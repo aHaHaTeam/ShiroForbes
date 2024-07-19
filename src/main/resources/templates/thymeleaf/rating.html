@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Shiroforbes</title>
@@ -8,35 +8,31 @@
 </head>
 
 <body>
-    <div style="display:grid;">
-        <h1>
-            <span style="color: rgb(246, 160, 0);">Shiro</span>
-            <span style="color: rgb(18, 18, 117);">Forbes</span>
-        </h1>
+<div style="display:grid;">
 
-        <h3>
-            <a href="", style="color: rgb(208, 135, 0);">City Camp</a>
-            <a href="", style="color: rgb(14, 14, 128);">Regular Kamp</a>
-        </h3>
+    <h3>
+        <a href="" style="color: rgb(208, 135, 0);">City Camp</a>
+        <a href="" style="color: rgb(14, 14, 128);">Regular Camp</a>
+    </h3>
 
-        <h2>Rating</h2>
+    <h2>Rating</h2>
 
-        <table>
-            <tr>
-                <th>№</th>
-                <th>Name</th>
-                <th>Rating</th>
-                <th>Wealth</th>
-            </tr>
-            <tr th:each="user, i: ${allUsers}">
-                <td th:text="${i.index+1}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.rating}"></td>
-                <td th:text="${user.wealth}"></td>
-            </tr>
-        </table>
+    <table>
+        <tr>
+            <th>№</th>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Wealth</th>
+        </tr>
+        <tr th:each="user, i: ${allUsers}">
+            <td th:text="${i.index+1}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.rating}"></td>
+            <td th:text="${user.wealth}"></td>
+        </tr>
+    </table>
 
-    </div>
+</div>
 </body>
 
 </html>

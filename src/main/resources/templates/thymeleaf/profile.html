@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiroforbes</title>
+
+    <script>
+        name = document.getElementById('name').textContent;
+        document.getElementById('invest').addEventListener('click', function() {
+            // ниже надо написать ссылку куда слать заявки на инвестиции
+            fetch('https://example.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Успех:', data);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+        });
+    </script>
+</head>
+<body>
+<div class="picture">
+    <img th:src="${login}.jpg" th:alt = "Тут должна быть картинка ${name}">
+</div>
+
+<div class="name">
+    <h2 id = "name" th:text="${name}"></h2>
+</div>
+
+<div class="problemStats">
+    <p th:text="Решено ${solved}"></p>
+    <p th:text="Алгебра ${algSolved}"></p>
+    <p th:text="Геометрия ${geomSolved}"></p>
+    <p th:text="Комбинаторика ${combSolved}"></p>
+</div>
+
+<div class="moneyStats">
+    <p th:text="Баланс ${money}"></p>
+
+    <!-- Тут надо придумать обозначение.
+    Можно надпись красить в разные цвета когда да/нет, можно справа галочку ставить -->
+    <p>Присутствие на зарядке</p>
+    <p>Отбой вовремя</p>
+</div>
+
+<div class = "plot">
+    <!--
+    <img src = "" картинку с графиком нужно либо прислать с сервера либо сгенерировать на месте
+    -->
+</div>
+
+<div class = "investButton">
+    <button id="invest">Сегодня инвестирую!</button>
+</div>
+
+</body>
+</html>

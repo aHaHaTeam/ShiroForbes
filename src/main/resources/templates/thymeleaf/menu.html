@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Shiriforbes</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        fetch('rating.html')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Сетевая ошибка: ' + response.status);
+                }
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById('ratingTable').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке:', error);
+            });
+    </script>
+</head>
+<body>
+<div class="logo"><h1>
+    <!-- лого широфорбса справа сверху -->
+    <span style="color: rgb(246, 160, 0);">Shiro</span>
+    <span style="color: rgb(18, 18, 117);">Forbes</span>
+</h1></div>
+
+<div class = "account">
+    <!-- кнопочка войти в личный кабинет в правом верхнем углу -->
+    <div th:is="${isLoggedIn}">
+        <a th:href ="/profile/${login}" th:text="${login}"></a>
+    </div>
+    <div th:unless="${isLoggedIn}">
+        <a href = "/login">Войти</a>
+    </div>
+</div>
+
+<div class = "ratingTable">
+    <!-- этот раздел генерируется скриптом из /head -->
+</div>
+
+</body>
+</html>
