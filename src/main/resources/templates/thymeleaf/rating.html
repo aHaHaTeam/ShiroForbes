@@ -24,11 +24,11 @@
             <th>Rating</th>
             <th>Wealth</th>
         </tr>
-        <tr th:each="user, i: ${allUsers}">
+        <tr th:each="student, i: ${groups[0].students}">
             <td th:text="${i.index+1}"></td>
-            <td th:text="${user.name}"></td>
-            <td th:text="${user.rating}"></td>
-            <td th:text="${user.wealth}"></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.rating}"></td>
+            <td th:text="${student.wealth}"></td>
         </tr>
     </table>
 

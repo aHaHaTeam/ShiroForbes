@@ -6,8 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
-import ru.shiroforbes.service.GroupService
-import ru.shiroforbes.web.rating
+import ru.shiroforbes.web.routes
 
 fun Application.configureApp() {
     install(Thymeleaf) {
@@ -21,6 +20,6 @@ fun Application.configureApp() {
     }
 
     install(Routing) {
-        rating(GroupService())
+        routes(null)
     }
 }

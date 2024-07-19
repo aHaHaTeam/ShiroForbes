@@ -2,6 +2,7 @@
 
 package ru.shiroforbes.web
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.response.*
@@ -10,14 +11,102 @@ import io.ktor.server.thymeleaf.*
 import ru.shiroforbes.service.GroupService
 import java.io.File
 
-fun Routing.rating(groupService: GroupService) {
+fun Routing.routes(groupService: GroupService?) {
     staticFiles("/static", File("src/main/resources/static/"))
+
+    get("/") {
+        call.respondRedirect("/menu")
+    }
+
+    get("/menu") {
+        call.respond(
+            ThymeleafContent(
+                "menu",
+                mapOf("students" to groupService!!.getGroup(0).students),
+            ),
+        )
+    }
 
     get("/rating") {
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService.getGroup(0).students),
+                mapOf("students" to groupService!!.getGroup(0).students),
+            ),
+        )
+    }
+
+    get("/login") {
+        call.respond(
+            ThymeleafContent(
+                "rating",
+                mapOf("students" to groupService!!.getGroup(0).students),
+            ),
+        )
+    }
+
+    get("/profile") {
+        call.respond(
+            ThymeleafContent(
+                "rating",
+                mapOf("students" to groupService!!.getGroup(0).students),
+            ),
+        )
+    }
+
+    get("/admin") {
+        call.respond(
+            ThymeleafContent(
+                "rating",
+                mapOf("students" to groupService!!.getGroup(0).students),
+            ),
+        )
+    }
+
+    // Mock routes for testing
+    get("/mock") {
+        call.respondRedirect("/menu")
+    }
+
+    get("/mock/menu") {
+        call.respond(
+            ThymeleafContent(
+                "menu",
+                mapOf(
+                    "students" to MockGroupService.getAllGroups(),
+                    "isLoggedIn" to false,
+                ),
+            ),
+        )
+    }
+
+    get("/mock/rating") {
+        call.respond(
+            ThymeleafContent(
+                "rating",
+                mapOf("groups" to MockGroupService.getAllGroups()),
+            ),
+        )
+    }
+
+    get("/mock/login") {
+        call.respondText("login", ContentType.Text.Html)
+    }
+
+    get("/mock/profile/{id}") {
+        call.respond(
+            ThymeleafContent(
+                "profile",
+                mapOf("student" to MockStudentService.getStudent(call.parameters["id"]!!.toInt())),
+            ),
+        )
+    }
+
+    get("/mock/admin") {
+        call.respond(
+            ThymeleafContent(
+                "admin",
+                mapOf("students" to groupService!!.getGroup(0).students),
             ),
         )
     }

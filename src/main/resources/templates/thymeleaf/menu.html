@@ -31,7 +31,7 @@
 <div class = "account">
     <!-- кнопочка войти в личный кабинет в правом верхнем углу -->
     <div th:is="${isLoggedIn}">
-        <a th:href ="/profile/${login}" th:text="${login}"></a>
+<!--        <a th:href ="/profile/${login}" th:text="${login}"></a>-->
     </div>
     <div th:unless="${isLoggedIn}">
         <a href = "/login">Войти</a>
