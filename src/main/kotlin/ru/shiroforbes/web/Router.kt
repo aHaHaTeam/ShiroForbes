@@ -8,6 +8,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
+import ru.shiroforbes.model.Student
 import ru.shiroforbes.service.GroupService
 import java.io.File
 
@@ -109,5 +110,9 @@ fun Routing.routes(groupService: GroupService?) {
                 mapOf("students" to groupService!!.getGroup(0).students),
             ),
         )
+    }
+
+    get("/") {
+        call.respondRedirect("/mock/profile/1")
     }
 }

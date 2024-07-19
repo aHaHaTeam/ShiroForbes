@@ -1,0 +1,39 @@
+body {
+    background-color: rgb(218, 224, 252);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    position: center;
+
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-align: center;
+}
+
+table {
+    margin: auto;
+}
+
+table,
+th,
+td {
+    width: fit-content;
+    padding: 0.5em;
+}
+
+table,
+tr {
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    font-size: small;
+    text-align: center;
+}

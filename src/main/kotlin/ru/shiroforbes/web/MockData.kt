@@ -9,14 +9,14 @@ import ru.shiroforbes.service.StudentService
 
 val students =
     listOf(
-        Student(0, "Name1", "Login1", "Password1", 121, 1231),
-        Student(1, "Name2", "Login2", "Password2", 122, 2232),
-        Student(2, "Name3", "Login3", "Password3", 123, 3233),
-        Student(3, "Name4", "Login4", "Password4", 124, 4234),
-        Student(4, "Name5", "Login5", "Password5", 125, 5235),
-        Student(5, "Name11", "Login11", "Password11", 21, 131),
-        Student(6, "Name12", "Login12", "Password12", 22, 232),
-        Student(7, "Name13", "Login13", "Password13", 23, 333),
+        Student(0, "Name1", "Login1", "Password1", 121, 1231, null, false),
+        Student(1, "Name2 Surname2", "Login2", "Password2", 122, 2232, false, true),
+        Student(2, "Name3", "Login3", "Password3", 123, 3233, null, null),
+        Student(3, "Name4", "Login4", "Password4", 124, 4234, true, false),
+        Student(4, "Name5", "Login5", "Password5", 125, 5235, true, false),
+        Student(5, "Name11", "Login11", "Password11", 21, 131, true, false),
+        Student(6, "Name12", "Login12", "Password12", 22, 232, true, false),
+        Student(7, "Name13", "Login13", "Password13", 23, 333, true, false),
     )
 
 object MockStudentService : StudentService {

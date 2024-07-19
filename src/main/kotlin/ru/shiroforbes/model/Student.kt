@@ -8,4 +8,22 @@ data class Student(
     val password: String,
     val rating: Int,
     val wealth: Int,
-)
+    val isExercised: Boolean?,
+    val isBeaten: Boolean?
+    ) {
+    fun solved(): Int {
+        return this.algSolved() + this.geomSolved() + this.combSolved()
+    }
+
+    fun algSolved(): Int {
+        return 1
+    }
+
+    fun geomSolved(): Int {
+        return 2
+    }
+
+    fun combSolved(): Int {
+        return 3
+    }
+}
