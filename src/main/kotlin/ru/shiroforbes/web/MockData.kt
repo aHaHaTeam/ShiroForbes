@@ -10,7 +10,7 @@ import ru.shiroforbes.service.StudentService
 val students =
     listOf(
         Student(0, "Name1", "Login1", "Password1", 121, 1231, null, false),
-        Student(1, "Name2 Surname2", "Login2", "Password2", 122, 2232, false, true),
+        Student(1, "Silly Cat Bleh", "Login2", "Password2", 239, 239239, false, true),
         Student(2, "Name3", "Login3", "Password3", 123, 3233, null, null),
         Student(3, "Name4", "Login4", "Password4", 124, 4234, true, false),
         Student(4, "Name5", "Login5", "Password5", 125, 5235, true, false),

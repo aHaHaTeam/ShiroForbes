@@ -11,6 +11,10 @@
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
     <link href="/static/styles.css" rel="stylesheet">
 
+    <!--    Font for ShiroForbes logo   -->
+    <link href="https://db.onlinewebfonts.com/c/18388ffae47d04063d2b24fc4a9cff60?family=Publico+Headline+Web+Bold+Regular"
+          rel="stylesheet">
+
     <script>
         name = document.getElementById('name').textContent;
         document.getElementById('invest').addEventListener('click', function () {
@@ -38,23 +42,22 @@
     <div class="grid">
         <div class="s0 m1 l2"></div>
         <article class="s12 m10 l8 grid border">
-            <h1 class="s12">Shiroforbses</h1>
+            <h1 class="s12" style="font-family: 'Publico Headline Web Bold Regular',serif;">
+                <span style="color: darkblue">Shiro</span>
+                <span style="color: darkgoldenrod">Forbes</span>
+            </h1>
             <div class="s6">
                 <br>
-                <h5 id="name" class="center-align" th:text="${student.name}"></h5>
+                <h5 id="name" class="bold center-align" th:text="${student.name}"></h5>
                 <br>
-                <!--                <div class="divider"></div>-->
                 <article class="border">
-                    <h6 th:text="|Решено: ${student.solved()}|"></h6>
-                    <!--                <div class="divider"></div>-->
-                    <h6 th:text="|Алгебра: ${student.algSolved()}|"></h6>
-                    <!--                <div class="divider"></div>-->
-                    <h6 th:text="|Геометрия: ${student.geomSolved()}|"></h6>
-                    <!--                <div class="divider"></div>-->
-                    <h6 th:text="|Комбинаторика: ${student.combSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Решено: ${student.solved()}|"></h6>
+                    <h6 class="large-text" th:text="|Алгебра: ${student.algSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Геометрия: ${student.geomSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Комбинаторика: ${student.combSolved()}|"></h6>
                 </article>
                 <br>
-                <h4 th:text="|Баланс ${student.wealth}|" class="s12"></h4>
+                <h6 th:text="|Баланс ${student.wealth}|" class="s12"></h6>
             </div>
 
             <div id="moneyStats" class="s6 vertical grid">
@@ -62,10 +65,6 @@
                     <img class="responsive extra middle center-align" th:src="|/static/${student.login}.jpg|"
                          th:alt="|Тут должна быть картинка ${student.name}|">
                 </article>
-
-
-                <!-- Тут надо придумать обозначение.
-                Можно надпись красить в разные цвета когда да/нет, можно справа галочку ставить -->
 
             </div>
             <div th:unless="${student.isExercised==null}" class="s6">
