@@ -14,10 +14,6 @@ import java.io.File
 fun Routing.routes(groupService: GroupService?) {
     staticFiles("/static", File("src/main/resources/static/"))
 
-    get("/") {
-        call.respondRedirect("/menu")
-    }
-
     get("/menu") {
         call.respond(
             ThymeleafContent(

@@ -5,19 +5,33 @@
     <title>Shiroforbes</title>
     <link rel="stylesheet" href="/static/ratingStyles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
 </head>
 
 <body>
-<div style="display:grid;">
+<div class="grid">
 
-    <h3>
-        <a href="" style="color: rgb(208, 135, 0);">City Camp</a>
-        <a href="" style="color: rgb(14, 14, 128);">Regular Camp</a>
-    </h3>
+    <h2 class="s12 center-align middle">Рейтинг</h2>
 
-    <h2>Rating</h2>
+    <div class="s3"></div>
+    <nav class="no-space center-align middle-align s6">
+        <button id="countryside" class="border left-round max fill">
+            <i class="small">nature</i>
+            <span>Настоящий лагерь</span>
+        </button>
+        <button id="urban" class="border right-round max">
+            <i class="small">home</i>
+            <span>Городской лагерь</span>
+        </button>
+    </nav>
+    <div class="s3"></div>
 
-    <table>
+
+    <table class="s12" id="countrysideTable">
         <tr>
             <th>№</th>
             <th>Name</th>
@@ -32,6 +46,21 @@
         </tr>
     </table>
 
+    <table class="s12" hidden id="urbanTable">
+        <tr>
+            <th>№</th>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Wealth</th>
+        </tr>
+        <tr th:each="student, j: ${groups[1].students}">
+            <td th:text="${j.index+1}"></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.rating}"></td>
+            <td th:text="${student.wealth}"></td>
+        </tr>
+    </table>
+    <script src="/static/rating.js"></script>
 </div>
 </body>
 
