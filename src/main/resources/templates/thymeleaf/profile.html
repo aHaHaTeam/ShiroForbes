@@ -15,33 +15,36 @@
     <link href="https://db.onlinewebfonts.com/c/18388ffae47d04063d2b24fc4a9cff60?family=Publico+Headline+Web+Bold+Regular"
           rel="stylesheet">
 
-    <script>
-        name = document.getElementById('name').textContent;
-        document.getElementById('invest').addEventListener('click', function () {
-            // ниже надо написать ссылку куда слать заявки на инвестиции
-            fetch('https://example.com/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name})
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Успех:', data);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                });
-        });
-    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--    <script>-->
+    <!--        name = document.getElementById('name').textContent;-->
+    <!--        document.getElementById('invest').addEventListener('click', function () {-->
+    <!--            // ниже надо написать ссылку куда слать заявки на инвестиции-->
+    <!--            fetch('https://example.com/submit', {-->
+    <!--                method: 'POST',-->
+    <!--                headers: {-->
+    <!--                    'Content-Type': 'application/json'-->
+    <!--                },-->
+    <!--                body: JSON.stringify({name: name})-->
+    <!--            })-->
+    <!--                .then(response => response.json())-->
+    <!--                .then(data => {-->
+    <!--                    console.log('Успех:', data);-->
+    <!--                })-->
+    <!--                .catch(error => {-->
+    <!--                    console.error('Ошибка:', error);-->
+    <!--                });-->
+    <!--        });-->
+    <!--    </script>-->
 </head>
 <body>
 <main class="responsive">
 
     <div class="grid">
         <div class="s0 m1 l2"></div>
-        <article class="s12 m10 l8 grid border">
+        <div class="s12 m10 l8 grid">
             <h1 class="s12" style="font-family: 'Publico Headline Web Bold Regular',serif;">
                 <span style="color: darkblue">Shiro</span>
                 <span style="color: darkgoldenrod">Forbes</span>
@@ -57,7 +60,10 @@
                     <h6 class="large-text" th:text="|Комбинаторика: ${student.combSolved()}|"></h6>
                 </article>
                 <br>
-                <h6 th:text="|Баланс ${student.wealth}|" class="s12"></h6>
+                <div class="grid">
+                    <h6 th:text="|Баланс ${student.wealth}|" class="s6"></h6>
+                    <button id="invest" class="s6">Сегодня инвестирую!</button>
+                </div>
             </div>
 
             <div id="moneyStats" class="s6 vertical grid">
@@ -81,16 +87,12 @@
                     <i th:unless="${student.isBeaten}">close</i>
                 </div>
             </div>
-            <div class="s4">
-                <button id="invest">Сегодня инвестирую!</button>
-            </div>
-            <div class="s12" id="plot">
-                <!--
-                <img src = "" картинку с графиком нужно либо прислать с сервера либо сгенерировать на месте
-                -->
+
+            <div class="s12">
+                <div th:insert="~{chart :: chart(${wealth}, ${rating})}"></div>
             </div>
 
-        </article>
+        </div>
         <div class="s0 m1 l2"></div>
     </div>
 </main>

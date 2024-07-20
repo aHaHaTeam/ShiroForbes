@@ -8,7 +8,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
-import ru.shiroforbes.model.Student
 import ru.shiroforbes.service.GroupService
 import java.io.File
 
@@ -98,7 +97,11 @@ fun Routing.routes(groupService: GroupService?) {
         call.respond(
             ThymeleafContent(
                 "profile",
-                mapOf("student" to MockStudentService.getStudent(call.parameters["id"]!!.toInt())),
+                mapOf(
+                    "student" to MockStudentService.getStudent(call.parameters["id"]!!.toInt()),
+                    "rating" to listOf(8, 2, 3, 7, 5, 4),
+                    "wealth" to listOf(1, 2, 3, 7, 5, 4),
+                ),
             ),
         )
     }
