@@ -35,8 +35,8 @@ fun Routing.routes(groupService: GroupService?) {
     get("/login") {
         call.respond(
             ThymeleafContent(
-                "rating",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                "login",
+                mapOf(),
             ),
         )
     }

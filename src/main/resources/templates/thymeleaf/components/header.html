@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Shiroforbes</title>
+    <title>ShiroForbes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
@@ -14,27 +14,26 @@
 <body>
 <div th:fragment="header(isLoggedIn)">
     <header class="fixed fill small-round">
-        <nav class="row">
-            <button class="circle transparent right">
+        <nav class="grid">
+            <button class="circle transparent right s2">
                 <i>menu</i>
             </button>
-            <h2 class="max center-align s8" style="font-family: 'Publico Headline Web Bold Regular',serif;">
-                <span style="color: darkblue">Shiro</span>
-                <span style="color: darkgoldenrod">Forbes</span>
-            </h2>
+            <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
-            <div th:if="${isLoggedIn}">
-                <a th:href="|/mock/profile/${user.id}|">
-                <span th::text="${user.name}"></span>
-                <img th:src="|/static/${user.login}.jpg|" class="circle">
-                </a>
-            </div>
+            <div class="s2 right-align">
+                <div th:if="${isLoggedIn}">
+                    <a th:href="|/mock/profile/${user.id}|">
+                        <span th::text="${user.name}"></span>
+                        <img th:src="|/static/${user.login}.jpg|" class="circle">
+                    </a>
+                </div>
 
-            <div th:unless="${isLoggedIn}">
-                <a class="circle transparent horizontal" href="/login">
-                    <span>Войти</span>
-                    <i>login</i>
-                </a>
+                <div th:unless="${isLoggedIn}">
+                    <a class="circle transparent horizontal" href="/login">
+                        <span>Войти</span>
+                        <i>login</i>
+                    </a>
+                </div>
             </div>
         </nav>
     </header>

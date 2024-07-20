@@ -2,9 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>ShiroForbes</title>
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+    <link href="/styles.css" rel="stylesheet">
 </head>
 <body>
+<main class="responsive grid">
+    <div class="s0 m2 l3"></div>
+    <div class="s12 m8 l6">
+        <article class="fill middle grid">
+            <div class="s2"></div>
 
+            <div class="s8">
+                <br>
+                <div class="center" th:insert="~{components/logo :: logo()}"></div>
+                <br>
+                <div class="field label border">
+                    <input type="text">
+                    <label>Login</label>
+                </div>
+                <br>
+                <div class="field label border">
+                    <input type="password">
+                    <label>Password</label>
+                </div>
+                <br>
+                <button class="extra round">Sign In</button>
+                <br>
+            </div>
+
+            <div class="s2"></div>
+        </article>
+    </div>
+    <div class="s0 m2 s3"></div>
+</main>
 </body>
 </html>
