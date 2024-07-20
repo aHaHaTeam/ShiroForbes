@@ -7,7 +7,7 @@
 </head>
 <body>
 <div th:fragment="chart(wealth, rating)">
-    <canvas id="chart" style="width:100%;max-width:700px"></canvas>
+    <canvas id="chart" style="width:100%;"></canvas>
     <script th:inline="javascript">
         const wealth = /*[[${wealth}]]*/ [];
         today = new Date()
@@ -24,6 +24,7 @@
                 labels: days,
                 datasets: [{
                     label: "wealth",
+                    cubicInterpolationMode: 'monotone',
                     backgroundColor: "rgb(115,0,255)",
                     borderColor: "rgba(132,0,255,0.1)",
                     data: wealth,

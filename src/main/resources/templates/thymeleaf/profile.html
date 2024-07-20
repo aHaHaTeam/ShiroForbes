@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shiroforbes</title>
+    <title>ShiroForbes</title>
 
 
     <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
@@ -18,83 +18,59 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!--    <script>-->
-    <!--        name = document.getElementById('name').textContent;-->
-    <!--        document.getElementById('invest').addEventListener('click', function () {-->
-    <!--            // ниже надо написать ссылку куда слать заявки на инвестиции-->
-    <!--            fetch('https://example.com/submit', {-->
-    <!--                method: 'POST',-->
-    <!--                headers: {-->
-    <!--                    'Content-Type': 'application/json'-->
-    <!--                },-->
-    <!--                body: JSON.stringify({name: name})-->
-    <!--            })-->
-    <!--                .then(response => response.json())-->
-    <!--                .then(data => {-->
-    <!--                    console.log('Успех:', data);-->
-    <!--                })-->
-    <!--                .catch(error => {-->
-    <!--                    console.error('Ошибка:', error);-->
-    <!--                });-->
-    <!--        });-->
-    <!--    </script>-->
 </head>
 <body>
-<main class="responsive">
-
-    <div class="grid">
-        <div class="s0 m1 l2"></div>
-        <div class="s12 m10 l8 grid">
-            <h1 class="s12" style="font-family: 'Publico Headline Web Bold Regular',serif;">
-                <span style="color: darkblue">Shiro</span>
-                <span style="color: darkgoldenrod">Forbes</span>
-            </h1>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8">
+        <div th:insert="~{components/header :: header(true)}"></div>
+        <main class="responsive grid">
             <div class="s6">
                 <br>
-                <h5 id="name" class="bold center-align" th:text="${student.name}"></h5>
+                <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
                 <br>
                 <article class="border">
-                    <h6 class="large-text" th:text="|Решено: ${student.solved()}|"></h6>
-                    <h6 class="large-text" th:text="|Алгебра: ${student.algSolved()}|"></h6>
-                    <h6 class="large-text" th:text="|Геометрия: ${student.geomSolved()}|"></h6>
-                    <h6 class="large-text" th:text="|Комбинаторика: ${student.combSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Решено: ${user.solved()}|"></h6>
+                    <h6 class="large-text" th:text="|Алгебра: ${user.algSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Геометрия: ${user.geomSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Комбинаторика: ${user.combSolved()}|"></h6>
                 </article>
                 <br>
                 <div class="grid">
-                    <h6 th:text="|Баланс ${student.wealth}|" class="s6"></h6>
+                    <h6 th:text="|Баланс ${user.wealth}|" class="s6"></h6>
                     <button id="invest" class="s6">Сегодня инвестирую!</button>
                 </div>
             </div>
 
             <div id="moneyStats" class="s6 vertical grid">
                 <article id="picture" class="s12 middle center-align">
-                    <img class="responsive extra middle center-align" th:src="|/static/${student.login}.jpg|"
-                         th:alt="|Тут должна быть картинка ${student.name}|">
+                    <img class="responsive extra middle center-align" th:src="|/static/${user.login}.jpg|"
+                         th:alt="|Тут должна быть картинка ${user.name}|">
                 </article>
 
             </div>
-            <div th:unless="${student.isExercised==null}" class="s6">
+            <div th:unless="${user.isExercised==null}" class="s6">
                 <span class="large-text">Присутствие на зарядке</span>
                 <div class="chip fill extra">
-                    <i th:if="${student.isExercised}">done</i>
-                    <i th:unless="${student.isExercised}">close</i>
+                    <i th:if="${user.isExercised}">done</i>
+                    <i th:unless="${user.isExercised}">close</i>
                 </div>
             </div>
-            <div th:unless="${student.isBeaten==null}" class="s6">
+            <div th:unless="${user.isBeaten==null}" class="s6">
                 <span class="large-text">Отбой вовремя</span>
                 <div class="chip fill extra">
-                    <i th:if="${student.isBeaten}">done</i>
-                    <i th:unless="${student.isBeaten}">close</i>
+                    <i th:if="${user.isBeaten}">done</i>
+                    <i th:unless="${user.isBeaten}">close</i>
                 </div>
             </div>
 
             <div class="s12">
-                <div th:insert="~{chart :: chart(${wealth}, ${rating})}"></div>
+                <div th:insert="~{components/chart :: chart(${wealth}, ${rating})}"></div>
             </div>
-
-        </div>
-        <div class="s0 m1 l2"></div>
+        </main>
     </div>
-</main>
+    <div class="s0 m1 l2"></div>
+</div>
+
 </body>
 </html>

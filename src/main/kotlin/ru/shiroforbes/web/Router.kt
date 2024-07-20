@@ -69,8 +69,9 @@ fun Routing.routes(groupService: GroupService?) {
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "students" to MockGroupService.getAllGroups(),
-                    "isLoggedIn" to false,
+                    "user" to students[1],
+                    "isLoggedIn" to true,
+                    "groups" to MockGroupService.getAllGroups(),
                 ),
             ),
         )
@@ -79,7 +80,7 @@ fun Routing.routes(groupService: GroupService?) {
     get("/mock/rating") {
         call.respond(
             ThymeleafContent(
-                "rating",
+                "components/rating",
                 mapOf("groups" to MockGroupService.getAllGroups()),
             ),
         )
@@ -94,7 +95,7 @@ fun Routing.routes(groupService: GroupService?) {
             ThymeleafContent(
                 "profile",
                 mapOf(
-                    "student" to MockStudentService.getStudent(call.parameters["id"]!!.toInt()),
+                    "user" to MockStudentService.getStudent(call.parameters["id"]!!.toInt()),
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
                     "wealth" to listOf(1, 2, 3, 7, 5, 4),
                 ),

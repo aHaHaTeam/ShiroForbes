@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Shiroforbes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+
+<body>
+<div th:fragment="header(isLoggedIn)">
+    <header class="fixed fill small-round">
+        <nav class="row">
+            <button class="circle transparent right">
+                <i>menu</i>
+            </button>
+            <h2 class="max center-align s8" style="font-family: 'Publico Headline Web Bold Regular',serif;">
+                <span style="color: darkblue">Shiro</span>
+                <span style="color: darkgoldenrod">Forbes</span>
+            </h2>
+
+            <div th:if="${isLoggedIn}">
+                <a th:href="|/mock/profile/${user.id}|">
+                <span th::text="${user.name}"></span>
+                <img th:src="|/static/${user.login}.jpg|" class="circle">
+                </a>
+            </div>
+
+            <div th:unless="${isLoggedIn}">
+                <a class="circle transparent horizontal" href="/login">
+                    <span>Войти</span>
+                    <i>login</i>
+                </a>
+            </div>
+        </nav>
+    </header>
+</div>
+</body>
+
+</html>

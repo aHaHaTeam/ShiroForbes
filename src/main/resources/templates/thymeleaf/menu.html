@@ -1,46 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Shiriforbes</title>
-    <link rel="stylesheet" href="/ratingStyles.css">
+    <title>ShiroForbes</title>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script>
-        fetch('rating.html')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Сетевая ошибка: ' + response.status);
-                }
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById('ratingTable').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Ошибка при загрузке:', error);
-            });
-    </script>
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+    <link href="/static/styles.css" rel="stylesheet">
 </head>
 <body>
-<div id="logo"><h1>
-    <!-- лого широфорбса справа сверху -->
-    <span style="color: rgb(246, 160, 0);">Shiro</span>
-    <span style="color: rgb(18, 18, 117);">Forbes</span>
-</h1></div>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8">
+        <div th:insert="~{components/header :: header(${isLoggedIn})}"></div>
 
-<div id="account">
-    <!-- кнопочка войти в личный кабинет в правом верхнем углу -->
-    <div th:is="${isLoggedIn}">
-        <a th:href="/profile/${login}" th:text="${login}"></a>
+
+        <div th:insert="~{components/rating :: rating(${groups})}"></div>
     </div>
-    <div th:unless="${isLoggedIn}">
-        <a href="/login">Войти</a>
-    </div>
+    <div class="s0 m1 l2"></div>
 </div>
-
-<div id="ratingTable">
-    <!-- этот раздел генерируется скриптом из /head -->
-</div>
-
 </body>
 </html>
