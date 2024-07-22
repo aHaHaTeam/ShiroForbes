@@ -20,6 +20,6 @@ fun Application.configureApp() {
     }
 
     install(Routing) {
-        routes(null)
+        routes()
     }
 }

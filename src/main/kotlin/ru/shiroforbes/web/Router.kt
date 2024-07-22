@@ -9,16 +9,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import ru.shiroforbes.service.GroupService
+import ru.shiroforbes.service.StudentService
 import java.io.File
 
-fun Routing.routes(groupService: GroupService?) {
+fun Routing.routes(groupService: GroupService? = null, studentService: StudentService? = null) {
     staticFiles("/static", File("src/main/resources/static/"))
 
     get("/menu") {
         call.respond(
             ThymeleafContent(
                 "menu",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                mapOf("students" to groupService!!.getAllGroups()[0].students),
             ),
         )
     }
@@ -27,7 +28,7 @@ fun Routing.routes(groupService: GroupService?) {
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                mapOf("students" to groupService!!.getAllGroups()[0].students),
             ),
         )
     }
@@ -45,7 +46,20 @@ fun Routing.routes(groupService: GroupService?) {
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                mapOf("students" to groupService!!.getAllGroups()[0].students),
+            ),
+        )
+    }
+
+    get("/profile/{id}") {
+        call.respond(
+            ThymeleafContent(
+                "profile",
+                mapOf(
+                    "user" to studentService!!.getStudent(call.parameters["id"]!!.toInt()),
+                    "rating" to listOf(8, 2, 3, 7, 5, 4),
+                    "wealth" to listOf(1, 2, 3, 7, 5, 4),
+                ),
             ),
         )
     }
@@ -54,7 +68,7 @@ fun Routing.routes(groupService: GroupService?) {
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                mapOf("students" to groupService!!.getAllGroups()[0].students),
             ),
         )
     }
@@ -69,9 +83,8 @@ fun Routing.routes(groupService: GroupService?) {
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "user" to students[1],
-                    "isLoggedIn" to true,
-                    "groups" to MockGroupService.getAllGroups(),
+                    "students" to MockGroupService.getAllGroups(),
+                    "isLoggedIn" to false,
                 ),
             ),
         )
@@ -107,7 +120,7 @@ fun Routing.routes(groupService: GroupService?) {
         call.respond(
             ThymeleafContent(
                 "admin",
-                mapOf("students" to groupService!!.getGroup(0).students),
+                mapOf("students" to groupService!!.getAllGroups()[0].students),
             ),
         )
     }
