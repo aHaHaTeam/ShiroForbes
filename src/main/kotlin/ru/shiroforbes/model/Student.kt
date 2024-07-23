@@ -1,14 +1,16 @@
 package ru.shiroforbes.model
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import ru.shiroforbes.database.Students
-
 // Dataclass representing student
-class Student {
-
-
+data class Student(
+    val id: Int,
+    val name: String,
+    val login: String,
+    val password: String,
+    val rating: Int,
+    val wealth: Int,
+    val isExercised: Boolean?,
+    val isBeaten: Boolean?
+) {
     fun solved(): Int {
         return this.algSolved() + this.geomSolved() + this.combSolved()
     }

@@ -43,8 +43,6 @@ val groups =
     )
 
 object MockGroupService : GroupService {
-    override suspend fun getGroup(id: Int): Group =
-        if (id in 0..<groups.size) groups[id] else throw RuntimeException("No group with id $id")
 
     override suspend fun getAllGroups(): List<Group> = groups
 }
