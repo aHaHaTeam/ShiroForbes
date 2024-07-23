@@ -8,12 +8,19 @@ import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
+import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
 import java.io.File
 
-fun Routing.routes(groupService: GroupService? = null, studentService: StudentService? = null) {
+fun Routing.routes(
+    groupService: GroupService? = null,
+    studentService: StudentService? = null,
+) {
     staticFiles("/static", File("src/main/resources/static/"))
+    get("/favicon.ico") {
+        call.respondFile(File("src/main/resources/static/images/shiro&vlasik.png"))
+    }
 
     get("/menu") {
         call.respond(
@@ -73,28 +80,27 @@ fun Routing.routes(groupService: GroupService? = null, studentService: StudentSe
         )
     }
 
+    get("/download/rating.pdf") {
+        call.respondFile(
+            File("src/main/resources/static/rating.pdf"),
+        )
+    }
+
     // Mock routes for testing
     get("/mock") {
         call.respondRedirect("/menu")
     }
 
     get("/mock/menu") {
+        val groups = MockGroupService.getAllGroups()
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "students" to MockGroupService.getAllGroups(),
+                    "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
+                    "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
                     "isLoggedIn" to false,
                 ),
-            ),
-        )
-    }
-
-    get("/mock/rating") {
-        call.respond(
-            ThymeleafContent(
-                "components/rating",
-                mapOf("groups" to MockGroupService.getAllGroups()),
             ),
         )
     }
@@ -110,7 +116,7 @@ fun Routing.routes(groupService: GroupService? = null, studentService: StudentSe
                 mapOf(
                     "user" to MockStudentService.getStudent(call.parameters["id"]!!.toInt()),
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
-                    "wealth" to listOf(1, 2, 3, 7, 5, 4),
+                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
                 ),
             ),
         )

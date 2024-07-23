@@ -8,16 +8,19 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
-    <link href="/static/styles.css" rel="stylesheet">
+    <link href="/static/styles/styles.css" rel="stylesheet">
 </head>
 <body>
 <div class="grid">
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
+        <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
         <div th:insert="~{components/header :: header(${isLoggedIn})}"></div>
 
 
-        <div th:insert="~{components/rating :: rating(${groups})}"></div>
+        <!--/*@thymesVar id="countrysideCampStudents" type="java.util.List<Student>"*/-->
+        <!--/*@thymesVar id="urbanCampStudents" type="java.util.List<Student>"*/-->
+        <div th:insert="~{components/rating :: rating(${countrysideCampStudents}, ${urbanCampStudents})}"></div>
     </div>
     <div class="s0 m1 l2"></div>
 </div>

@@ -7,15 +7,15 @@
 </head>
 <body>
 <div th:fragment="chart(wealth, rating)">
-    <canvas id="chart" style="width:100%;"></canvas>
+    <canvas id="chart"></canvas>
     <script th:inline="javascript">
         const wealth = /*[[${wealth}]]*/ [];
         today = new Date()
         console.log(today)
-        today.setDate(today.getDate()-16)
+        today.setDate(today.getDate() - 16)
         const days = Array.from({length: wealth.length}, (_, i) => {
-                today.setDate(today.getDate()-1)
-                return today.toDateString()
+                today.setDate(today.getDate() - 1)
+                return today.toDateString().split(' ').slice(1, 3).join(' ')
             }
         ).reverse();
         new Chart("chart", {

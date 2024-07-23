@@ -14,10 +14,12 @@ object Students : IntIdTable("student", "student_id") {
     val wealth = integer("wealth")
     val isExercised = bool("exercided")
     val isBeaten = bool("beaten")
+    // TODO: add field isInvesting: Boolean
 }
 
-
-class StudentDAO(id: EntityID<Int>) : IntEntity(id) {
+class StudentDAO(
+    id: EntityID<Int>,
+) : IntEntity(id) {
     companion object : IntEntityClass<StudentDAO>(Students)
 
     var name by Students.name
@@ -33,4 +35,3 @@ class StudentDAO(id: EntityID<Int>) : IntEntity(id) {
 
     val transactions by TransactionDAO via StudentTransaction
 }
-

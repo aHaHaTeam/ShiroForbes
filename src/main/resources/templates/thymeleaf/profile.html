@@ -9,7 +9,7 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
-    <link href="/static/styles.css" rel="stylesheet">
+    <link href="/static/styles/styles.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -31,30 +31,53 @@
                 </article>
                 <br>
                 <div class="grid">
-                    <h6 th:text="|Баланс ${user.wealth}|" class="s6"></h6>
-                    <button id="invest" class="s6">Сегодня инвестирую!</button>
+                    <p th:text="|Баланс: ${user.wealth}|" class="s12"></p>
+                    <div class="s12 field middle-align">
+                        <nav style="padding-left: 0">
+                            <div class="max">
+                                <p>Я инвестирую! Или нет? 🤔</p>
+                                <p id="investorStatus" class="small-text"></p>
+                            </div>
+                            <label class="switch icon">
+                                <input type="checkbox" id="investorCheckbox">
+
+                                <span>
+                                    <i>close</i>
+                                    <i>done</i>
+                                </span>
+                            </label>
+                            <script th:inline="javascript">
+                                document.getElementById("investorCheckbox").checked = /*[[${user.isInvesting}]]*/ false;
+                                console.log("checked:", document.getElementById("investorCheckbox").checked)
+                            </script>
+                        </nav>
+                    </div>
                 </div>
             </div>
 
             <div id="moneyStats" class="s6 vertical grid">
                 <article id="picture" class="s12 middle center-align">
-                    <img class="responsive extra middle center-align" th:src="|/static/${user.login}.jpg|"
+                    <img class="responsive extra middle center-align" th:src="|/static/images/${user.login}.jpg|"
                          th:alt="|Тут должна быть картинка ${user.name}|">
                 </article>
 
             </div>
             <div th:unless="${user.isExercised==null}" class="s6">
-                <span class="large-text">Присутствие на зарядке</span>
-                <div class="chip fill extra">
-                    <i th:if="${user.isExercised}">done</i>
-                    <i th:unless="${user.isExercised}">close</i>
+                <div class="center fit-content">
+                    <span class="large-text">Присутствие на зарядке</span>
+                    <div class="chip fill extra">
+                        <i th:if="${user.isExercised}">done</i>
+                        <i th:unless="${user.isExercised}">close</i>
+                    </div>
                 </div>
             </div>
             <div th:unless="${user.isBeaten==null}" class="s6">
-                <span class="large-text">Отбой вовремя</span>
-                <div class="chip fill extra">
-                    <i th:if="${user.isBeaten}">done</i>
-                    <i th:unless="${user.isBeaten}">close</i>
+                <div class="center fit-content">
+                    <span class="large-text">Отбой вовремя</span>
+                    <div class="chip fill extra">
+                        <i th:if="${user.isBeaten}">done</i>
+                        <i th:unless="${user.isBeaten}">close</i>
+                    </div>
                 </div>
             </div>
 
@@ -66,5 +89,6 @@
     <div class="s0 m1 l2"></div>
 </div>
 
+<script src="/static/scripts/profile.js"></script>
 </body>
 </html>

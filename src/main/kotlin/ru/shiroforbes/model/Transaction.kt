@@ -1,6 +1,5 @@
 package ru.shiroforbes.model
 
-
 // Dataclass representing a single transaction
 data class Transaction(
     val id: Int,
@@ -8,4 +7,3 @@ data class Transaction(
     val size: Int,
     val description: String,
 )
-

@@ -14,7 +14,9 @@ object Ratings : IntIdTable("rating", "rating_id") {
     val combinatorics = float("combinatorics")
 }
 
-class RatingDAO(id: EntityID<Int>): IntEntity(id){
+class RatingDAO(
+    id: EntityID<Int>,
+) : IntEntity(id) {
     companion object : IntEntityClass<RatingDAO>(Ratings)
 
     val date by Ratings.date

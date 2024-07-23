@@ -11,7 +11,9 @@ object Wealths : IntIdTable("wealth", "wealth_id") {
     val wealth = integer("wealth")
 }
 
-class WealthDAO(id: EntityID<Int>) : IntEntity(id) {
+class WealthDAO(
+    id: EntityID<Int>,
+) : IntEntity(id) {
     companion object : IntEntityClass<WealthDAO>(Wealths)
 
     val date by Wealths.date

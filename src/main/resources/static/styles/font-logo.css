@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "Publico Headline Web";
+    font-face-name: "Publico Headline Web Bold Regular";
+    src: url("/static/PublicoHeadline-Bold-Web.ttf") format("truetype");
+}
+
+/*@font-face {*/
+/*    font-family: "Publico Headline Web Bold Regular";*/
+/*    src: url(sansation_bold.woff);*/
+/*    font-weight: bold;*/
+/*}*/

@@ -17,6 +17,11 @@
         <nav class="grid">
             <button class="circle transparent right s2">
                 <i>menu</i>
+                <menu class="right no-wrap">
+                    <a>Item 1</a>
+                    <a>Item 2</a>
+                    <a>Item 3</a>
+                </menu>
             </button>
             <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
@@ -24,7 +29,7 @@
                 <div th:if="${isLoggedIn}">
                     <a th:href="|/mock/profile/${user.id}|">
                         <span th::text="${user.name}"></span>
-                        <img th:src="|/static/${user.login}.jpg|" class="circle">
+                        <img th:src="|/static/images/${user.login}.jpg|" class="circle">
                     </a>
                 </div>
 

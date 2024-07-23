@@ -9,21 +9,14 @@ data class Student(
     val rating: Int,
     val wealth: Int,
     val isExercised: Boolean?,
-    val isBeaten: Boolean?
+    val isBeaten: Boolean?,
+    val isInvesting: Boolean?,
 ) {
-    fun solved(): Int {
-        return this.algSolved() + this.geomSolved() + this.combSolved()
-    }
+    fun solved(): Int = this.algSolved() + this.geomSolved() + this.combSolved()
 
-    fun algSolved(): Int {
-        return 1
-    }
+    fun algSolved(): Int = 1
 
-    fun geomSolved(): Int {
-        return 2
-    }
+    fun geomSolved(): Int = 2
 
-    fun combSolved(): Int {
-        return 3
-    }
+    fun combSolved(): Int = 3
 }
