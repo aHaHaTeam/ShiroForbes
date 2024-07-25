@@ -24,10 +24,10 @@
                 <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
                 <br>
                 <article class="border">
-                    <h6 class="large-text" th:text="|Решено: ${user.solved()}|"></h6>
-                    <h6 class="large-text" th:text="|Алгебра: ${user.algSolved()}|"></h6>
-                    <h6 class="large-text" th:text="|Геометрия: ${user.geomSolved()}|"></h6>
-                    <h6 class="large-text" th:text="|Комбинаторика: ${user.combSolved()}|"></h6>
+                    <h6 class="large-text" th:text="|Решено: ${user.totalSolved}|"></h6>
+                    <h6 class="large-text" th:text="|Алгебра: ${user.algebraSolved}|"></h6>
+                    <h6 class="large-text" th:text="|Геометрия: ${user.geometrySolved}|"></h6>
+                    <h6 class="large-text" th:text="|Комбинаторика: ${user.combinatoricsSolved}|"></h6>
                 </article>
                 <br>
                 <div class="grid">

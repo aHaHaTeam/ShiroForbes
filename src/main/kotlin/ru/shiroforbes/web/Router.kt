@@ -59,11 +59,15 @@ fun Routing.routes(
     }
 
     get("/profile/{id}") {
+        val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+        if (user==null){
+            call.respond(HttpStatusCode.BadRequest)
+        }
         call.respond(
             ThymeleafContent(
                 "profile",
                 mapOf(
-                    "user" to studentService!!.getStudent(call.parameters["id"]!!.toInt()),
+                    "user" to user!!,
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
                     "wealth" to listOf(1, 2, 3, 7, 5, 4),
                 ),
@@ -114,7 +118,7 @@ fun Routing.routes(
             ThymeleafContent(
                 "profile",
                 mapOf(
-                    "user" to MockStudentService.getStudent(call.parameters["id"]!!.toInt()),
+                    "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
                     "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
                 ),

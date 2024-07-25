@@ -6,15 +6,22 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
+
 object Students : IntIdTable("student", "student_id") {
     val name: Column<String> = varchar("name", 200)
     val login = varchar("login", 255)
     val password = varchar("password", 255)
     val rating = integer("rating")
     val wealth = integer("wealth")
-    val isExercised = bool("exercided")
-    val isBeaten = bool("beaten")
-    // TODO: add field isInvesting: Boolean
+
+    val totalSolved = integer("totalSolved")
+    val algebraSolved = integer("algebraSolved")
+    val geometrySolved = integer("geometrySolved")
+    val combinatoricsSolved = integer("combinatoricsSolved")
+
+    val isExercised = bool("exercised").nullable()
+    val isBeaten = bool("beaten").nullable()
+    val isInvesting = bool("investing").nullable()
 }
 
 class StudentDAO(
@@ -24,11 +31,18 @@ class StudentDAO(
 
     var name by Students.name
     var login: String by Students.login
-    val password: String by Students.password
+    var password: String by Students.password
     val rating: Int by Students.rating
     val wealth: Int by Students.wealth
-    val isExercised: Boolean by Students.isExercised
-    val isBeaten: Boolean by Students.isBeaten
+
+    val totalSolved: Int by Students.totalSolved
+    val algebraSolved: Int by Students.algebraSolved
+    val geometrySolved: Int by Students.geometrySolved
+    val combinatoricsSolved: Int by Students.combinatoricsSolved
+
+    val isExercised: Boolean? by Students.isExercised
+    val isBeaten: Boolean? by Students.isBeaten
+    val isInvesting: Boolean? by Students.isInvesting
 
     val ratingHistory by RatingDAO via StudentRatings
     val wealthHistory by WealthDAO via StudentWealth
