@@ -2,6 +2,7 @@ package ru.shiroforbes.service
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import ru.shiroforbes.database.*
 import ru.shiroforbes.model.Student
 
@@ -14,7 +15,14 @@ interface StudentService {
 
     suspend fun getAllStudents(): List<Student> = throw NotImplementedError() // TODO
 
-    suspend fun updateStudent(id: Int): Student = throw NotImplementedError() // TODO
+    suspend fun updateStudent(student: Student) {
+        Students.update ({ Students.id eq student.id }){
+            it[name] = student.name
+            it[isBeaten] = student.isBeaten
+            it[isExercised] = student.isExercised
+            it[isInvesting] = student.isInvesting
+        }
+    }
 }
 
 object DbStudentService : StudentService {
