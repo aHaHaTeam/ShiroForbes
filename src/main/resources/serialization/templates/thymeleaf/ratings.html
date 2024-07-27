@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!--    <meta charset="UTF-8">-->
+    <style>
+        body {
+            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
+            font-size: 11pt;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        table {
+            margin-left: auto;
+            margin-right: auto;
+            border-bottom: 2px solid;
+            page-break-after: always;
+        }
+
+        .title {
+            border: 2px solid;
+            text-align: center;
+            font-weight: bold;
+            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
+            font-size: 12pt;
+            padding: 2px 3px 2px 3px;
+        }
+
+        .firstName {
+            border-right: 1px solid;
+            text-align: left;
+            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
+            padding: 2px 30px 2px 2px;
+        }
+
+        .lastName {
+            border-left: 1px solid;
+            text-align: left;
+            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
+            padding: 2px 30px 2px 3px;
+        }
+
+        td {
+            border-left: 2px solid;
+            border-right: 2px solid;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding: 2px 3px 2px 3px;
+        }
+
+    </style>
+
+    <style>
+        tr {
+            height: 20px;
+        }
+    </style>
+    <title></title>
+
+</head>
+<body>
+<table>
+    <thead>
+    <tr style="height: 20px">
+        <td class="title" colspan="5">Рейтинг</td>
+    </tr>
+    <tr>
+        <td class="title">№</td>
+        <td class="title" colspan="2">Шировласики</td>
+        <td class="title">Задачи</td>
+        <td class="title">Рейтинг</td>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="students" type="kotlin.collections.List<ru.shiroforbes.model.Student>"*/-->
+    <tr th:each="student, j: ${studentsSortedByRating}">
+        <td th:text="${j.index+1}"></td>
+        <td class="firstName" th:text="${student.firstName()}"></td>
+        <td class="lastName" th:text="${student.lastName()}"></td>
+        <td th:text="${student.totalSolved}"></td>
+        <td th:text="${student.rating}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+    <tr style="height: 20px">
+        <td class="title" colspan="5">Рейтинг
+            <span th:insert="~{logo :: logo()}"></span>
+        </td>
+    </tr>
+    <tr>
+        <td class="title">№</td>
+        <td class="title" colspan="2">Шировласики</td>
+        <td class="title">ShiroCoins</td>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="students" type="kotlin.collections.List<ru.shiroforbes.model.Student>"*/-->
+    <tr th:each="student, j: ${studentsSortedByWealth}">
+        <td th:text="${j.index+1}"></td>
+        <td class="firstName" th:text="${student.firstName()}"></td>
+        <td class="lastName" th:text="${student.lastName()}"></td>
+        <td th:text="${student.wealth}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

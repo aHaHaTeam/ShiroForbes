@@ -18,8 +18,8 @@
         <div th:insert="~{components/header :: header(${isLoggedIn})}"></div>
 
 
-        <!--/*@thymesVar id="countrysideCampStudents" type="java.util.List<Student>"*/-->
-        <!--/*@thymesVar id="urbanCampStudents" type="java.util.List<Student>"*/-->
+        <!--/*@thymesVar id="countrysideCampStudents" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
+        <!--/*@thymesVar id="urbanCampStudents" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
         <div th:insert="~{components/rating :: rating(${countrysideCampStudents}, ${urbanCampStudents})}"></div>
     </div>
     <div class="s0 m1 l2"></div>
