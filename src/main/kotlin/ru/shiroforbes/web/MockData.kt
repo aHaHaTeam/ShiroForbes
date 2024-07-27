@@ -29,7 +29,7 @@ object MockStudentService : StudentService {
 
     override suspend fun getAllStudents(): List<Student> = students
 
-    override suspend fun updateStudent(student: Student) = throw NotImplementedError()
+    //override suspend fun updateStudent(student: Student) = throw NotImplementedError()
 }
 
 val groups =

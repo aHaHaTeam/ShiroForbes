@@ -5,9 +5,12 @@ package ru.shiroforbes.web
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
@@ -137,5 +140,20 @@ fun Routing.routes(
 
     get("/") {
         call.respondRedirect("/mock/profile/1")
+    }
+
+    post ("/profile/investing/{id}"){
+        val formContent = call.receiveText()
+        println(formContent)
+        val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
+
+        if (params=="true"){
+            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
+        }
+        if (params=="false"){
+            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
+        }
+
+        call.respond(HttpStatusCode.NoContent)
     }
 }

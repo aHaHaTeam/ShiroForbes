@@ -15,14 +15,13 @@ interface StudentService {
 
     suspend fun getAllStudents(): List<Student> = throw NotImplementedError() // TODO
 
-    suspend fun updateStudent(student: Student) {
-        Students.update ({ Students.id eq student.id }){
-            it[name] = student.name
-            it[isBeaten] = student.isBeaten
-            it[isExercised] = student.isExercised
-            it[isInvesting] = student.isInvesting
-        }
-    }
+    suspend fun updateStudentInvesting(id: Int, investing: Boolean): Unit = throw NotImplementedError()
+
+    suspend fun updateStudentExercised(id: Int, exercised: Boolean) : Unit = throw NotImplementedError()
+    suspend fun updateAllStudentsExercised(exercised: Boolean): Unit = throw NotImplementedError()
+
+    suspend fun updateStudentBeaten(id: Int, beaten: Boolean): Unit = throw NotImplementedError()
+    suspend fun updateAllStudentsBeaten(Beaten: Boolean): Unit = throw NotImplementedError()
 }
 
 object DbStudentService : StudentService {
@@ -60,5 +59,45 @@ object DbStudentService : StudentService {
 
     override suspend fun getAllStudents(): List<Student> {
         return StudentDAO.all().map { daoToStudent(it) }
+    }
+
+    override suspend fun updateStudentInvesting(id: Int, investing: Boolean) {
+        transaction {
+            Students.update({ Students.id eq id }) {
+                it[isInvesting] = investing
+            }
+        }
+    }
+
+    override suspend fun updateStudentExercised(id: Int, exercised: Boolean) {
+        transaction {
+            Students.update({ Students.id eq id }) {
+                it[isExercised] = exercised
+            }
+        }
+    }
+
+    override suspend fun updateAllStudentsExercised(exercised: Boolean) {
+        transaction {
+            Students.update({Students.id greater 0}) {
+                it[isExercised] = exercised
+            }
+        }
+    }
+
+    override suspend fun updateStudentBeaten(id: Int, beaten: Boolean) {
+        transaction {
+            Students.update({ Students.id eq id }) {
+                it[isBeaten] = beaten
+            }
+        }
+    }
+
+    override suspend fun updateAllStudentsBeaten(Beaten: Boolean) {
+        transaction {
+            Students.update({Students.id greater 0}) {
+                it[isBeaten] = Beaten
+            }
+        }
     }
 }

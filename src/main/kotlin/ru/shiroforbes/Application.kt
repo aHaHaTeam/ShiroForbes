@@ -5,11 +5,47 @@ package ru.shiroforbes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.quartz.CronScheduleBuilder
+import org.quartz.JobBuilder
+import org.quartz.TriggerBuilder
+import org.quartz.impl.StdSchedulerFactory
 import ru.shiroforbes.config.configureApp
+import ru.shiroforbes.jobs.DailyResetBeat
+import ru.shiroforbes.jobs.DailyResetExercise
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+    runBlocking {
+        launch {
+            val exercise = JobBuilder.newJob(DailyResetExercise::class.java)
+                .withIdentity("exercise")
+                .build()
+
+            val morning = TriggerBuilder.newTrigger()
+                .withIdentity("morning")
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(7, 0))
+                .build()
+
+            val beat = JobBuilder.newJob(DailyResetBeat::class.java)
+                .withIdentity("beat")
+                .build()
+
+            val evening = TriggerBuilder.newTrigger()
+                .withIdentity("evening")
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(22, 0))
+                .build()
+
+            val scheduler = StdSchedulerFactory.getDefaultScheduler()
+            scheduler.start()
+            scheduler.scheduleJob(exercise, morning)
+            scheduler.scheduleJob(beat, evening)
+        }
+        launch {
+            embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+                .start(wait = true)
+        }
+    }
 }
 
 fun Application.module() {
