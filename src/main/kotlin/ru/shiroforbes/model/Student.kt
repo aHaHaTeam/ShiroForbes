@@ -20,9 +20,7 @@ class Student(
     private var isExercised_: Boolean?,
     private var isBeaten_: Boolean?,
     private var isInvesting_: Boolean?,
-
     var wealthHistory: List<Int> = listOf(),
-
     var ratingHistory: List<Float> = listOf(),
     var algebraHistory: List<Float> = listOf(),
     var geometryHistory: List<Float> = listOf(),
@@ -45,7 +43,7 @@ class Student(
         dao.combinatoricsSolved,
         dao.isExercised,
         dao.isBeaten,
-        dao.isInvesting
+        dao.isInvesting,
     ) {
         wealthHistory = wealths.sortedBy { it.date }.map { it.wealth }
 
@@ -71,4 +69,8 @@ class Student(
         set(value) {
             TODO()
         }
+
+    fun firstName(): String = name.split(" ").first()
+
+    fun lastName(): String = name.split(" ").last()
 }

@@ -12,13 +12,16 @@ import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 fun Routing.routes(
     groupService: GroupService? = null,
     studentService: StudentService? = null,
+    ratingSerializer: RatingSerializer,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
     get("/favicon.ico") {
@@ -63,7 +66,7 @@ fun Routing.routes(
 
     get("/profile/{id}") {
         val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-        if (user==null){
+        if (user == null) {
             call.respond(HttpStatusCode.BadRequest)
         }
         call.respond(
@@ -87,10 +90,16 @@ fun Routing.routes(
         )
     }
 
-    get("/download/rating.pdf") {
-        call.respondFile(
-            File("src/main/resources/static/rating.pdf"),
-        )
+    get("/download/urban/rating.pdf") {
+        val outputStream = ByteArrayOutputStream()
+        ratingSerializer.serialize(outputStream, groups[GroupType.UrbanCamp.ordinal].students)
+        call.respondBytes(outputStream.toByteArray())
+    }
+
+    get("/download/countryside/rating.pdf") {
+        val outputStream = ByteArrayOutputStream()
+        ratingSerializer.serialize(outputStream, groups[GroupType.CountrysideCamp.ordinal].students)
+        call.respondBytes(outputStream.toByteArray())
     }
 
     // Mock routes for testing

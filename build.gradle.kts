@@ -1,4 +1,7 @@
+@Suppress("ktlint:standard:property-naming")
 val kotlin_version: String by project
+
+@Suppress("ktlint:standard:property-naming")
 val logback_version: String by project
 
 plugins {
@@ -34,18 +37,17 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
-
     implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
+    implementation("org.postgresql:postgresql:42.7.2") // Зависимость на PostgreSQL драйвер
 }
 
 dependencies {
-    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
-    implementation ("org.jetbrains.exposed:exposed-dao:0.41.1")
-    implementation ("org.jetbrains.exposed:exposed-jdbc:0.41.1")
-    implementation ("org.postgresql:postgresql:42.3.6" ) // Зависимость на PostgreSQL драйвер
+    implementation("com.sksamuel.hoplite:hoplite-core:2.7.5")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:2.7.5")
+    implementation("com.itextpdf:itext7-core:7.1.7")
+    implementation("com.itextpdf:html2pdf:2.1.4")
 }
 
 dependencies {
