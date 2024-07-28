@@ -18,15 +18,14 @@ class Student(
     val algebraSolved: Int = 0,
     val geometrySolved: Int = 0,
     val combinatoricsSolved: Int = 0,
-
-    private var isExercised_: Boolean?,
-    private var isBeaten_: Boolean?,
-    private var isInvesting_: Boolean?,
-    var wealthHistory: List<Int> = listOf(),
-    var ratingHistory: List<Float> = listOf(),
-    var algebraHistory: List<Float> = listOf(),
-    var geometryHistory: List<Float> = listOf(),
-    var combinatoricsHistory: List<Float> = listOf(),
+    private var _isExercised: Boolean?,
+    private var _isBeaten: Boolean?,
+    private var _isInvesting: Boolean?,
+    private val wealthHistory: MutableList<Int> = mutableListOf(),
+    private val ratingHistory: MutableList<Float> = mutableListOf(),
+    private val algebraHistory: MutableList<Float> = mutableListOf(),
+    private val geometryHistory: MutableList<Float> = mutableListOf(),
+    private val combinatoricsHistory: MutableList<Float> = mutableListOf(),
 ) {
     constructor(
         dao: StudentDAO,
@@ -47,32 +46,25 @@ class Student(
         dao.isBeaten,
         dao.isInvesting,
     ) {
-        wealthHistory = wealths.sortedBy { it.date }.map { it.wealth }
+        wealths.sortedBy { it.date }.map { it.wealth }.forEach { populateWealthHistory(it) }
 
-        ratingHistory = ratings.sortedBy { it.date }.map { it.total }
-        algebraHistory = ratings.sortedBy { it.date }.map { it.algebra }
-        geometryHistory = ratings.sortedBy { it.date }.map { it.geometry }
-        combinatoricsHistory = ratings.sortedBy { it.date }.map { it.combinatorics }
+        ratings.sortedBy { it.date }.map { it.total }.forEach { populateRatingHistory(it) }
+        ratings.sortedBy { it.date }.map { it.algebra }.forEach { populateAlgebraHistory(it) }
+        ratings.sortedBy { it.date }.map { it.geometry }.forEach { populateGeometryHistory(it) }
+        ratings.sortedBy { it.date }.map { it.combinatorics }.forEach { populateCombinatoricsHistory(it) }
     }
-
-    var isExercised: Boolean?
-        get() = isExercised_
-        set(value) {
-            TODO()
-        }
-    var isBeaten: Boolean?
-        get() = isBeaten_
-        set(value) {
-            TODO()
-        }
-
-    var isInvesting: Boolean?
-        get() = isInvesting_
-        set(value) {
-            TODO()
-        }
 
     fun firstName(): String = name.split(" ").first()
 
     fun lastName(): String = name.split(" ").last()
+
+    fun populateWealthHistory(wealth: Int) = wealthHistory.add(wealth)
+
+    fun populateRatingHistory(rating: Float) = ratingHistory.add(rating)
+
+    fun populateAlgebraHistory(algebra: Float) = algebraHistory.add(algebra)
+
+    fun populateGeometryHistory(geometry: Float) = geometryHistory.add(geometry)
+
+    fun populateCombinatoricsHistory(combinatorics: Float) = combinatoricsHistory.add(combinatorics)
 }
