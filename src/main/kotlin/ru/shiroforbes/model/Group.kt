@@ -5,7 +5,9 @@ enum class GroupType {
     UrbanCamp,
 }
 
-// Dataclass representing separate group of students, e.g. city camp or regular camp
+/**
+ * Dataclass representing separate group of students, e.g. city camp or regular camp
+ */
 data class Group(
     val id: Int,
     val name: String,

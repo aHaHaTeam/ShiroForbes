@@ -6,8 +6,10 @@ import org.jetbrains.exposed.sql.update
 import ru.shiroforbes.database.*
 import ru.shiroforbes.model.Student
 
-// Service for accessing the student storage.
-// It is very likely that this interface will be changed/expanded depending on future requirements.
+/**
+ * Service for accessing the student storage.
+ * It is very likely that this interface will be changed/expanded depending on future requirements.
+ */
 interface StudentService {
     suspend fun getStudentById(id: Int): Student?
 
