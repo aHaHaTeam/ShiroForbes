@@ -4,7 +4,9 @@ import ru.shiroforbes.database.RatingDAO
 import ru.shiroforbes.database.StudentDAO
 import ru.shiroforbes.database.WealthDAO
 
-// Dataclass representing student
+/**
+ * Dataclass representing student
+ */
 class Student(
     val id: Int,
     val name: String = "",
