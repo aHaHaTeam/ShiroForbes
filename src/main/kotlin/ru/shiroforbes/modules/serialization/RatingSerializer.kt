@@ -30,21 +30,5 @@ class RatingSerializer {
         val fileContent = templateEngine.process("ratings.html", templateContext)
 
         HtmlConverter.convertToPdf(fileContent, outputStream)
-
-//        val myPdf: PdfDocument = PdfDocument.renderHtmlAsPdf(fileContent)
-
-//        try {
-//            val renderer = ITextRenderer()
-//            renderer.fontResolver.addFont(
-//                "src/main/resources/serialization/Arial.ttf",
-//                BaseFont.IDENTITY_H,
-//                BaseFont.NOT_EMBEDDED,
-//            )
-//            renderer.setDocumentFromString(fileContent)
-//            renderer.layout()
-//            renderer.createPDF(outputStream)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
     }
 }

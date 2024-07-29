@@ -24,7 +24,6 @@
             border: 2px solid;
             text-align: center;
             font-weight: bold;
-            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
             font-size: 12pt;
             padding: 2px 3px 2px 3px;
         }
@@ -32,14 +31,12 @@
         .firstName {
             border-right: 1px solid;
             text-align: left;
-            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
             padding: 2px 30px 2px 2px;
         }
 
         .lastName {
             border-left: 1px solid;
             text-align: left;
-            font-family: 'Arial Unicode MS', FreeSans, sans-serif;
             padding: 2px 30px 2px 3px;
         }
 
@@ -47,7 +44,6 @@
             border-left: 2px solid;
             border-right: 2px solid;
             text-align: center;
-            font-family: Arial, sans-serif;
             padding: 2px 3px 2px 3px;
         }
 
@@ -100,7 +96,7 @@
     </tr>
     </thead>
     <tbody>
-    <!--/*@thymesVar id="students" type="kotlin.collections.List<ru.shiroforbes.model.Student>"*/-->
+    <!--/*@thymesVar id="studentsSortedByWealth" type="kotlin.collections.List<ru.shiroforbes.model.Student>"*/-->
     <tr th:each="student, j: ${studentsSortedByWealth}">
         <td th:text="${j.index+1}"></td>
         <td class="firstName" th:text="${student.firstName()}"></td>

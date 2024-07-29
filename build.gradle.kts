@@ -51,6 +51,12 @@ dependencies {
 }
 
 dependencies {
-    implementation("org.quartz-scheduler:quartz:2.3.2")
+    implementation("com.google.api-client:google-api-client:2.0.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0")
+    implementation("com.google.code.gson:gson:2.11.0")
 }
 
+dependencies {
+    implementation("org.quartz-scheduler:quartz:2.3.2")
+}
