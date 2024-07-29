@@ -3,9 +3,9 @@ package ru.shiroforbes.modules.googlesheets
 data class RatingRow(
     val firstName: String,
     val lastName: String,
-    val solvedProblems: Int,
-    val rating: Int,
-    val algebraPercentage: Int,
-    val combinatoricsPercentage: Int,
+    val solvedProblems: String,
+    val rating: String,
+    val algebraPercentage: String,
+    val combinatoricsPercentage: String,
     val geometryPercentage: Int,
 )

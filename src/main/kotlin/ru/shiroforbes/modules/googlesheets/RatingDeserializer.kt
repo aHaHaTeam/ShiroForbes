@@ -14,45 +14,62 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import io.ktor.util.reflect.*
 import java.io.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 
-private object GoogleSheetsApiService {
-    private const val APPLICATION_NAME = "Google Sheets API Java Quickstart"
-    private val JSON_FACTORY: JsonFactory = GsonFactory.getDefaultInstance()
-    private const val TOKENS_DIRECTORY_PATH = "tokens"
+/**
+ * Service providing connection to Google APIs.
+ *
+ * @property [credentialsFilePath] path to file with credentials (/credentials.json by default)
+ * @property [scopes] the list of OAuth 2.0 scopes for use with API.
+ */
+class GoogleSheetsApiConnectionService(
+    val credentialsFilePath: String = "/credentials.json",
+    val scopes: List<String>,
+    applicationName: String = "Google API Service",
+    tokensDirectoryPath: String = "tokens",
+) {
+    val service: Sheets
 
-    /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
-     */
-    private val SCOPES = listOf(SheetsScopes.SPREADSHEETS_READONLY)
-    private const val CREDENTIALS_FILE_PATH = "/googlesheets/credentials.json"
+    init {
+        val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
+        val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
+        service =
+            Sheets
+                .Builder(httpTransport, jsonFactory, getCredentials(jsonFactory, httpTransport, tokensDirectoryPath))
+                .setApplicationName(applicationName)
+                .build()
+    }
 
     /**
      * Creates an authorized Credential object.
-     *
-     * @param httpTransport The network HTTP Transport.
-     * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
      */
     @Throws(IOException::class)
-    private fun getCredentials(httpTransport: NetHttpTransport): Credential {
+    private fun getCredentials(
+        jsonFactory: JsonFactory,
+        httpTransport: NetHttpTransport,
+        tokensDirectoryPath: String,
+    ): Credential {
         // Load client secrets.
         val inputStream =
-            RatingDeserializer::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
-                ?: throw FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH)
+            GoogleSheetsService::class.java.getResourceAsStream(credentialsFilePath)
+                ?: throw FileNotFoundException("Resource not found: " + credentialsFilePath)
         val clientSecrets: GoogleClientSecrets =
-            GoogleClientSecrets.load(JSON_FACTORY, InputStreamReader(inputStream))
+            GoogleClientSecrets.load(jsonFactory, InputStreamReader(inputStream))
 
         // Build flow and trigger user authorization request.
         val flow: GoogleAuthorizationCodeFlow =
             GoogleAuthorizationCodeFlow
                 .Builder(
                     httpTransport,
-                    JSON_FACTORY,
+                    jsonFactory,
                     clientSecrets,
-                    SCOPES,
-                ).setDataStoreFactory(FileDataStoreFactory(File(TOKENS_DIRECTORY_PATH)))
+                    scopes,
+                ).setDataStoreFactory(FileDataStoreFactory(File(tokensDirectoryPath)))
                 .setAccessType("offline")
                 .build()
         val receiver: LocalServerReceiver = LocalServerReceiver.Builder().setPort(8888).build()
@@ -62,16 +79,10 @@ private object GoogleSheetsApiService {
     /**
      * Build a new authorized API client service.
      */
-    private val HTTP_TRANSPORT: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
-    val service: Sheets =
-        Sheets
-            .Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-            .setApplicationName(APPLICATION_NAME)
-            .build()
 }
 
 /**
- * Service for extracting rating from Google spreadsheets
+ * Service for extracting data from Google spreadsheets
  *
  * @property [spreadsheetId] the id of the table
  * (e.g. spreadsheet [https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit](https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit)
@@ -80,96 +91,98 @@ private object GoogleSheetsApiService {
  * Ranges must be represented in [A1 or R1C1 notation](https://developers.google.com/sheets/api/guides/concepts#cell).
  *
  */
-class RatingDeserializer(
+class GoogleSheetsService<T : Any>(
+    private val connectionService: GoogleSheetsApiConnectionService,
     private val spreadsheetId: String,
-    private val firstNameRange: String,
-    private val lastNameRange: String,
-    private val solvedProblemsRange: String,
-    private val ratingRange: String,
-    private val algebraPercentageRange: String,
-    private val combinatoricsPercentageRange: String,
-    private val geometryPercentageRange: String,
+    private val clazz: KClass<T>,
+    private vararg val dataRanges: String,
 ) {
-    fun getRating(): List<RatingRow> {
+    fun getRating(): List<T> {
         val response =
-            GoogleSheetsApiService.service
+            connectionService
+                .service
                 .spreadsheets()
                 .values()
                 .batchGet(spreadsheetId)
                 .apply {
-                    ranges = (
-                        listOf(
-                            firstNameRange,
-                            lastNameRange,
-                            solvedProblemsRange,
-                            ratingRange,
-                            algebraPercentageRange,
-                            combinatoricsPercentageRange,
-                            geometryPercentageRange,
-                        )
-                    )
+                    ranges = dataRanges.toList()
                 }.execute()
         val valueRanges = response.valueRanges
         if (valueRanges.isEmpty()) {
             println("No data found.")
-        } else {
-            val maxLength = valueRanges.maxOf { it.getValues().size }
-            return List<RatingRow>(maxLength) {
-                RatingRow(
-                    valueRanges[0]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .trim(),
-                    valueRanges[1]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .trim(),
-                    valueRanges[2]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .toInt(),
-                    valueRanges[3]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .toInt(),
-                    valueRanges[4]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .toInt(),
-                    valueRanges[5]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .toInt(),
-                    valueRanges[6]
-                        .getValues()[it]
-                        .first()
-                        .toString()
-                        .toInt(),
-                )
+            return listOf()
+        }
+        val maxLength = valueRanges.maxOf { it.getValues().size }
+        val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }
+        for (range in valueRanges) {
+            for (rowIndexed in range.getValues().withIndex()) {
+                argLists[rowIndexed.index].addAll(rowIndexed.value)
             }
         }
-        return listOf()
+        return argLists.map {
+            val args =
+                it.mapIndexed { index, value ->
+                    convert(
+                        value as? String,
+                        clazz.primaryConstructor!!.parameters[index].type,
+                    )
+                }
+            clazz.primaryConstructor!!.call(*(args.toTypedArray()))
+        }
+    }
+
+    /**
+     * Converts string [str] to value of the type [type]
+     */
+    private fun convert(
+        str: String?,
+        type: KType,
+    ): Any? {
+        if (str == null) {
+            return null
+        }
+        if (type.jvmErasure.simpleName == String::class.simpleName) {
+            return str
+        }
+        val conversionClass = Class.forName("kotlin.text.StringsKt")
+
+        val typeName = type.jvmErasure.simpleName
+        val conversionFuncName = "to${typeName}OrNull"
+
+        val conversionFunc =
+            try {
+                conversionClass.getMethod(conversionFuncName, String::class.java)
+            } catch (e: NoSuchMethodException) {
+                throw IllegalArgumentException("Type $type is not a valid string conversion target")
+            }
+
+        conversionFunc.isAccessible = true
+        return conversionFunc.invoke(null, str)
+            ?: throw IllegalArgumentException("'$str' cannot be parsed to type $type")
     }
 }
 
 object Obj {
     @JvmStatic
     fun main(args: Array<String>) {
-        RatingDeserializer(
+        val dataRanges =
+            listOf(
+                "Конд!C5:C33",
+                "Конд!B5:B33",
+                "Конд!D5:D33",
+                "Конд!E5:E33",
+                "Конд!G5:G33",
+                "Конд!I5:I33",
+                "Конд!K5:K33",
+            )
+        GoogleSheetsService(
+            GoogleSheetsApiConnectionService(
+                "/googlesheets/credentials.json",
+                listOf(SheetsScopes.SPREADSHEETS_READONLY),
+            ),
             "spreadsheetId",
-            "Конд!C5:C33",
-            "Конд!B5:B33",
-            "Конд!D5:D33",
-            "Конд!E5:E33",
-            "Конд!G5:G33",
-            "Конд!I5:I33",
-            "Конд!K5:K33",
+            RatingRow::class,
+            *dataRanges.toTypedArray(),
         ).getRating().map {
             println(it)
         }

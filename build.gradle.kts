@@ -55,6 +55,7 @@ dependencies {
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation(kotlin("reflect"))
 }
 
 dependencies {
