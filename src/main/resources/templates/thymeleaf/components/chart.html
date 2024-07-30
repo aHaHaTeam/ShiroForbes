@@ -6,28 +6,29 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div th:fragment="chart(wealth, rating)">
-    <canvas id="chart"></canvas>
+<div th:fragment="chart(data, name)">
+    <canvas th:id="|${name}_|"></canvas>
     <script th:inline="javascript">
-        const wealth = /*[[${wealth}]]*/ [];
+        data = /*[[${data}]]*/ [];
+        name = /*[[${name}]]*/ []
         today = new Date()
         console.log(today)
         today.setDate(today.getDate() - 16)
-        const days = Array.from({length: wealth.length}, (_, i) => {
+        days = Array.from({length: data.length}, (_, i) => {
                 today.setDate(today.getDate() - 1)
                 return today.toDateString().split(' ').slice(1, 3).join(' ')
             }
         ).reverse();
-        new Chart("chart", {
+        new Chart(name+"_", {
             type: "line",
             data: {
                 labels: days,
                 datasets: [{
-                    label: "wealth",
+                    label: name,
                     cubicInterpolationMode: 'monotone',
                     backgroundColor: "rgb(115,0,255)",
                     borderColor: "rgba(132,0,255,0.1)",
-                    data: wealth,
+                    data: data,
                 }]
             },
             options: {}

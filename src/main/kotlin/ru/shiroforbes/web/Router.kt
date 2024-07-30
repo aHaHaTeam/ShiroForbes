@@ -64,8 +64,25 @@ fun Routing.routes(
         )
     }
 
-    get("/profile/{id}") {
-        val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+//    get("/profile/{id}") {
+//        val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+//        if (user == null) {
+//            call.respond(HttpStatusCode.BadRequest)
+//        }
+//        call.respond(
+//            ThymeleafContent(
+//                "profile",
+//                mapOf(
+//                    "user" to user!!,
+//                    "rating" to user.ratingHistory,
+//                    "wealth" to user.wealthHistory,
+//                ),
+//            ),
+//        )
+//    }
+
+    get("/profile/{login}") {
+        val user = studentService!!.getStudentByLogin(call.parameters["login"]!!)
         if (user == null) {
             call.respond(HttpStatusCode.BadRequest)
         }
@@ -74,8 +91,8 @@ fun Routing.routes(
                 "profile",
                 mapOf(
                     "user" to user!!,
-                    "rating" to listOf(8, 2, 3, 7, 5, 4),
-                    "wealth" to listOf(1, 2, 3, 7, 5, 4),
+                    "rating" to user.ratingHistory,
+                    "wealth" to user.wealthHistory,
                 ),
             ),
         )
@@ -125,12 +142,25 @@ fun Routing.routes(
         call.respondText("login", ContentType.Text.Html)
     }
 
-    get("/mock/profile/{id}") {
+//    get("/mock/profile/{id}") {
+//        call.respond(
+//            ThymeleafContent(
+//                "profile",
+//                mapOf(
+//                    "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
+//                    "rating" to listOf(8, 2, 3, 7, 5, 4),
+//                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+//                ),
+//            ),
+//        )
+//    }
+
+    get("/mock/profile/{login}") {
         call.respond(
             ThymeleafContent(
                 "profile",
                 mapOf(
-                    "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
+                    "user" to MockStudentService.getStudentByLogin(call.parameters["login"]!!),
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
                     "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
                 ),
@@ -148,7 +178,7 @@ fun Routing.routes(
     }
 
     get("/") {
-        call.respondRedirect("/mock/profile/1")
+        call.respondRedirect("/mock/menu/")
     }
 
     post ("/profile/investing/{id}"){

@@ -50,7 +50,7 @@
             <tbody>
             <tr th:each="student, j: ${countrysideCampStudents}">
                 <td th:text="${j.index+1}"></td>
-                <td th:text="${student.name}"></td>
+                <td ><a th:href="|profile/${student.login}|" th:text="${student.name}"></a></td>
                 <td class="right-align" th:text="${student.rating}"></td>
                 <td class="right-align" th:text="${student.wealth}"></td>
             </tr>

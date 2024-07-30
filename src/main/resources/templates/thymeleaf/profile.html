@@ -82,14 +82,25 @@
             </div>
 
             <div class="s12">
-                <div th:insert="~{components/chart :: chart(${wealth}, ${rating})}"></div>
+                <div class="tabs">
+                    <a class="active" id="ratingChartSelector">
+                        <i>brain</i>
+                        <span>Рейтинг</span>
+                    </a>
+                    <a id="wealthChartSelector">
+                        <i>dollar</i>
+                        <span>Златы</span>
+                    </a>
+                </div>
+                <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id ="ratingChart"></div>
+                <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id = "wealthChart"></div>
             </div>
         </main>
     </div>
     <div class="s0 m1 l2"></div>
 </div>
 
-<script th:inline="javascript" >
+<script th:inline="javascript">
     const investorStatus = document.getElementById("investorStatus")
     const investorCheckbox = document.getElementById("investorCheckbox")
 
@@ -115,10 +126,31 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then(() => {
+            alert("Изменения записаны.")
             console.log("updated")
         })
     })
+</script>
 
+<script th:inline="javascript">
+    const ratingSelector = document.getElementById("ratingChartSelector")
+    const wealthSelector = document.getElementById("wealthChartSelector")
+    const ratingChart = document.getElementById("ratingChart")
+    const wealthChart = document.getElementById("wealthChart")
+
+    ratingSelector.addEventListener("click", () => {
+        wealthSelector.classList.remove("active")
+        ratingSelector.classList.add("active")
+        wealthChart.hidden = true
+        ratingChart.hidden = false
+    })
+
+    wealthSelector.addEventListener("click", () => {
+        ratingSelector.classList.remove("active")
+        wealthSelector.classList.add("active")
+        ratingChart.hidden = true
+        wealthChart.hidden = false
+    })
 </script>
 </body>
 </html>
