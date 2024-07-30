@@ -151,17 +151,19 @@ fun Routing.routes(
         call.respondRedirect("/mock/profile/1")
     }
 
-    post ("/profile/investing/{id}"){
+    post("/profile/investing/{id}") {
         val formContent = call.receiveText()
         println(formContent)
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
 
-        if (params=="true"){
-            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
-        }
-        if (params=="false"){
-            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
-        }
+        if (params == "true")
+            {
+                studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
+            }
+        if (params == "false")
+            {
+                studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
+            }
 
         call.respond(HttpStatusCode.NoContent)
     }
