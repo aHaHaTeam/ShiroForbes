@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package ru.shiroforbes.database
 
 import org.jetbrains.exposed.sql.*
