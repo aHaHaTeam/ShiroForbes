@@ -156,14 +156,12 @@ fun Routing.routes(
         println(formContent)
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
 
-        if (params == "true")
-            {
-                studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
-            }
-        if (params == "false")
-            {
-                studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
-            }
+        if (params == "true") {
+            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
+        }
+        if (params == "false") {
+            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
+        }
 
         call.respond(HttpStatusCode.NoContent)
     }
