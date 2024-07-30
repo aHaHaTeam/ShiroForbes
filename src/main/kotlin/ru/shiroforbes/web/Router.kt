@@ -181,15 +181,15 @@ fun Routing.routes(
         call.respondRedirect("/mock/menu/")
     }
 
-    post ("/profile/investing/{id}"){
+    post("/profile/investing/{id}") {
         val formContent = call.receiveText()
         println(formContent)
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
 
-        if (params=="true"){
+        if (params == "true") {
             studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
         }
-        if (params=="false"){
+        if (params == "false") {
             studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
         }
 

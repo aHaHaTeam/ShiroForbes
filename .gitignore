@@ -36,3 +36,4 @@ out/
 .vscode/
 
 /src/main/resources/googlesheets/credentials.json
+/.kotlin/

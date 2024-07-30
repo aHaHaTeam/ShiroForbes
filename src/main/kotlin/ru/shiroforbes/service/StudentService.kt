@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package ru.shiroforbes.service
 
 import org.jetbrains.exposed.sql.Database
@@ -17,12 +19,23 @@ interface StudentService {
 
     suspend fun getAllStudents(): List<Student> = throw NotImplementedError() // TODO
 
-    suspend fun updateStudentInvesting(id: Int, investing: Boolean): Unit = throw NotImplementedError()
+    suspend fun updateStudentInvesting(
+        id: Int,
+        investing: Boolean,
+    ): Unit = throw NotImplementedError()
 
-    suspend fun updateStudentExercised(id: Int, exercised: Boolean) : Unit = throw NotImplementedError()
+    suspend fun updateStudentExercised(
+        id: Int,
+        exercised: Boolean,
+    ): Unit = throw NotImplementedError()
+
     suspend fun updateAllStudentsExercised(exercised: Boolean): Unit = throw NotImplementedError()
 
-    suspend fun updateStudentBeaten(id: Int, beaten: Boolean): Unit = throw NotImplementedError()
+    suspend fun updateStudentBeaten(
+        id: Int,
+        beaten: Boolean,
+    ): Unit = throw NotImplementedError()
+
     suspend fun updateAllStudentsBeaten(Beaten: Boolean): Unit = throw NotImplementedError()
 }
 
@@ -50,20 +63,23 @@ object DbStudentService : StudentService {
     }
 
     override suspend fun getStudentByLogin(login: String): Student? {
-        return daoToStudent(StudentDAO.find { Students.login eq login }.limit(1).let {
-            if (it.toList().isNotEmpty()) {
-                return@let it.first()
-            } else {
-                return null
-            }
-        })
+        return daoToStudent(
+            StudentDAO.find { Students.login eq login }.limit(1).let {
+                if (it.toList().isNotEmpty()) {
+                    return@let it.first()
+                } else {
+                    return null
+                }
+            },
+        )
     }
 
-    override suspend fun getAllStudents(): List<Student> {
-        return StudentDAO.all().map { daoToStudent(it) }
-    }
+    override suspend fun getAllStudents(): List<Student> = StudentDAO.all().map { daoToStudent(it) }
 
-    override suspend fun updateStudentInvesting(id: Int, investing: Boolean) {
+    override suspend fun updateStudentInvesting(
+        id: Int,
+        investing: Boolean,
+    ) {
         transaction {
             Students.update({ Students.id eq id }) {
                 it[isInvesting] = investing
@@ -71,7 +87,10 @@ object DbStudentService : StudentService {
         }
     }
 
-    override suspend fun updateStudentExercised(id: Int, exercised: Boolean) {
+    override suspend fun updateStudentExercised(
+        id: Int,
+        exercised: Boolean,
+    ) {
         transaction {
             Students.update({ Students.id eq id }) {
                 it[isExercised] = exercised
@@ -81,13 +100,16 @@ object DbStudentService : StudentService {
 
     override suspend fun updateAllStudentsExercised(exercised: Boolean) {
         transaction {
-            Students.update({Students.id greater 0}) {
+            Students.update({ Students.id greater 0 }) {
                 it[isExercised] = exercised
             }
         }
     }
 
-    override suspend fun updateStudentBeaten(id: Int, beaten: Boolean) {
+    override suspend fun updateStudentBeaten(
+        id: Int,
+        beaten: Boolean,
+    ) {
         transaction {
             Students.update({ Students.id eq id }) {
                 it[isBeaten] = beaten
@@ -97,7 +119,7 @@ object DbStudentService : StudentService {
 
     override suspend fun updateAllStudentsBeaten(Beaten: Boolean) {
         transaction {
-            Students.update({Students.id greater 0}) {
+            Students.update({ Students.id greater 0 }) {
                 it[isBeaten] = Beaten
             }
         }
