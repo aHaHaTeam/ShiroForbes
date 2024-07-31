@@ -26,7 +26,7 @@ fun Application.configureApp() {
         routes(
             studentService = DbStudentService,
             ratingSerializer = RatingSerializer(),
-            eventService = DbEventService
+            eventService = DbEventService,
         )
     }
 }

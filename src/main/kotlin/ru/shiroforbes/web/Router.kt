@@ -167,16 +167,20 @@ fun Routing.routes(
         call.respondRedirect("/mock/menu/")
     }
 
-    get("/mock/event"){
-        call.respond(ThymeleafContent("eventWorkshop", mapOf("isLoggedIn" to false,)))
+    get("/mock/event") {
+        call.respond(ThymeleafContent("eventWorkshop", mapOf("isLoggedIn" to false)))
     }
 
-    post("/event/new" ) {
+    post("/event/new") {
         val params = call.receiveParameters()
 
-        val event = Event(-1, params["eventName"].toString(), params["timeAndPlace"].toString(),
-            params["eventDescription"].toString()
-        )
+        val event =
+            Event(
+                -1,
+                params["eventName"].toString(),
+                params["timeAndPlace"].toString(),
+                params["eventDescription"].toString(),
+            )
 
         eventService!!.addEvent(event)
         call.respond(HttpStatusCode.NoContent)
