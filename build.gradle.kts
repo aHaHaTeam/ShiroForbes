@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-thymeleaf-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
