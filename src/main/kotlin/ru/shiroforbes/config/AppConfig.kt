@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import ru.shiroforbes.modules.serialization.RatingSerializer
+import ru.shiroforbes.service.DbEventService
 import ru.shiroforbes.service.DbStudentService
 import ru.shiroforbes.web.routes
 
@@ -25,6 +26,7 @@ fun Application.configureApp() {
         routes(
             studentService = DbStudentService,
             ratingSerializer = RatingSerializer(),
+            eventService = DbEventService,
         )
     }
 }

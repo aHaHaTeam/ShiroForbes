@@ -61,3 +61,11 @@ dependencies {
 dependencies {
     implementation("org.quartz-scheduler:quartz:2.3.2")
 }
+
+dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+}
+
+dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+}

@@ -11,8 +11,10 @@ import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.serialization.RatingSerializer
+import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
@@ -21,6 +23,7 @@ import java.io.File
 fun Routing.routes(
     groupService: GroupService? = null,
     studentService: StudentService? = null,
+    eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
@@ -63,23 +66,6 @@ fun Routing.routes(
             ),
         )
     }
-
-//    get("/profile/{id}") {
-//        val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-//        if (user == null) {
-//            call.respond(HttpStatusCode.BadRequest)
-//        }
-//        call.respond(
-//            ThymeleafContent(
-//                "profile",
-//                mapOf(
-//                    "user" to user!!,
-//                    "rating" to user.ratingHistory,
-//                    "wealth" to user.wealthHistory,
-//                ),
-//            ),
-//        )
-//    }
 
     get("/profile/{login}") {
         val user = studentService!!.getStudentByLogin(call.parameters["login"]!!)
@@ -181,9 +167,27 @@ fun Routing.routes(
         call.respondRedirect("/mock/menu/")
     }
 
+    get("/mock/event") {
+        call.respond(ThymeleafContent("eventWorkshop", mapOf("isLoggedIn" to false)))
+    }
+
+    post("/event/new") {
+        val params = call.receiveParameters()
+
+        val event =
+            Event(
+                -1,
+                params["eventName"].toString(),
+                params["timeAndPlace"].toString(),
+                params["eventDescription"].toString(),
+            )
+
+        eventService!!.addEvent(event)
+        call.respond(HttpStatusCode.NoContent)
+    }
+
     post("/profile/investing/{id}") {
         val formContent = call.receiveText()
-        println(formContent)
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
 
         if (params == "true") {

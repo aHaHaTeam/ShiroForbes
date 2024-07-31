@@ -5,8 +5,8 @@
     <title>ShiroForbes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
 </head>
@@ -27,7 +27,7 @@
 
             <div class="s2 right-align">
                 <div th:if="${isLoggedIn}">
-                    <a th:href="|/mock/profile/${user.id}|">
+                    <a th:href="|/mock/profile/${user.login}|">
                         <span th::text="${user.name}"></span>
                         <img th:src="|/static/images/${user.login}.jpg|" class="circle">
                     </a>
@@ -42,6 +42,7 @@
             </div>
         </nav>
     </header>
+    <br>
 </div>
 </body>
 
