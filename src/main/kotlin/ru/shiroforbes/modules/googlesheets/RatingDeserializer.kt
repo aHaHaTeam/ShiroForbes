@@ -46,7 +46,7 @@ class GoogleSheetsApiConnectionService(
     }
 
     /**
-     * Creates an authorized Credential object.
+     * Builds a new authorized API client service.
      */
     @Throws(IOException::class)
     private fun getCredentials(
@@ -75,10 +75,6 @@ class GoogleSheetsApiConnectionService(
         val receiver: LocalServerReceiver = LocalServerReceiver.Builder().setPort(8888).build()
         return AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
     }
-
-    /**
-     * Build a new authorized API client service.
-     */
 }
 
 /**
@@ -95,8 +91,15 @@ class GoogleSheetsService<T : Any>(
     private val connectionService: GoogleSheetsApiConnectionService,
     private val spreadsheetId: String,
     private val clazz: KClass<T>,
-    private vararg val dataRanges: String,
+    private val dataRanges: List<String>,
 ) {
+    constructor(
+        connectionService: GoogleSheetsApiConnectionService,
+        spreadsheetId: String,
+        clazz: KClass<T>,
+        vararg dataRanges: String,
+    ) : this(connectionService, spreadsheetId, clazz, dataRanges.toList())
+
     fun getRating(): List<T> {
         val response =
             connectionService
@@ -105,7 +108,7 @@ class GoogleSheetsService<T : Any>(
                 .values()
                 .batchGet(spreadsheetId)
                 .apply {
-                    ranges = dataRanges.toList()
+                    ranges = dataRanges
                 }.execute()
         val valueRanges = response.valueRanges
         if (valueRanges.isEmpty()) {
@@ -182,7 +185,7 @@ object Obj {
             ),
             "spreadsheetId",
             RatingRow::class,
-            *dataRanges.toTypedArray(),
+            dataRanges,
         ).getRating().map {
             println(it)
         }

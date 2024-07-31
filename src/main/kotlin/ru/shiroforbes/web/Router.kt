@@ -11,8 +11,11 @@ import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
+import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.GroupService
@@ -25,10 +28,16 @@ fun Routing.routes(
     studentService: StudentService? = null,
     eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
+    ratingDeserializer: GoogleSheetsService<RatingRow>,
+    routerConfig: RouterConfig? = null,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
     get("/favicon.ico") {
         call.respondFile(File("src/main/resources/static/images/shiro&vlasik.png"))
+    }
+
+    get("/grobarium") {
+        call.respondRedirect(routerConfig!!.grobariumUrl)
     }
 
     get("/menu") {
