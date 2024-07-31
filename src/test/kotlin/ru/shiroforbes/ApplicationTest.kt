@@ -3,6 +3,8 @@
 package ru.shiroforbes
 
 import io.ktor.server.testing.*
+import ru.shiroforbes.config.GoogleSheetsConfig
+import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.config.configureApp
 import kotlin.test.Test
 
@@ -11,7 +13,7 @@ class ApplicationTest {
     fun testRoot() =
         testApplication {
             application {
-                configureApp()
+                configureApp(Config(GoogleSheetsConfig("", listOf()), RouterConfig("")))
             }
         }
 }
