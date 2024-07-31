@@ -13,6 +13,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.serialization.RatingSerializer
+import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
@@ -21,6 +22,7 @@ import java.io.File
 fun Routing.routes(
     groupService: GroupService? = null,
     studentService: StudentService? = null,
+    eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
@@ -133,6 +135,7 @@ fun Routing.routes(
                     "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
                     "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
                     "isLoggedIn" to false,
+                    "events" to events,
                 ),
             ),
         )
@@ -163,6 +166,18 @@ fun Routing.routes(
                     "user" to MockStudentService.getStudentByLogin(call.parameters["login"]!!),
                     "rating" to listOf(8, 2, 3, 7, 5, 4),
                     "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+                ),
+            ),
+        )
+    }
+
+    get("/event/{id}") {
+        call.respond(
+            ThymeleafContent(
+                "event",
+                mapOf(
+                    "isLoggedIn" to false,
+                    "event" to MockEventService.getEvent(call.parameters["id"]!!.toInt())!!,
                 ),
             ),
         )

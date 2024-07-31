@@ -2,10 +2,13 @@
 
 package ru.shiroforbes.web
 
+import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.Group
 import ru.shiroforbes.model.Student
+import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
+import java.io.File
 
 val students =
     listOf(
@@ -48,4 +51,37 @@ val groups =
 
 object MockGroupService : GroupService {
     override suspend fun getAllGroups(): List<Group> = groups
+}
+
+val events =
+    mutableListOf<Event>(
+        Event(
+            0,
+            "Волейбол",
+            "волейбольное поле, во время разбора",
+            File("src/main/kotlin/ru/shiroforbes/web/MockEvent0Description.html").readText(),
+        ),
+        Event(
+            1,
+            "Волейбол",
+            "волейбольное поле, во время разбора",
+            File("src/main/kotlin/ru/shiroforbes/web/MockEvent0Description.html").readText(),
+        ),
+    )
+
+object MockEventService : EventService {
+    override fun getAllEvents(): List<Event> = events
+
+    override fun getEvent(id: Int): Event? = events.find { it.id == id }
+
+    override fun addEvent(event: Event): Event {
+        events.add(Event(events.size, event.name, event.timeAndPlace, event.description))
+        return events.last()
+    }
+
+    override fun updateEvent(event: Event): Event {
+        events.removeIf { it.id == event.id }
+        events.add(event)
+        return event
+    }
 }
