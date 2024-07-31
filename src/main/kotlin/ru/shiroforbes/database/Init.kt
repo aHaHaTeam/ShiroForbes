@@ -13,7 +13,7 @@ fun main() {
     )
 
     transaction {
-        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction)
+        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events)
         println(StudentDAO.findById(1))
 //        Students.insert { student ->
 //            student[name] = "Name1"

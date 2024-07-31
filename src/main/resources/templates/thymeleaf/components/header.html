@@ -27,7 +27,7 @@
 
             <div class="s2 right-align">
                 <div th:if="${isLoggedIn}">
-                    <a th:href="|/mock/profile/${user.id}|">
+                    <a th:href="|/mock/profile/${user.login}|">
                         <span th::text="${user.name}"></span>
                         <img th:src="|/static/images/${user.login}.jpg|" class="circle">
                     </a>

@@ -70,16 +70,16 @@ val events =
     )
 
 object MockEventService : EventService {
-    override fun getAllEvents(): List<Event> = events
+    override suspend fun getAllEvents(): List<Event> = events
 
-    override fun getEvent(id: Int): Event? = events.find { it.id == id }
+    override suspend fun getEvent(id: Int): Event? = events.find { it.id == id }
 
-    override fun addEvent(event: Event): Event {
+    override suspend fun addEvent(event: Event): Event {
         events.add(Event(events.size, event.name, event.timeAndPlace, event.description))
         return events.last()
     }
 
-    override fun updateEvent(event: Event): Event {
+    override suspend fun updateEvent(event: Event): Event {
         events.removeIf { it.id == event.id }
         events.add(event)
         return event

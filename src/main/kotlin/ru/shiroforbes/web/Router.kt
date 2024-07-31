@@ -11,6 +11,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.EventService
@@ -66,23 +67,6 @@ fun Routing.routes(
         )
     }
 
-//    get("/profile/{id}") {
-//        val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-//        if (user == null) {
-//            call.respond(HttpStatusCode.BadRequest)
-//        }
-//        call.respond(
-//            ThymeleafContent(
-//                "profile",
-//                mapOf(
-//                    "user" to user!!,
-//                    "rating" to user.ratingHistory,
-//                    "wealth" to user.wealthHistory,
-//                ),
-//            ),
-//        )
-//    }
-
     get("/profile/{login}") {
         val user = studentService!!.getStudentByLogin(call.parameters["login"]!!)
         if (user == null) {
@@ -135,7 +119,6 @@ fun Routing.routes(
                     "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
                     "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
                     "isLoggedIn" to false,
-                    "events" to events,
                 ),
             ),
         )
@@ -171,18 +154,6 @@ fun Routing.routes(
         )
     }
 
-    get("/event/{id}") {
-        call.respond(
-            ThymeleafContent(
-                "event",
-                mapOf(
-                    "isLoggedIn" to false,
-                    "event" to MockEventService.getEvent(call.parameters["id"]!!.toInt())!!,
-                ),
-            ),
-        )
-    }
-
     get("/mock/admin") {
         call.respond(
             ThymeleafContent(
@@ -196,9 +167,23 @@ fun Routing.routes(
         call.respondRedirect("/mock/menu/")
     }
 
+    get("/mock/event"){
+        call.respond(ThymeleafContent("eventWorkshop", mapOf("isLoggedIn" to false,)))
+    }
+
+    post("/event/new" ) {
+        val params = call.receiveParameters()
+
+        val event = Event(-1, params["eventName"].toString(), params["timeAndPlace"].toString(),
+            params["eventDescription"].toString()
+        )
+
+        eventService!!.addEvent(event)
+        call.respond(HttpStatusCode.NoContent)
+    }
+
     post("/profile/investing/{id}") {
         val formContent = call.receiveText()
-        println(formContent)
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
 
         if (params == "true") {

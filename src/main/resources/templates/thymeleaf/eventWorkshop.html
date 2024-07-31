@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShiroForbes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.8/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+    <link href="/static/styles/styles.css" rel="stylesheet">
+
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            /*max-width: 400px;*/
+            margin: 0 auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8">
+        <div th:insert="~{components/header :: header(${isLoggedIn})}"></div>
+        <div class="grid">
+            <h2 class="s12 center-align middle">Конструктор мероприятий</h2>
+
+            <form class="s12 grid" action="/event/new" method="POST">
+                <label class="s4" for="eventName">Название мероприятия:</label>
+                <input class="field border s8" type="text" id="eventName" name="eventName" required>
+
+                <label class="s4" for="timeAndPlace">Время и место</label>
+                <textarea class="field border s8" id="timeAndPlace" name="timeAndPlace" rows="5"
+                          required></textarea>
+
+                <label class="s4" for="eventDescription">Описание мероприятия:</label>
+                <textarea class="field border s8" id="eventDescription" name="eventDescription" rows="8"
+                          required></textarea>
+
+                <button class="s4" type="submit">Создать мероприятие</button>
+            </form>
+        </div>
+    </div>
+    <div class="s0 m1 l2"></div>
+</div>
+</body>
+</html>
