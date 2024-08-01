@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 fun Routing.routes(
-    groupService: GroupService? = null,
     studentService: StudentService? = null,
     eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
@@ -53,8 +52,8 @@ fun Routing.routes(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to groupService!!.getAllGroups()[0].students,
-                    "urbanCampStudents" to groupService.getAllGroups()[1].students,
+                    "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
+                    "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
                     "user" to students[1], // TODO() call for proper user
                 ),
             ),
@@ -65,7 +64,7 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
@@ -83,7 +82,7 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
@@ -109,20 +108,20 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.Urban.ordinal].students)
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Urban))
         call.respondBytes(outputStream.toByteArray())
     }
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService!!.getAllStudents())
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
         call.respondBytes(outputStream.toByteArray())
     }
 
@@ -132,14 +131,15 @@ fun Routing.routes(
     }
 
     get("/mock/menu") {
-        val groups = MockGroupService.getAllGroups()
+        val countryside = studentService!!.getGroup(GroupType.Countryside)
+        val urban = studentService.getGroup(GroupType.Urban)
         val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to groups[GroupType.Countryside.ordinal].students,
-                    "urbanCampStudents" to groups[GroupType.Urban.ordinal].students,
+                    "countrysideCampStudents" to countryside,
+                    "urbanCampStudents" to urban,
                     "user" to Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside), // TODO() call for proper user
                 ),
             ),
@@ -167,7 +167,7 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "admin",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
