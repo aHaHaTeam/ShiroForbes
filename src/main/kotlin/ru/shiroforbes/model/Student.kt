@@ -9,9 +9,9 @@ import ru.shiroforbes.database.WealthDAO
  */
 class Student(
     val id: Int,
-    val name: String = "",
-    val login: String = "",
-    val password: String = "",
+    name: String = "",
+    login: String = "",
+    password: String = "",
     val rating: Int = 0,
     val wealth: Int = 0,
     val totalSolved: Int = 0,
@@ -26,7 +26,7 @@ class Student(
     private val algebraHistory: MutableList<Float> = mutableListOf(),
     private val geometryHistory: MutableList<Float> = mutableListOf(),
     private val combinatoricsHistory: MutableList<Float> = mutableListOf(),
-) {
+) : User(name, login, password, false) {
     constructor(
         dao: StudentDAO,
         ratings: List<RatingDAO>,

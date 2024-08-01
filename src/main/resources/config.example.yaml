@@ -1,0 +1,13 @@
+routerConfig:
+  grobariumUrl: https://www.overleaf.com/read/example#0000
+
+googleSheetsConfig:
+  ratingSpreadsheetId: AAAA-AAAA_AAAAAexAmpleAAAAAAA
+  ratingRanges:
+    - Лист1!A3:A30
+    - Лист1!B3:B30
+    - Лист1!C3:C30
+    - Лист1!D3:D30
+    - Лист1!E3:E30
+    - Лист1!F3:F30
+    - Лист1!G3:G30

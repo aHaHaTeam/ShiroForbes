@@ -3,7 +3,6 @@
 package ru.shiroforbes
 
 import io.ktor.server.testing.*
-import ru.shiroforbes.config.configureApp
 import kotlin.test.Test
 
 class ApplicationTest {
@@ -11,7 +10,6 @@ class ApplicationTest {
     fun testRoot() =
         testApplication {
             application {
-                configureApp()
             }
         }
 }

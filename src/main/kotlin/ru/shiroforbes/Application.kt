@@ -2,6 +2,8 @@
 
 package ru.shiroforbes
 
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addResourceSource
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -11,9 +13,24 @@ import org.quartz.CronScheduleBuilder
 import org.quartz.JobBuilder
 import org.quartz.TriggerBuilder
 import org.quartz.impl.StdSchedulerFactory
+import ru.shiroforbes.config.GoogleSheetsConfig
+import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.config.configureApp
 import ru.shiroforbes.jobs.DailyResetBeat
 import ru.shiroforbes.jobs.DailyResetExercise
+
+data class Config(
+    val googleSheetsConfig: GoogleSheetsConfig,
+    val routerConfig: RouterConfig,
+)
+
+internal val config: Config by lazy {
+    ConfigLoaderBuilder
+        .default()
+        .addResourceSource("/config.yaml")
+        .build()
+        .loadConfigOrThrow<Config>()
+}
 
 fun main() {
     runBlocking {
@@ -57,5 +74,5 @@ fun main() {
 }
 
 fun Application.module() {
-    configureApp()
+    configureApp(config)
 }
