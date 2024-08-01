@@ -31,15 +31,18 @@ object DbTransactionService : TransactionService {
         )
     }
 
-    private fun daoToTransaction(dao: TransactionDAO, studentId: Int): Transaction {
-        return Transaction(dao.id.value, studentId, dao.size, dao.date, dao.description)
-    }
+    private fun daoToTransaction(
+        dao: TransactionDAO,
+        studentId: Int,
+    ): Transaction = Transaction(dao.id.value, studentId, dao.size, dao.date, dao.description)
 
-    private fun getStudentId(transactionId: Int): Int {
-        return StudentTransaction.select(StudentTransaction.student)
+    private fun getStudentId(transactionId: Int): Int =
+        StudentTransaction
+            .select(StudentTransaction.student)
             .where { StudentTransaction.transaction eq transactionId }
-            .limit(1).first()[StudentTransaction.student].value
-    }
+            .limit(1)
+            .first()[StudentTransaction.student]
+            .value
 
     override suspend fun getTransaction(id: Int): Transaction? {
         return transaction {
@@ -49,19 +52,17 @@ object DbTransactionService : TransactionService {
         }
     }
 
-    override suspend fun getAllTransactions(): List<Transaction> {
-        return TransactionDAO.all().map { daoToTransaction(it, getStudentId(it.id.value)) }
-    }
+    override suspend fun getAllTransactions(): List<Transaction> =
+        TransactionDAO.all().map { daoToTransaction(it, getStudentId(it.id.value)) }
 
-    override suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> {
-        return Transactions.innerJoin(StudentTransaction).selectAll().where { Students.id eq studentId }.map {
+    override suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> =
+        Transactions.innerJoin(StudentTransaction).selectAll().where { Students.id eq studentId }.map {
             Transaction(
                 it[Transactions.id].value,
                 studentId,
                 it[Transactions.size],
                 it[Transactions.date],
-                it[Transactions.description]
+                it[Transactions.description],
             )
         }
-    }
 }

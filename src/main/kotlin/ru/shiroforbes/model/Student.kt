@@ -26,7 +26,7 @@ class Student(
     private val algebraHistory: MutableList<Float> = mutableListOf(),
     private val geometryHistory: MutableList<Float> = mutableListOf(),
     private val combinatoricsHistory: MutableList<Float> = mutableListOf(),
-) : User(name, login, password, false){
+) : User(name, login, password, false) {
     constructor(
         dao: StudentDAO,
         ratings: List<RatingDAO>,

@@ -48,7 +48,7 @@ fun Routing.routes(
                 mapOf(
                     "countrysideCampStudents" to groupService!!.getAllGroups()[0].students,
                     "urbanCampStudents" to groupService.getAllGroups()[1].students,
-                    "user" to students[1], //TODO() call for proper user
+                    "user" to students[1], // TODO() call for proper user
                 ),
             ),
         )
@@ -133,7 +133,7 @@ fun Routing.routes(
                 mapOf(
                     "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
                     "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
-                    "user" to Admin(1, "vasya", "vasya566", "pass"),//TODO() call for proper user
+                    "user" to Admin(1, "vasya", "vasya566", "pass"), // TODO() call for proper user
                 ),
             ),
         )
@@ -172,10 +172,11 @@ fun Routing.routes(
     get("/event") {
         call.respond(
             ThymeleafContent(
-                "eventWorkshop", mapOf(
-                    "user" to 0 //TODO() call for proper user
-                )
-            )
+                "eventWorkshop",
+                mapOf(
+                    "user" to 0, // TODO() call for proper user
+                ),
+            ),
         )
     }
 
