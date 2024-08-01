@@ -12,9 +12,9 @@ import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.config.RouterConfig
+import ru.shiroforbes.database.GroupType
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
-import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
@@ -109,13 +109,13 @@ fun Routing.routes(
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.UrbanCamp.ordinal].students)
+        ratingSerializer.serialize(outputStream, groups[GroupType.Urban.ordinal].students)
         call.respondBytes(outputStream.toByteArray())
     }
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.CountrysideCamp.ordinal].students)
+        ratingSerializer.serialize(outputStream, groups[GroupType.Countryside.ordinal].students)
         call.respondBytes(outputStream.toByteArray())
     }
 
@@ -126,14 +126,14 @@ fun Routing.routes(
 
     get("/mock/menu") {
         val groups = MockGroupService.getAllGroups()
-        val a = (Admin(1, "vasya", "vasya566", "pass").equals(0))
+        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
-                    "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
-                    "user" to Admin(1, "vasya", "vasya566", "pass"), // TODO() call for proper user
+                    "countrysideCampStudents" to groups[GroupType.Countryside.ordinal].students,
+                    "urbanCampStudents" to groups[GroupType.Urban.ordinal].students,
+                    "user" to Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside), // TODO() call for proper user
                 ),
             ),
         )

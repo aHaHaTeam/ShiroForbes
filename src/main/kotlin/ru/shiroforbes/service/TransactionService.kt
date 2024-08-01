@@ -21,16 +21,17 @@ import ru.shiroforbes.model.Transaction
  */
 interface TransactionService {
     suspend fun makeTransaction(transaction: Transaction): Unit = throw NotImplementedError()
+
     suspend fun getTransaction(id: Int): Transaction? = throw NotImplementedError() // TODO
 
     suspend fun getAllTransactions(): List<Transaction> = throw NotImplementedError() // TODO
 
     suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> = throw NotImplementedError() // TODO
 
-    suspend fun SendMoneyByCondition(
+    suspend fun sendMoneyByCondition(
         students: List<Student>,
         amount: Int,
-        condition: Student.() -> Boolean
+        condition: Student.() -> Boolean,
     ): Unit
 }
 
@@ -58,11 +59,12 @@ object DbTransactionService : TransactionService {
             .value
 
     override suspend fun makeTransaction(transaction: Transaction) {
-        val tansactionId = Transactions.insertAndGetId {
-            it[Transactions.size] = transaction.size
-            it[Transactions.date] = transaction.date
-            it[Transactions.description] = transaction.description
-        }
+        val tansactionId =
+            Transactions.insertAndGetId {
+                it[Transactions.size] = transaction.size
+                it[Transactions.date] = transaction.date
+                it[Transactions.description] = transaction.description
+            }
         StudentTransaction.insert {
             it[StudentTransaction.transaction] = tansactionId
             it[StudentTransaction.student] = transaction.studentId
@@ -91,20 +93,21 @@ object DbTransactionService : TransactionService {
             )
         }
 
-    override suspend fun SendMoneyByCondition(
+    override suspend fun sendMoneyByCondition(
         students: List<Student>,
         amount: Int,
-        condition: Student.() -> Boolean
+        condition: Student.() -> Boolean,
     ) {
         students.forEach {
             if (condition(it)) {
-                val transaction = Transaction(
-                    0,
-                    it.id,
-                    amount,
-                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                    "successfully exercised"
-                )
+                val transaction =
+                    Transaction(
+                        0,
+                        it.id,
+                        amount,
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                        "successfully exercised",
+                    )
                 makeTransaction(transaction)
             }
         }

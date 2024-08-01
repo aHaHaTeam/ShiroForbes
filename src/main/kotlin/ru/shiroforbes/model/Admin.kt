@@ -1,8 +1,11 @@
 package ru.shiroforbes.model
 
+import ru.shiroforbes.database.GroupType
+
 class Admin(
     val id: Int,
     name: String = "",
     login: String = "",
     password: String = "",
-) : User(name, login, password, true)
+    group: GroupType,
+) : User(name, login, password, group, true)

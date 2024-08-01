@@ -1,16 +1,11 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package ru.shiroforbes.jobs
 
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.quartz.Job
 import org.quartz.JobExecutionContext
-import ru.shiroforbes.model.Student
-import ru.shiroforbes.model.Transaction
 import ru.shiroforbes.service.*
-
 
 class DailyResetExercise(
     val groupService: GroupService? = null,
@@ -19,7 +14,7 @@ class DailyResetExercise(
 ) : Job {
     override fun execute(context: JobExecutionContext?) {
         runBlocking {
-            transactionService!!.SendMoneyByCondition(studentService!!.getAllStudents(), amount = 50) {
+            transactionService!!.sendMoneyByCondition(studentService!!.getAllStudents(), amount = 50) {
                 this.isExercised == true
             }
             studentService.updateAllStudentsExercised(false)
@@ -34,7 +29,7 @@ class DailyResetBeat(
 ) : Job {
     override fun execute(context: JobExecutionContext?) {
         runBlocking {
-            transactionService!!.SendMoneyByCondition(studentService!!.getAllStudents(), amount = 50) {
+            transactionService!!.sendMoneyByCondition(studentService!!.getAllStudents(), amount = 50) {
                 this.isBeaten == true
             }
             studentService.updateAllStudentsBeaten(false)

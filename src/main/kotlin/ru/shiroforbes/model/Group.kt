@@ -1,10 +1,5 @@
 package ru.shiroforbes.model
 
-enum class GroupType {
-    CountrysideCamp,
-    UrbanCamp,
-}
-
 /**
  * Dataclass representing separate group of students, e.g. city camp or regular camp
  */
