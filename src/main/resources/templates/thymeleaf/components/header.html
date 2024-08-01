@@ -12,28 +12,30 @@
 </head>
 
 <body>
-<div th:fragment="header(isLoggedIn)">
+<div th:fragment="header(user)">
     <header class="fixed fill small-round">
         <nav class="grid">
             <button class="circle transparent right s2">
                 <i>menu</i>
                 <menu class="right no-wrap">
-                    <a>Item 1</a>
-                    <a>Item 2</a>
-                    <a>Item 3</a>
+                    <a href="/grobarium">Гробарий</a>
+                    <a>Серия</a>
+                    <a>Новости</a>
+                    <div th:if="${!user.equals(0)}"><a th:if="${user.HasAdminRights}" th:href="/event">Создать новое событие</a></div>
+
                 </menu>
             </button>
             <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
             <div class="s2 right-align">
-                <div th:if="${isLoggedIn}">
+                <div th:if="${!user.equals(0)}">
                     <a th:href="|/mock/profile/${user.login}|">
-                        <span th::text="${user.name}"></span>
+                        <span th:text="${user.name}"></span>
                         <img th:src="|/static/images/${user.login}.jpg|" class="circle">
                     </a>
                 </div>
 
-                <div th:unless="${isLoggedIn}">
+                <div th:unless="${!user.equals(0)}">
                     <a class="circle transparent horizontal" href="/login">
                         <span>Войти</span>
                         <i>login</i>
