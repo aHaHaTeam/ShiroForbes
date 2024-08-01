@@ -1,6 +1,5 @@
 package ru.shiroforbes.model
 
-import ru.shiroforbes.database.GroupType
 import ru.shiroforbes.database.RatingDAO
 import ru.shiroforbes.database.StudentDAO
 import ru.shiroforbes.database.WealthDAO

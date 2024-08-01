@@ -5,14 +5,7 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
-import java.lang.IllegalArgumentException
-
-enum class GroupType(
-    val text: String,
-) {
-    Urban("Urban"),
-    Countryside("Countryside"),
-}
+import ru.shiroforbes.model.GroupType
 
 object Students : IntIdTable("student", "student_id") {
     val name: Column<String> = varchar("name", 200)

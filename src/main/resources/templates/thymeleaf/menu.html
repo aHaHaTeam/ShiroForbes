@@ -14,24 +14,39 @@
 <div class="grid">
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
-        <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
+        <!--/*@thymesVar id="user" type="ru.shiroforbes.model.Admin"*/-->
         <div th:insert="~{components/header :: header(${user})}"></div>
 
-        <div>
-            <h2 class="center-align">Мероприятия</h2>
-            <!--/*@thymesVar id="events" type="java.util.List<ru.shiroforbes.model.Event>"*/-->
-            <a th:each="event, i: ${events}" th:href="|/event/${event.id}|" class="grid">
-                <div class="s12 grid" th:insert="~{components/event :: preview(${event})}"></div>
-            </a>
+        <div class="grid">
+            <div class="s3"></div>
+            <nav class="no-space center-align middle-align s6">
+                <button id="countryside" class="border left-round max"
+                        th:classappend="${user.group == GroupType.Countryside} ? 'fill'">
+                    <i class="small">nature</i>
+                    <span>Настоящий лагерь</span>
+                </button>
+                <button id="urban" class="border right-round max"
+                        th:classappend="${user.group == GroupType.Urban} ? 'fill'">
+                    <i class="small">home</i>
+                    <span>Городской лагерь</span>
+                </button>
+            </nav>
+            <div class="s3"></div>
         </div>
 
-        <br>
+        <div id="countrysideContent"
+             th:hidden="${user.group == GroupType.Countryside}"
+             th:insert="~{menuContent :: menu(${countrysideCampEvents}, ${countrysideCampStudents})}">
+        </div>
 
-        <!--/*@thymesVar id="countrysideCampStudents" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
-        <!--/*@thymesVar id="urbanCampStudents" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
-        <div th:insert="~{components/rating :: rating(${countrysideCampStudents}, ${urbanCampStudents})}"></div>
+        <div id="urbanContent"
+             th:hidden="${user.group == GroupType.Urban}"
+             th:insert="~{menuContent :: menu(${urbanCampEvents}, ${urbanCampStudents})}">
+        </div>
     </div>
     <div class="s0 m1 l2"></div>
+
+    <script src="/static/scripts/menu.js"></script>
 </div>
 </body>
 </html>

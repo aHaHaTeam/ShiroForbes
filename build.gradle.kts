@@ -41,6 +41,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
     implementation("org.postgresql:postgresql:42.7.2") // Зависимость на PostgreSQL драйвер
+    implementation("com.mysql:mysql-connector-j:9.0.0") // Зависимость на PostgreSQL драйвер
 }
 
 dependencies {

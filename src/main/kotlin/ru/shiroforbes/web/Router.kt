@@ -12,14 +12,13 @@ import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.config.RouterConfig
-import ru.shiroforbes.database.GroupType
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
+import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.EventService
-import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -39,6 +38,14 @@ fun Routing.routes(
 
     get("/grobarium") {
         call.respondRedirect(routerConfig!!.grobariumUrl)
+    }
+
+    get("/series") {
+        call.respondRedirect(routerConfig!!.seriesUrl)
+    }
+
+    get("/lz") {
+        call.respondRedirect(routerConfig!!.lzUrl)
     }
 
     get("/menu") {
@@ -115,7 +122,7 @@ fun Routing.routes(
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.Countryside.ordinal].students)
+        ratingSerializer.serialize(outputStream, studentService!!.getAllStudents())
         call.respondBytes(outputStream.toByteArray())
     }
 
@@ -166,7 +173,7 @@ fun Routing.routes(
     }
 
     get("/") {
-        call.respondRedirect("/mock/menu/")
+        call.respondRedirect("/mock/menu")
     }
 
     get("/event") {

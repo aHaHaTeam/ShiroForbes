@@ -5,10 +5,12 @@ package ru.shiroforbes.jobs
 import kotlinx.coroutines.runBlocking
 import org.quartz.Job
 import org.quartz.JobExecutionContext
-import ru.shiroforbes.service.*
+import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.service.DbTransactionService
+import ru.shiroforbes.service.StudentService
+import ru.shiroforbes.service.TransactionService
 
 class DailyResetExercise(
-    val groupService: GroupService? = null,
     private val studentService: StudentService? = DbStudentService,
     private val transactionService: TransactionService? = DbTransactionService,
 ) : Job {
@@ -23,7 +25,6 @@ class DailyResetExercise(
 }
 
 class DailyResetBeat(
-    val groupService: GroupService? = null,
     private val studentService: StudentService? = DbStudentService,
     private val transactionService: TransactionService? = DbTransactionService,
 ) : Job {
