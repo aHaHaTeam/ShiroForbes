@@ -12,10 +12,10 @@ object Students : IntIdTable("student", "student_id") {
     val login = varchar("login", 255)
     val password = varchar("password", 255)
 
-    var group =
-        Dual.customEnumeration(
+    var group: Column<GroupType> =
+        customEnumeration(
             "group",
-            "ENUM('Urban', 'Countryside)",
+            "varchar(20)",
             { value ->
                 GroupType.entries.find { it.text == value } ?: throw IllegalArgumentException("Unknown groupType value")
             },
