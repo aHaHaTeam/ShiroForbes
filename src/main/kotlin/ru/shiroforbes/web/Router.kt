@@ -99,7 +99,6 @@ fun Routing.routes(
         val name = params.jsonValue("login")
         val password = params.jsonValue("password")
         if (!validUser(name, password)) {
-            call.respondRedirect("/login")
             return@post
         }
         call.sessions.set(Session(name, password))

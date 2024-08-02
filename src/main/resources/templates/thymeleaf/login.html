@@ -49,14 +49,18 @@
     button.addEventListener("click", () => {
         const data = {
             "login": login.value,
-            "password": CryptoJS.MD5(password.value),
+            "password": CryptoJS.MD5(password.value).toString(CryptoJS.enc.Hex),
         }
         fetch("/login", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then(response => {
-            
+            if (response.redirected) {
+                window.location.assign(response.url)
+            } else {
+                alert("Неверный логин или пароль")
+            }
         })
     })
 </script>

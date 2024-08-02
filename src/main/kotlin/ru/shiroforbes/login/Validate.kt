@@ -6,10 +6,11 @@ import java.security.MessageDigest
 
 fun isAdmin(user: String?): Boolean = user == "admin"
 
+@OptIn(ExperimentalStdlibApi::class)
 fun validUser(
     login: String,
     password: String,
-): Boolean = true
+): Boolean = password == md5("admin").toHexString()
 
 fun md5(password: String): ByteArray {
     val md = MessageDigest.getInstance("MD5")
