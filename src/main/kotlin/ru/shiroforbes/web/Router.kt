@@ -130,6 +130,28 @@ fun Routing.routes(
         call.respondRedirect("/menu")
     }
 
+    get("/transactions/exercises/countryside") {
+        val countryside = studentService!!.getGroup(GroupType.Countryside)
+        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
+        call.respond(
+            ThymeleafContent(
+                "exercises",
+                mapOf(
+                    "students" to countryside,
+                    "user" to
+                        Admin(
+                            1,
+                            "vasya",
+                            "vasya566",
+                            "pass",
+                            GroupType.Countryside,
+                        ),
+                    // TODO() call for proper user
+                ),
+            ),
+        )
+    }
+
     get("/mock/menu") {
         val countryside = studentService!!.getGroup(GroupType.Countryside)
         val urban = studentService.getGroup(GroupType.Urban)
@@ -140,7 +162,17 @@ fun Routing.routes(
                 mapOf(
                     "countrysideCampStudents" to countryside,
                     "urbanCampStudents" to urban,
-                    "user" to Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside), // TODO() call for proper user
+                    "countrysideCampEvents" to listOf<Event>(),
+                    "urbanCampEvents" to listOf<Event>(),
+                    "user" to
+                        Admin(
+                            1,
+                            "vasya",
+                            "vasya566",
+                            "pass",
+                            GroupType.Countryside,
+                        ),
+                    // TODO() call for proper user
                 ),
             ),
         )

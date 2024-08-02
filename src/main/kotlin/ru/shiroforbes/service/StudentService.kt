@@ -2,10 +2,12 @@
 
 package ru.shiroforbes.service
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import ru.shiroforbes.database.*
+import ru.shiroforbes.database.StudentDAO
+import ru.shiroforbes.database.Students
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.Student
 
@@ -128,5 +130,8 @@ object DbStudentService : StudentService {
         }
     }
 
-    override suspend fun getGroup(group: GroupType): List<Student> = getAllStudents().filter { it.group == group }
+    override suspend fun getGroup(group: GroupType): List<Student> =
+        transaction {
+            return@transaction runBlocking { getAllStudents().filter { it.group == group } }
+        }
 }
