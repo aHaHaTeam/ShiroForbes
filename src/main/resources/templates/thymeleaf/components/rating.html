@@ -12,33 +12,21 @@
 </head>
 
 <body>
-<div class="grid" th:fragment="rating(countrysideCampStudents, urbanCampStudents)">
+<div class="grid" th:fragment="rating(students)">
 
     <h2 class="s12 center-align middle">Рейтинг</h2>
 
     <div class="s3"></div>
     <nav class="no-space center-align middle-align s6">
-        <button type="submit" onclick="window.open('/download/urban/rating.pdf')" id="ratingDownloadButton">
+        <button type="submit" onclick="window.open('/download/rating.pdf')" id="ratingDownloadButton">
             <span>Рейтинг</span>
             <i class="responsive">description</i>
         </button>
     </nav>
     <div class="s3"></div>
-    <div class="s3"></div>
-    <nav class="no-space center-align middle-align s6">
-        <button id="countryside" class="border left-round max fill">
-            <i class="small">nature</i>
-            <span>Настоящий лагерь</span>
-        </button>
-        <button id="urban" class="border right-round max">
-            <i class="small">home</i>
-            <span>Городской лагерь</span>
-        </button>
-    </nav>
-    <div class="s3"></div>
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
-        <table class="stripes" id="countrysideTable">
+        <table class="stripes">
             <thead>
             <tr>
                 <th class="min">№</th>
@@ -48,7 +36,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="student, j: ${countrysideCampStudents}">
+            <tr th:each="student, j: ${students}">
                 <td th:text="${j.index+1}"></td>
                 <td ><a th:href="|profile/${student.login}|" th:text="${student.name}"></a></td>
                 <td class="right-align" th:text="${student.rating}"></td>
@@ -56,29 +44,8 @@
             </tr>
             </tbody>
         </table>
-
-        <table class="stripes" hidden id="urbanTable">
-            <thead>
-            <tr>
-                <th class="min">№</th>
-                <th class="max">Name</th>
-                <th>Rating</th>
-                <th>Wealth</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="student, j: ${urbanCampStudents}">
-                <td th:text="${j.index+1}"></td>
-                <td th:text="${student.name}"></td>
-                <td th:text="${student.rating}"></td>
-                <td th:text="${student.wealth}"></td>
-            </tr>
-            </tbody>
-        </table>
     </div>
     <div class="s0 m1 l2"></div>
-
-    <script src="/static/scripts/rating.js"></script>
 </div>
 </body>
 

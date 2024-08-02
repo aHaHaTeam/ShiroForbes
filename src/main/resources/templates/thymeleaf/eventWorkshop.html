@@ -12,10 +12,13 @@
 </head>
 <body>
 <div class="grid">
-    <div class="s0 m2 l3"></div>
-    <div class="s12 m8 l6">
-        <div th:insert="~{components/header :: header(${user})}"></div>
-        <div>
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8 grid">
+        <div class="s12" th:insert="~{components/header :: header(${user})}"></div>
+
+        <div class="s0 m1 l2"></div>
+
+        <div class="s12 m10 l8">
             <h2 class="center-align">Конструктор мероприятий</h2>
 
             <form action="/event/new" method="POST">
@@ -36,12 +39,14 @@
                         <label for="eventDescription">Описание</label>
                     </div>
 
-                    <button class="large center-align" type="submit">Создать мероприятие</button>
+                    <button class="large center" type="submit">Создать мероприятие</button>
                 </fieldset>
             </form>
         </div>
+
+        <div class="s0 m1 l2"></div>
     </div>
-    <div class="s0 m2 l3"></div>
+    <div class="s0 m1 l2"></div>
 </div>
 </body>
 </html>

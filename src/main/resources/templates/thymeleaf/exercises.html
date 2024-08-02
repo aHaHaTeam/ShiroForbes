@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShiroForbes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+<body>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8 grid">
+        <div class="s12" th:insert="~{components/header :: header(${user})}"></div>
+
+        <div class="s0 m1 l2"></div>
+
+        <div class="s12 m10 l8">
+            <h2 class="center-align">Конструктор зарядки</h2>
+            <div class="tabs">
+                <a class="active" id="exercisesTab"
+                   onclick="document.getElementById('activityType').textContent='exercises'">
+                    <i>home</i>
+                    <span>Зарядка</span>
+                </a>
+                <a id="promenadeTab">
+                    <i>home</i>
+                    <span>Прогулка</span>
+                </a>
+                <a id="curfewTab">
+                    <i>home</i>
+                    <span>Отбой</span>
+                </a>
+            </div>
+            <form action="/event/new" method="POST">
+                <fieldset>
+                    <legend>Заполните все поля</legend>
+                    <div name="activityType" id="activityType" hidden>exercises</div>
+                    <a href="" class="row">
+                        <div class="max">
+                            <h6 class="small">Шировласики</h6>
+                        </div>
+                        <span>Выбрать всех</span>
+                        <label class="switch icon">
+                            <input type="checkbox" id="switchAll">
+                            <span>
+                                <i>close</i>
+                                <i>done</i>
+                            </span>
+                        </label>
+                    </a>
+                    <hr class="small">
+                    <a class="row" th:each="student, j: ${students}">
+                        <div class="max">
+                            <h6 class="small" th:text="${student.name}"></h6>
+                        </div>
+
+                        <label class="switch icon">
+                            <input type="checkbox" class="regularSwitch">
+                            <span>
+                                <i>close</i>
+                                <i>done</i>
+                            </span>
+                        </label>
+                    </a>
+
+                    <button class="large center" type="submit">Начислить Златы</button>
+                </fieldset>
+            </form>
+        </div>
+
+        <div class="s0 m1 l2"></div>
+    </div>
+    <div class="s0 m1 l2"></div>
+</div>
+<script src="/static/scripts/exercises.js"></script>
+</body>
+</html>

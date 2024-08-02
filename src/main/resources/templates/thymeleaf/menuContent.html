@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>ShiroForbes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+<body>
+<div th:fragment="menu(events, students)">
+    <div th:if="${!events.isEmpty()}">
+        <h2 class="center-align">Мероприятия</h2>
+        <!--/*@thymesVar id="events" type="java.util.List<ru.shiroforbes.model.Event>"*/-->
+        <a th:each="event, i: ${events}" th:href="|/event/${event.id}|" class="grid">
+            <div class="s12 grid" th:insert="~{components/event :: preview(${event})}"></div>
+        </a>
+    </div>
+
+    <br>
+
+    <!--/*@thymesVar id="students" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
+    <div th:insert="~{components/rating :: rating(${students})}"></div>
+</div>
+</body>
+</html>

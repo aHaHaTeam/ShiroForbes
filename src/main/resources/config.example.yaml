@@ -1,5 +1,7 @@
 routerConfig:
   grobariumUrl: https://www.overleaf.com/read/example#0000
+  seriesUrl: https://www.overleaf.com/read/example#0000
+  lzUrl: https://www.overleaf.com/read/example#0000
 
 googleSheetsConfig:
   ratingSpreadsheetId: AAAA-AAAA_AAAAAexAmpleAAAAAAA

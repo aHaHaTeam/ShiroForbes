@@ -1,12 +1,18 @@
 package ru.shiroforbes.service
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.StudentTransaction
 import ru.shiroforbes.database.Students
 import ru.shiroforbes.database.TransactionDAO
 import ru.shiroforbes.database.Transactions
+import ru.shiroforbes.model.Student
 import ru.shiroforbes.model.Transaction
 
 /**
@@ -14,11 +20,19 @@ import ru.shiroforbes.model.Transaction
  * It is very likely that this interface will be changed/expanded depending on future requirements.
  */
 interface TransactionService {
+    suspend fun makeTransaction(transaction: Transaction): Unit = throw NotImplementedError()
+
     suspend fun getTransaction(id: Int): Transaction? = throw NotImplementedError() // TODO
 
     suspend fun getAllTransactions(): List<Transaction> = throw NotImplementedError() // TODO
 
     suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> = throw NotImplementedError() // TODO
+
+    suspend fun sendMoneyByCondition(
+        students: List<Student>,
+        amount: Int,
+        condition: Student.() -> Boolean,
+    ): Unit
 }
 
 object DbTransactionService : TransactionService {
@@ -44,6 +58,19 @@ object DbTransactionService : TransactionService {
             .first()[StudentTransaction.student]
             .value
 
+    override suspend fun makeTransaction(transaction: Transaction) {
+        val tansactionId =
+            Transactions.insertAndGetId {
+                it[Transactions.size] = transaction.size
+                it[Transactions.date] = transaction.date
+                it[Transactions.description] = transaction.description
+            }
+        StudentTransaction.insert {
+            it[StudentTransaction.transaction] = tansactionId
+            it[StudentTransaction.student] = transaction.studentId
+        }
+    }
+
     override suspend fun getTransaction(id: Int): Transaction? {
         return transaction {
             val dao = TransactionDAO.findById(id) ?: return@transaction null
@@ -65,4 +92,24 @@ object DbTransactionService : TransactionService {
                 it[Transactions.description],
             )
         }
+
+    override suspend fun sendMoneyByCondition(
+        students: List<Student>,
+        amount: Int,
+        condition: Student.() -> Boolean,
+    ) {
+        students.forEach {
+            if (condition(it)) {
+                val transaction =
+                    Transaction(
+                        0,
+                        it.id,
+                        amount,
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                        "successfully exercised",
+                    )
+                makeTransaction(transaction)
+            }
+        }
+    }
 }

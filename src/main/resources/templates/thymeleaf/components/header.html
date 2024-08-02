@@ -17,11 +17,11 @@
         <nav class="grid">
             <button class="circle transparent right s2">
                 <i>menu</i>
-                <menu class="right no-wrap">
+                <menu class="right no-wrap small-round">
                     <a href="/grobarium">Гробарий</a>
-                    <a>Серия</a>
-                    <a>Новости</a>
-                    <div th:if="${!user.equals(0)}"><a th:if="${user.HasAdminRights}" th:href="/event">Создать новое событие</a></div>
+                    <a href="/series">Серии</a>
+                    <a href="/lz">Летнее задание</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event">Создать новое событие</a>
 
                 </menu>
             </button>

@@ -12,6 +12,7 @@ class Student(
     name: String = "",
     login: String = "",
     password: String = "",
+    group: GroupType,
     val rating: Int = 0,
     val wealth: Int = 0,
     val totalSolved: Int = 0,
@@ -26,7 +27,7 @@ class Student(
     private val algebraHistory: MutableList<Float> = mutableListOf(),
     private val geometryHistory: MutableList<Float> = mutableListOf(),
     private val combinatoricsHistory: MutableList<Float> = mutableListOf(),
-) : User(name, login, password, false) {
+) : User(name, login, password, group, false) {
     constructor(
         dao: StudentDAO,
         ratings: List<RatingDAO>,
@@ -36,6 +37,7 @@ class Student(
         dao.name,
         dao.login,
         dao.password,
+        dao.group,
         dao.rating,
         dao.wealth,
         dao.totalSolved,

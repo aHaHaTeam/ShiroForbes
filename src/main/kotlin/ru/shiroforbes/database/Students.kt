@@ -5,11 +5,23 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
+import ru.shiroforbes.model.GroupType
 
 object Students : IntIdTable("student", "student_id") {
     val name: Column<String> = varchar("name", 200)
     val login = varchar("login", 255)
     val password = varchar("password", 255)
+
+    var group: Column<GroupType> =
+        customEnumeration(
+            "group",
+            "varchar(20)",
+            { value ->
+                GroupType.entries.find { it.text == value } ?: throw IllegalArgumentException("Unknown groupType value")
+            },
+            { it.text },
+        )
+
     val rating = integer("rating")
     val wealth = integer("wealth")
 
@@ -31,6 +43,7 @@ class StudentDAO(
     var name by Students.name
     var login: String by Students.login
     var password: String by Students.password
+    var group: GroupType by Students.group
     val rating: Int by Students.rating
     val wealth: Int by Students.wealth
 

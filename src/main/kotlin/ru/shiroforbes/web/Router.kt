@@ -23,13 +23,11 @@ import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.EventService
-import ru.shiroforbes.service.GroupService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
 import java.io.File
 
 fun Routing.routes(
-    groupService: GroupService? = null,
     studentService: StudentService? = null,
     eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
@@ -45,13 +43,21 @@ fun Routing.routes(
         call.respondRedirect(routerConfig!!.grobariumUrl)
     }
 
+    get("/series") {
+        call.respondRedirect(routerConfig!!.seriesUrl)
+    }
+
+    get("/lz") {
+        call.respondRedirect(routerConfig!!.lzUrl)
+    }
+
     get("/menu") {
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to groupService!!.getAllGroups()[0].students,
-                    "urbanCampStudents" to groupService.getAllGroups()[1].students,
+                    "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
+                    "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
                     "user" to students[1], // TODO() call for proper user
                 ),
             ),
@@ -62,7 +68,7 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
@@ -80,7 +86,7 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
@@ -127,8 +133,8 @@ fun Routing.routes(
             } else {
                 call.respond(
                     ThymeleafContent(
-                        "menu",
-                        mapOf("events" to listOf<Event>()),
+                        "rating",
+                        mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
                     ),
                 )
             }
@@ -155,12 +161,12 @@ fun Routing.routes(
             call.respond(
                 ThymeleafContent(
                     "admin",
-                    mapOf("students" to groupService!!.getAllGroups()[0].students),
+                    mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
                 ),
             )
         }
     }
-
+    
     authenticate("auth-session") {
         post("/profile/investing/{id}") {
             val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
@@ -185,13 +191,13 @@ fun Routing.routes(
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.UrbanCamp.ordinal].students)
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Urban))
         call.respondBytes(outputStream.toByteArray())
     }
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, groups[GroupType.CountrysideCamp.ordinal].students)
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
         call.respondBytes(outputStream.toByteArray())
     }
 
@@ -200,16 +206,49 @@ fun Routing.routes(
         call.respondRedirect("/menu")
     }
 
+    get("/transactions/exercises/countryside") {
+        val countryside = studentService!!.getGroup(GroupType.Countryside)
+        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
+        call.respond(
+            ThymeleafContent(
+                "exercises",
+                mapOf(
+                    "students" to countryside,
+                    "user" to
+                        Admin(
+                            1,
+                            "vasya",
+                            "vasya566",
+                            "pass",
+                            GroupType.Countryside,
+                        ),
+                    // TODO() call for proper user
+                ),
+            ),
+        )
+    }
+
     get("/mock/menu") {
-        val groups = MockGroupService.getAllGroups()
-        val a = (Admin(1, "vasya", "vasya566", "pass").equals(0))
+        val countryside = studentService!!.getGroup(GroupType.Countryside)
+        val urban = studentService.getGroup(GroupType.Urban)
+        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
-                    "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
-                    "user" to Admin(1, "vasya", "vasya566", "pass"), // TODO() call for proper user
+                    "countrysideCampStudents" to countryside,
+                    "urbanCampStudents" to urban,
+                    "countrysideCampEvents" to listOf<Event>(),
+                    "urbanCampEvents" to listOf<Event>(),
+                    "user" to
+                        Admin(
+                            1,
+                            "vasya",
+                            "vasya566",
+                            "pass",
+                            GroupType.Countryside,
+                        ),
+                    // TODO() call for proper user
                 ),
             ),
         )
@@ -232,17 +271,8 @@ fun Routing.routes(
         )
     }
 
-    get("/mock/admin") {
-        call.respond(
-            ThymeleafContent(
-                "admin",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
-            ),
-        )
-    }
-
     get("/") {
-        call.respondRedirect("/mock/menu/")
+        call.respondRedirect("/mock/menu")
     }
 
     get("/event") {
@@ -271,17 +301,4 @@ fun Routing.routes(
         call.respond(HttpStatusCode.Accepted)
     }
 
-    post("/profile/investing/{id}") {
-        val formContent = call.receiveText()
-        val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
-
-        if (params == "true") {
-            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
-        }
-        if (params == "false") {
-            studentService?.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
-        }
-
-        call.respond(HttpStatusCode.NoContent)
-    }
 }
