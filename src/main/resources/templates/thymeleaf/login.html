@@ -20,17 +20,19 @@
                 <br>
                 <div class="center" th:insert="~{components/logo :: logo()}"></div>
                 <br>
-                <div class="field label border">
-                    <input type="text">
-                    <label>Login</label>
-                </div>
-                <br>
-                <div class="field label border">
-                    <input type="password">
-                    <label>Password</label>
-                </div>
-                <br>
-                <button class="extra round">Sign In</button>
+                <form action="/login" method="POST">
+                    <div class="field label border tiny min">
+                        <label for="login">Login</label>
+                        <input name="login" id="login" type="text" required>
+                    </div>
+                    <br>
+                    <div class="field label border tiny min">
+                        <label for="password">Password</label>
+                        <input name="password" id="password" type="password" required>
+                    </div>
+                    <br>
+                    <button class="extra round">Sign In</button>
+                </form>
                 <br>
             </div>
 
