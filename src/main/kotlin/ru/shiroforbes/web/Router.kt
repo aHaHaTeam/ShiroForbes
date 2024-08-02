@@ -306,9 +306,28 @@ fun Routing.routes(
         eventService!!.addEvent(event)
         call.respond(HttpStatusCode.Accepted)
     }
+
+    post("/profile/investing") {
+        val formContent = call.receiveText()
+        val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+
+        val id = params["userId"].toString().toInt()
+        val investing = params["isInvesting"].toString()
+        if (investing == "true") {
+            studentService?.updateStudentInvesting(id, true)
+        }
+        if (investing == "false") {
+            studentService?.updateStudentInvesting(id, false)
+        }
+
+        call.respond(HttpStatusCode.NoContent)
+    }
 }
 
 private fun Map<String, JsonElement>.jsonValue(key: String): String {
     val quoted = this[key].toString()
     return quoted.substring(1, quoted.length - 1)
+
 }
+
+
