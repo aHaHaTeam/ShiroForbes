@@ -13,9 +13,9 @@ import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
-import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType

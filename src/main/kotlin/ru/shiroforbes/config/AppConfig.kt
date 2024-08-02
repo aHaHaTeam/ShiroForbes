@@ -2,8 +2,8 @@
 
 package ru.shiroforbes.config
 
-import io.ktor.http.*
 import com.google.api.services.sheets.v4.SheetsScopes
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.Authentication.*
@@ -12,8 +12,8 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
-import ru.shiroforbes.login.Session
 import ru.shiroforbes.Config
+import ru.shiroforbes.login.Session
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
