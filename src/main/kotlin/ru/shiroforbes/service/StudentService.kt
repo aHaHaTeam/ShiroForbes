@@ -68,15 +68,17 @@ object DbStudentService : StudentService {
     }
 
     override suspend fun getStudentByLogin(login: String): Student? {
-        return daoToStudent(
-            StudentDAO.find { Students.login eq login }.limit(1).let {
-                if (it.toList().isNotEmpty()) {
-                    return@let it.first()
-                } else {
-                    return null
-                }
-            },
-        )
+        return transaction {
+            return@transaction daoToStudent(
+                StudentDAO.find { Students.login eq login }.limit(1).let {
+                    if (it.toList().isNotEmpty()) {
+                        return@let it.first()
+                    } else {
+                        return@transaction null
+                    }
+                },
+            )
+        }
     }
 
     override suspend fun getAllStudents(): List<Student> = StudentDAO.all().map { daoToStudent(it) }

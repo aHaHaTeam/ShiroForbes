@@ -12,10 +12,12 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
+import ru.shiroforbes.login.validUser
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
@@ -91,17 +93,22 @@ fun Routing.routes(
         )
     }
 
-    authenticate("auth-form") {
-        post("/login") {
-            val name = call.principal<UserIdPrincipal>()!!.name
-            call.sessions.set(Session(name))
-            if (name == "admin") {
-                call.respondRedirect("/admin")
-                return@post
-            }
-            val user = studentService!!.getStudentByLogin(name)
-            call.respondRedirect("/profile/${user!!.id}")
+    post("/login") {
+        val formContent = call.receiveText()
+        val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+        val name = params.jsonValue("login")
+        val password = params.jsonValue("password")
+        if (!validUser(name, password)) {
+            call.respondRedirect("/login")
+            return@post
         }
+        call.sessions.set(Session(name, password))
+        if (isAdmin(name)) {
+            call.respondRedirect("/admin")
+            return@post
+        }
+        val user = studentService!!.getStudentByLogin(name)
+        call.respondRedirect("/profile/${user!!.id}")
     }
 
     authenticate("auth-session") {
@@ -133,7 +140,7 @@ fun Routing.routes(
             } else {
                 call.respond(
                     ThymeleafContent(
-                        "rating",
+                        "components/rating",
                         mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
                     ),
                 )
@@ -166,7 +173,7 @@ fun Routing.routes(
             )
         }
     }
-    
+
     authenticate("auth-session") {
         post("/profile/investing/{id}") {
             val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
@@ -300,5 +307,9 @@ fun Routing.routes(
         eventService!!.addEvent(event)
         call.respond(HttpStatusCode.Accepted)
     }
+}
 
+private fun Map<String, JsonElement>.jsonValue(key: String): String {
+    val quoted = this[key].toString()
+    return quoted.substring(1, quoted.length - 1)
 }

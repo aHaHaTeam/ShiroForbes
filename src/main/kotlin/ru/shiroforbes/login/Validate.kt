@@ -4,7 +4,12 @@ package ru.shiroforbes.login
 
 import java.security.MessageDigest
 
-fun isAdmin(user: String?): Boolean = true
+fun isAdmin(user: String?): Boolean = user == "admin"
+
+fun validUser(
+    login: String,
+    password: String,
+): Boolean = true
 
 fun md5(password: String): ByteArray {
     val md = MessageDigest.getInstance("MD5")
@@ -12,4 +17,4 @@ fun md5(password: String): ByteArray {
     return md.digest()
 }
 
-fun knownPasswords(): Map<String, ByteArray> = mapOf()
+fun knownPasswords(): Map<String, ByteArray> = mapOf("admin" to md5("admin"))

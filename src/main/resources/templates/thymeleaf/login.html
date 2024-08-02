@@ -7,6 +7,8 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
 </head>
 <body>
@@ -20,19 +22,17 @@
                 <br>
                 <div class="center" th:insert="~{components/logo :: logo()}"></div>
                 <br>
-                <form action="/login" method="POST">
-                    <div class="field label border tiny min">
-                        <label for="login">Login</label>
-                        <input name="login" id="login" type="text" required>
-                    </div>
-                    <br>
-                    <div class="field label border tiny min">
-                        <label for="password">Password</label>
-                        <input name="password" id="password" type="password" required>
-                    </div>
-                    <br>
-                    <button class="extra round">Sign In</button>
-                </form>
+                <div class="field label border tiny min">
+                    <label for="login">Login</label>
+                    <input name="login" id="login" type="text" required>
+                </div>
+                <br>
+                <div class="field label border tiny min">
+                    <label for="password">Password</label>
+                    <input name="password" id="password" type="password" required>
+                </div>
+                <br>
+                <button class="extra round" id="signIn">Sign In</button>
                 <br>
             </div>
 
@@ -41,5 +41,24 @@
     </div>
     <div class="s0 m2 s3"></div>
 </main>
+<script th:inline="javascript">
+    const login = document.getElementById("login")
+    const password = document.getElementById("password")
+    const button = document.getElementById("signIn")
+
+    button.addEventListener("click", () => {
+        const data = {
+            "login": login.value,
+            "password": CryptoJS.MD5(password.value),
+        }
+        fetch("/login", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then(response => {
+            
+        })
+    })
+</script>
 </body>
 </html>
