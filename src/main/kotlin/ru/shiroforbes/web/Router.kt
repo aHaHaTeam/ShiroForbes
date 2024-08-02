@@ -4,14 +4,18 @@ package ru.shiroforbes.web
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.config.RouterConfig
+import ru.shiroforbes.login.Session
+import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
@@ -81,30 +85,102 @@ fun Routing.routes(
         )
     }
 
-    get("/profile/{login}") {
-        val user = studentService!!.getStudentByLogin(call.parameters["login"]!!)
-        if (user == null) {
-            call.respond(HttpStatusCode.BadRequest)
+    authenticate("auth-form") {
+        post("/login") {
+            val name = call.principal<UserIdPrincipal>()!!.name
+            call.sessions.set(Session(name))
+            if (name == "admin") {
+                call.respondRedirect("/admin")
+                return@post
+            }
+            val user = studentService!!.getStudentByLogin(name)
+            call.respondRedirect("/profile/${user!!.id}")
         }
-        call.respond(
-            ThymeleafContent(
-                "profile",
-                mapOf(
-                    "user" to user!!,
-                    "rating" to user.ratingHistory,
-                    "wealth" to user.wealthHistory,
-                ),
-            ),
-        )
     }
 
-    get("/admin") {
-        call.respond(
-            ThymeleafContent(
-                "rating",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
-            ),
-        )
+    authenticate("auth-session") {
+        get("/profile/{id}") {
+            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+            if (user == null) {
+                call.respond(HttpStatusCode.BadRequest)
+            } else if (user.login != call.principal<Session>()!!.login) {
+                call.respond(HttpStatusCode.Unauthorized)
+            } else {
+                call.respond(
+                    ThymeleafContent(
+                        "profile",
+                        mapOf(
+                            "user" to user,
+                            "rating" to listOf(8, 2, 3, 7, 5, 4),
+                            "wealth" to listOf(1, 2, 3, 7, 5, 4),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+
+    authenticate("auth-session") {
+        get("/admin") {
+            if (!isAdmin(call.principal<Session>()?.login)) {
+                call.respond(HttpStatusCode.Unauthorized)
+            } else {
+                call.respond(
+                    ThymeleafContent(
+                        "menu",
+                        mapOf("events" to listOf<Event>()),
+                    ),
+                )
+            }
+        }
+    }
+
+    authenticate("auth-session") {
+        get("/mock/profile/{id}") {
+            call.respond(
+                ThymeleafContent(
+                    "profile",
+                    mapOf(
+                        "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
+                        "rating" to listOf(8, 2, 3, 7, 5, 4),
+                        "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+                    ),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session") {
+        get("/mock/admin") {
+            call.respond(
+                ThymeleafContent(
+                    "admin",
+                    mapOf("students" to groupService!!.getAllGroups()[0].students),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session") {
+        post("/profile/investing/{id}") {
+            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+            if (user!!.login != call.principal<Session>()!!.login) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@post
+            }
+            val formContent = call.receiveText()
+            println(formContent)
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
+
+            if (params == "true") {
+                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
+            }
+            if (params == "false") {
+                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
+            }
+
+            call.respond(HttpStatusCode.NoContent)
+        }
     }
 
     get("/download/urban/rating.pdf") {
