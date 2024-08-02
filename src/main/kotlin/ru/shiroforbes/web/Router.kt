@@ -15,8 +15,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
+import ru.shiroforbes.config.RouterConfig
+import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
+import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.GroupService
@@ -29,17 +33,27 @@ fun Routing.routes(
     studentService: StudentService? = null,
     eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
+    ratingDeserializer: GoogleSheetsService<RatingRow>,
+    routerConfig: RouterConfig? = null,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
     get("/favicon.ico") {
         call.respondFile(File("src/main/resources/static/images/shiro&vlasik.png"))
     }
 
+    get("/grobarium") {
+        call.respondRedirect(routerConfig!!.grobariumUrl)
+    }
+
     get("/menu") {
         call.respond(
             ThymeleafContent(
                 "menu",
-                mapOf("students" to groupService!!.getAllGroups()[0].students),
+                mapOf(
+                    "countrysideCampStudents" to groupService!!.getAllGroups()[0].students,
+                    "urbanCampStudents" to groupService.getAllGroups()[1].students,
+                    "user" to students[1], // TODO() call for proper user
+                ),
             ),
         )
     }
@@ -188,13 +202,14 @@ fun Routing.routes(
 
     get("/mock/menu") {
         val groups = MockGroupService.getAllGroups()
+        val a = (Admin(1, "vasya", "vasya566", "pass").equals(0))
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
                     "countrysideCampStudents" to groups[GroupType.CountrysideCamp.ordinal].students,
                     "urbanCampStudents" to groups[GroupType.UrbanCamp.ordinal].students,
-                    "isLoggedIn" to false,
+                    "user" to Admin(1, "vasya", "vasya566", "pass"), // TODO() call for proper user
                 ),
             ),
         )
@@ -203,19 +218,6 @@ fun Routing.routes(
     get("/mock/login") {
         call.respondText("login", ContentType.Text.Html)
     }
-
-//    get("/mock/profile/{id}") {
-//        call.respond(
-//            ThymeleafContent(
-//                "profile",
-//                mapOf(
-//                    "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
-//                    "rating" to listOf(8, 2, 3, 7, 5, 4),
-//                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
-//                ),
-//            ),
-//        )
-//    }
 
     get("/mock/profile/{login}") {
         call.respond(
@@ -243,8 +245,15 @@ fun Routing.routes(
         call.respondRedirect("/mock/menu/")
     }
 
-    get("/mock/event") {
-        call.respond(ThymeleafContent("eventWorkshop", mapOf("isLoggedIn" to false)))
+    get("/event") {
+        call.respond(
+            ThymeleafContent(
+                "eventWorkshop",
+                mapOf(
+                    "user" to 0, // TODO() call for proper user
+                ),
+            ),
+        )
     }
 
     post("/event/new") {
@@ -259,7 +268,7 @@ fun Routing.routes(
             )
 
         eventService!!.addEvent(event)
-        call.respond(HttpStatusCode.NoContent)
+        call.respond(HttpStatusCode.Accepted)
     }
 
     post("/profile/investing/{id}") {
