@@ -14,4 +14,4 @@ public fun validate(
     return false
 }
 
-public fun isAdmin(user: UserIdPrincipal?): Boolean = true
+public fun isAdmin(user: String?): Boolean = true

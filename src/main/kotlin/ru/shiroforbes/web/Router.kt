@@ -13,6 +13,7 @@ import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
@@ -73,6 +74,7 @@ fun Routing.routes(
     authenticate("auth-form") {
         post("/login") {
             val name = call.principal<UserIdPrincipal>()!!.name
+            call.sessions.set(Session(name))
             if (name == "admin") {
                 call.respondRedirect("/admin")
                 return@post
@@ -82,12 +84,12 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-form") {
+    authenticate("auth-session") {
         get("/profile/{id}") {
             val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
             if (user == null) {
                 call.respond(HttpStatusCode.BadRequest)
-            } else if (user.login != call.principal<UserIdPrincipal>()!!.name) {
+            } else if (user.login != call.principal<Session>()!!.login) {
                 call.respond(HttpStatusCode.Unauthorized)
             } else {
                 call.respond(
@@ -104,22 +106,22 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-form") {
+    authenticate("auth-session") {
         get("/admin") {
-            if (!isAdmin(call.principal<UserIdPrincipal>())) {
+            if (!isAdmin(call.principal<Session>()?.login)) {
                 call.respond(HttpStatusCode.Unauthorized)
             } else {
                 call.respond(
                     ThymeleafContent(
-                        "rating",
-                        mapOf("students" to groupService!!.getAllGroups()[0].students),
+                        "menu",
+                        mapOf("events" to listOf<Event>()),
                     ),
                 )
             }
         }
     }
 
-    authenticate("auth-form") {
+    authenticate("auth-session") {
         get("/mock/profile/{id}") {
             call.respond(
                 ThymeleafContent(
@@ -134,7 +136,7 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-form") {
+    authenticate("auth-session") {
         get("/mock/admin") {
             call.respond(
                 ThymeleafContent(
@@ -145,10 +147,10 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-form") {
+    authenticate("auth-session") {
         post("/profile/investing/{id}") {
             val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-            if (user!!.login != call.principal<UserIdPrincipal>()!!.name) {
+            if (user!!.login != call.principal<Session>()!!.login) {
                 call.respond(HttpStatusCode.Unauthorized)
                 return@post
             }

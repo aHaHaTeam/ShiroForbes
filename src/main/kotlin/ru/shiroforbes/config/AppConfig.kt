@@ -52,7 +52,7 @@ fun Application.configureApp() {
                 session
             }
             challenge {
-                call.respondRedirect("/admin")
+                call.respondRedirect("/login")
             }
         }
     }
