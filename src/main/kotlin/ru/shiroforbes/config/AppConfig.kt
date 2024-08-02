@@ -14,6 +14,8 @@ import io.ktor.server.thymeleaf.*
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import ru.shiroforbes.Config
 import ru.shiroforbes.login.Session
+import ru.shiroforbes.login.knownPasswords
+import ru.shiroforbes.login.validUser
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
@@ -45,16 +47,19 @@ fun Application.configureApp(config: Config) {
             userParamName = "login"
             passwordParamName = "password"
             validate { credentials ->
-                if (ru.shiroforbes.login.validate(credentials.name, credentials.password)) {
-                    UserIdPrincipal(credentials.name)
-                } else {
-                    null
-                }
+                UserHashedTableAuth(
+                    { it.toByteArray() },
+                    knownPasswords(),
+                ).authenticate(credentials)
             }
         }
         session<Session>("auth-session") {
             validate { session ->
-                session
+                if (validUser(session.login, session.password)) {
+                    session
+                } else {
+                    null
+                }
             }
             challenge {
                 call.respondRedirect("/login")
