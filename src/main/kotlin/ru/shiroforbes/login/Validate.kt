@@ -2,16 +2,14 @@
 
 package ru.shiroforbes.login
 
-import io.ktor.server.auth.*
+import java.security.MessageDigest
 
-public fun validate(
-    login: String,
-    password: String,
-): Boolean {
-    if (login == "admin" && password == "admin") {
-        return true
-    }
-    return false
+fun isAdmin(user: String?): Boolean = true
+
+fun md5(password: String): ByteArray {
+    val md = MessageDigest.getInstance("MD5")
+    md.update(password.toByteArray())
+    return md.digest()
 }
 
-public fun isAdmin(user: String?): Boolean = true
+fun knownPasswords(): Map<String, ByteArray> = mapOf()
