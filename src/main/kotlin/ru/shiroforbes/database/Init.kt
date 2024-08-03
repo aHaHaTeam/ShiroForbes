@@ -2,6 +2,7 @@ package ru.shiroforbes.database
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.model.GroupType
@@ -15,24 +16,26 @@ fun main() {
     )
 
     transaction {
-        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events, Admins)
-//        println(StudentDAO.findById(1))
-//        Students.insert { student ->
-//            student[name] = "Name3"
-//            student[login] = "Login3"
-//            student[password] = "Pass3"
-//            student[group] = GroupType.Urban
-//            student[rating] = 2439
-//            student[wealth] = 23939
-//            student[totalSolved] = 3
-//            student[algebraSolved] = 15
-//            student[geometrySolved] = 0
-//            student[combinatoricsSolved] = 2
-//            student[isExercised] = false
-//            student[isBeaten] = true
-//            student[isInvesting] = false
-//        }
-//
+        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events)
+        Students.deleteAll()
+        for (i in 1..30) {
+            Students.insert { student ->
+                student[name] = "Name Mane$i"
+                student[login] = "Login$i"
+                student[password] = "Password$i"
+                student[group] = if (i % 2 == 0) GroupType.Countryside else GroupType.Urban
+                student[rating] = 721 + 13 * i - i * i
+                student[wealth] = 1231 + 2 * i - i * i
+                student[totalSolved] = 0
+                student[algebraSolved] = 0
+                student[geometrySolved] = 0
+                student[combinatoricsSolved] = 0
+                student[isExercised] = null
+                student[isBeaten] = true
+                student[isInvesting] = false
+            }
+        }
+
         Admins.insert {
             it[name] = "vasya"
             it[login] = "vasya566"
