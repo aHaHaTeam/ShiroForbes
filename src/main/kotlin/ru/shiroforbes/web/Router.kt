@@ -21,9 +21,11 @@ import ru.shiroforbes.login.validUser
 import ru.shiroforbes.model.Admin
 import ru.shiroforbes.model.Event
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Student
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
+import ru.shiroforbes.service.DbUserService
 import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
@@ -53,14 +55,39 @@ fun Routing.routes(
         call.respondRedirect(routerConfig!!.lzUrl)
     }
 
-    get("/menu") {
+    authenticate("auth-session-soft") {
+        get("/menu") {
+            var user: Any = 0
+            if (call.principal<Session>() != null) {
+                user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
+            }
+
+            call.respond(
+                ThymeleafContent(
+                    "menu",
+                    mapOf(
+                        "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
+                        "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
+                        "user" to user,
+                        "countrysideCampEvents" to listOf<Event>(),
+                        "urbanCampEvents" to listOf<Event>(),
+                    ),
+                ),
+            )
+        }
+    }
+
+    get("/menu-no-login") {
+        val user: Any = 0
         call.respond(
             ThymeleafContent(
                 "menu",
                 mapOf(
                     "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
                     "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
-                    "user" to students[1], // TODO() call for proper user
+                    "user" to user,
+                    "countrysideCampEvents" to listOf<Event>(),
+                    "urbanCampEvents" to listOf<Event>(),
                 ),
             ),
         )
@@ -103,34 +130,34 @@ fun Routing.routes(
         }
         call.sessions.set(Session(name, password))
         if (isAdmin(name)) {
-            call.respondRedirect("/admin")
+            call.respondRedirect("/menu")
             return@post
         }
-        val user = studentService!!.getStudentByLogin(name)
-        call.respondRedirect("/profile/${user!!.id}")
+        val user = DbUserService.getUserByLogin(name)
+        call.respondRedirect("/profile/${user!!.login}")
     }
 
-    authenticate("auth-session") {
-        get("/profile/{id}") {
-            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-            if (user == null) {
-                call.respond(HttpStatusCode.BadRequest)
-            } else if (user.login != call.principal<Session>()!!.login) {
-                call.respond(HttpStatusCode.Unauthorized)
-            } else {
-                call.respond(
-                    ThymeleafContent(
-                        "profile",
-                        mapOf(
-                            "user" to user,
-                            "rating" to listOf(8, 2, 3, 7, 5, 4),
-                            "wealth" to listOf(1, 2, 3, 7, 5, 4),
-                        ),
-                    ),
-                )
-            }
-        }
-    }
+//    authenticate("auth-session") {
+//        get("/profile/{id}") {
+//            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+//            if (user == null) {
+//                call.respond(HttpStatusCode.BadRequest)
+//            } else if (user.login != call.principal<Session>()!!.login) {
+//                call.respond(HttpStatusCode.Unauthorized)
+//            } else {
+//                call.respond(
+//                    ThymeleafContent(
+//                        "profile",
+//                        mapOf(
+//                            "user" to user,
+//                            "rating" to listOf(8, 2, 3, 7, 5, 4),
+//                            "wealth" to listOf(1, 2, 3, 7, 5, 4),
+//                        ),
+//                    ),
+//                )
+//            }
+//        }
+//    }
 
     authenticate("auth-session") {
         get("/admin") {
@@ -148,19 +175,44 @@ fun Routing.routes(
     }
 
     authenticate("auth-session") {
-        get("/mock/profile/{id}") {
-            call.respond(
-                ThymeleafContent(
-                    "profile",
-                    mapOf(
-                        "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
-                        "rating" to listOf(8, 2, 3, 7, 5, 4),
-                        "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+        get("/profile/{login}") {
+            if ((call.principal<Session>()?.login != call.parameters["login"])) {
+                call.respond(HttpStatusCode.Unauthorized)
+            }
+
+            val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
+            if (!user.HasAdminRights) {
+                user as Student
+                call.respond(
+                    ThymeleafContent(
+                        "profile",
+                        mapOf(
+                            "user" to user,
+                            "rating" to user.ratingHistory,
+                            "wealth" to user.wealthHistory,
+                        ),
                     ),
-                ),
-            )
+                )
+            } else {
+                call.respondRedirect("/menu")
+            }
         }
     }
+
+//    authenticate("auth-session") {
+//        get("/mock/profile/{id}") {
+//            call.respond(
+//                ThymeleafContent(
+//                    "profile",
+//                    mapOf(
+//                        "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
+//                        "rating" to listOf(8, 2, 3, 7, 5, 4),
+//                        "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+//                    ),
+//                ),
+//            )
+//        }
+//    }
 
     authenticate("auth-session") {
         get("/mock/admin") {
@@ -173,27 +225,27 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-session") {
-        post("/profile/investing/{id}") {
-            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-            if (user!!.login != call.principal<Session>()!!.login) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@post
-            }
-            val formContent = call.receiveText()
-            println(formContent)
-            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
-
-            if (params == "true") {
-                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
-            }
-            if (params == "false") {
-                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
-            }
-
-            call.respond(HttpStatusCode.NoContent)
-        }
-    }
+//    authenticate("auth-session") {
+//        post("/profile/investing/{id}") {
+//            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
+//            if (user!!.login != call.principal<Session>()!!.login) {
+//                call.respond(HttpStatusCode.Unauthorized)
+//                return@post
+//            }
+//            val formContent = call.receiveText()
+//            println(formContent)
+//            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
+//
+//            if (params == "true") {
+//                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
+//            }
+//            if (params == "false") {
+//                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
+//            }
+//
+//            call.respond(HttpStatusCode.NoContent)
+//        }
+//    }
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
@@ -205,11 +257,6 @@ fun Routing.routes(
         val outputStream = ByteArrayOutputStream()
         ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
         call.respondBytes(outputStream.toByteArray())
-    }
-
-    // Mock routes for testing
-    get("/mock") {
-        call.respondRedirect("/menu")
     }
 
     get("/transactions/exercises/countryside") {
@@ -260,25 +307,25 @@ fun Routing.routes(
         )
     }
 
-    get("/mock/login") {
-        call.respondText("login", ContentType.Text.Html)
-    }
+//    get("/mock/login") {
+//        call.respondText("login", ContentType.Text.Html)
+//    }
 
-    get("/mock/profile/{login}") {
-        call.respond(
-            ThymeleafContent(
-                "profile",
-                mapOf(
-                    "user" to MockStudentService.getStudentByLogin(call.parameters["login"]!!),
-                    "rating" to listOf(8, 2, 3, 7, 5, 4),
-                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
-                ),
-            ),
-        )
-    }
+//    get("/mock/profile/{login}") {
+//        call.respond(
+//            ThymeleafContent(
+//                "profile",
+//                mapOf(
+//                    "user" to MockStudentService.getStudentByLogin(call.parameters["login"]!!),
+//                    "rating" to listOf(8, 2, 3, 7, 5, 4),
+//                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
+//                ),
+//            ),
+//        )
+//    }
 
     get("/") {
-        call.respondRedirect("/mock/menu")
+        call.respondRedirect("/menu")
     }
 
     get("/event") {
@@ -327,7 +374,4 @@ fun Routing.routes(
 private fun Map<String, JsonElement>.jsonValue(key: String): String {
     val quoted = this[key].toString()
     return quoted.substring(1, quoted.length - 1)
-
 }
-
-
