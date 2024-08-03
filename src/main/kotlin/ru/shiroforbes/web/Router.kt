@@ -139,28 +139,6 @@ fun Routing.routes(
         call.respondRedirect("/profile/${user!!.login}")
     }
 
-//    authenticate("auth-session") {
-//        get("/profile/{id}") {
-//            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-//            if (user == null) {
-//                call.respond(HttpStatusCode.BadRequest)
-//            } else if (user.login != call.principal<Session>()!!.login) {
-//                call.respond(HttpStatusCode.Unauthorized)
-//            } else {
-//                call.respond(
-//                    ThymeleafContent(
-//                        "profile",
-//                        mapOf(
-//                            "user" to user,
-//                            "rating" to listOf(8, 2, 3, 7, 5, 4),
-//                            "wealth" to listOf(1, 2, 3, 7, 5, 4),
-//                        ),
-//                    ),
-//                )
-//            }
-//        }
-//    }
-
     authenticate("auth-session") {
         get("/admin") {
             if (!isAdmin(call.principal<Session>()?.login)) {
@@ -227,21 +205,6 @@ fun Routing.routes(
         }
     }
 
-//    authenticate("auth-session") {
-//        get("/mock/profile/{id}") {
-//            call.respond(
-//                ThymeleafContent(
-//                    "profile",
-//                    mapOf(
-//                        "user" to MockStudentService.getStudentById(call.parameters["id"]!!.toInt()),
-//                        "rating" to listOf(8, 2, 3, 7, 5, 4),
-//                        "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
-//                    ),
-//                ),
-//            )
-//        }
-//    }
-
     authenticate("auth-session") {
         get("/mock/admin") {
             call.respond(
@@ -252,28 +215,6 @@ fun Routing.routes(
             )
         }
     }
-
-//    authenticate("auth-session") {
-//        post("/profile/investing/{id}") {
-//            val user = studentService!!.getStudentById(call.parameters["id"]!!.toInt())
-//            if (user!!.login != call.principal<Session>()!!.login) {
-//                call.respond(HttpStatusCode.Unauthorized)
-//                return@post
-//            }
-//            val formContent = call.receiveText()
-//            println(formContent)
-//            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()["isInvesting"].toString()
-//
-//            if (params == "true") {
-//                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), true)
-//            }
-//            if (params == "false") {
-//                studentService.updateStudentInvesting(call.parameters["id"]!!.toInt(), false)
-//            }
-//
-//            call.respond(HttpStatusCode.NoContent)
-//        }
-//    }
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
@@ -307,48 +248,6 @@ fun Routing.routes(
             ),
         )
     }
-
-//    get("/mock/menu") {
-//        val countryside = studentService!!.getGroup(GroupType.Countryside)
-//        val urban = studentService.getGroup(GroupType.Urban)
-//        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
-//        call.respond(
-//            ThymeleafContent(
-//                "menu",
-//                mapOf(
-//                    "countrysideCampStudents" to countryside,
-//                    "urbanCampStudents" to urban,
-//                    "countrysideCampEvents" to listOf<Event>(),
-//                    "urbanCampEvents" to listOf<Event>(),
-//                    "user" to
-//                        Admin(
-//                            1,
-//                            "vasya",
-//                            "vasya566",
-//                            "pass",
-//                            GroupType.Countryside,
-//                        ),
-//                ),
-//            ),
-//        )
-//    }
-
-//    get("/mock/login") {
-//        call.respondText("login", ContentType.Text.Html)
-//    }
-
-//    get("/mock/profile/{login}") {
-//        call.respond(
-//            ThymeleafContent(
-//                "profile",
-//                mapOf(
-//                    "user" to MockStudentService.getStudentByLogin(call.parameters["login"]!!),
-//                    "rating" to listOf(8, 2, 3, 7, 5, 4),
-//                    "wealth" to listOf(1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2, 3, 7, 5, 4, 1, 2),
-//                ),
-//            ),
-//        )
-//    }
 
     get("/") {
         call.respondRedirect("/menu")
