@@ -34,6 +34,7 @@ fun main() {
                 student[isBeaten] = true
                 student[isInvesting] = false
             }
+        }
 
         Admins.insert {
             it[name] = "vasya"
