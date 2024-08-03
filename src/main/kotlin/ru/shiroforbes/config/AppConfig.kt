@@ -3,10 +3,8 @@
 package ru.shiroforbes.config
 
 import com.google.api.services.sheets.v4.SheetsScopes
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.Authentication.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -63,6 +61,29 @@ fun Application.configureApp(config: Config) {
             }
             challenge {
                 call.respondRedirect("/login")
+            }
+        }
+        session<Session>("auth-session-redirect-to-menu") {
+            validate { session ->
+                if (validUser(session.login, session.password)) {
+                    session
+                } else {
+                    null
+                }
+            }
+            challenge {
+                call.respondRedirect("/menu-no-login")
+            }
+        }
+
+        session<Session>("auth-session-no-redirect") {
+            skipWhen { call -> call.sessions.get<Session>() == null }
+            validate { session ->
+                if (validUser(session.login, session.password)) {
+                    session
+                } else {
+                    Session("", "")
+                }
             }
         }
     }

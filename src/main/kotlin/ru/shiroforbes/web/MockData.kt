@@ -11,14 +11,14 @@ import java.io.File
 
 val students =
     listOf(
-        Student(0, "Name1", "Login1", "Password1", GroupType.Countryside, 121, 1231, 0, 0, 0, 0, null, false, false),
-        Student(1, "Silly Cat Bleh", "Login2", "Password2", GroupType.Countryside, 239, 239239, 3, 1, 0, 2, false, true, true),
-        Student(2, "Name3", "Login3", "Password3", GroupType.Countryside, 123, 3233, 0, 0, 0, 0, null, null, null),
-        Student(3, "Name4", "Login4", "Password4", GroupType.Countryside, 124, 4234, 0, 0, 0, 0, true, false, null),
-        Student(4, "Name5", "Login5", "Password5", GroupType.Countryside, 125, 5235, 0, 0, 0, 0, true, false, null),
-        Student(5, "Name11", "Login11", "Password11", GroupType.Countryside, 21, 131, 0, 0, 0, 0, true, false, null),
-        Student(6, "Name12", "Login12", "Password12", GroupType.Countryside, 22, 232, 0, 0, 0, 0, true, false, null),
-        Student(7, "Name13", "Login13", "Password13", GroupType.Countryside, 23, 333, 0, 0, 0, 0, true, false, null),
+        Student(1, "Name1", "Login1", "Password1", GroupType.Countryside, 121, 1231, 0, 0, 0, 0, null, false, false),
+        Student(2, "Silly Cat Bleh", "Login2", "Password2", GroupType.Countryside, 239, 239239, 3, 1, 0, 2, false, true, true),
+        Student(3, "Name3", "Login3", "Password3", GroupType.Countryside, 123, 3233, 0, 0, 0, 0, null, null, null),
+        Student(4, "Name4", "Login4", "Password4", GroupType.Countryside, 124, 4234, 0, 0, 0, 0, true, false, null),
+        Student(5, "Name5", "Login5", "Password5", GroupType.Countryside, 125, 5235, 0, 0, 0, 0, true, false, null),
+        Student(6, "Name11", "Login11", "Password11", GroupType.Countryside, 21, 131, 0, 0, 0, 0, true, false, null),
+        Student(7, "Name12", "Login12", "Password12", GroupType.Countryside, 22, 232, 0, 0, 0, 0, true, false, null),
+        Student(8, "Name13", "Login13", "Password13", GroupType.Countryside, 23, 333, 0, 0, 0, 0, true, false, null),
     )
 
 object MockStudentService : StudentService {

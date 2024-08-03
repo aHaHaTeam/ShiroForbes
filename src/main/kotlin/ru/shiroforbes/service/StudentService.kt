@@ -62,6 +62,7 @@ object DbStudentService : StudentService {
     }
 
     private fun daoToStudent(dao: StudentDAO): Student {
+        println("daoToStudent")
         val ratings = dao.ratingHistory.toList()
         val wealths = dao.wealthHistory.toList()
         return Student(dao, ratings, wealths)
@@ -81,7 +82,10 @@ object DbStudentService : StudentService {
         }
     }
 
-    override suspend fun getAllStudents(): List<Student> = StudentDAO.all().map { daoToStudent(it) }
+    override suspend fun getAllStudents(): List<Student> {
+        println("getAllStudents")
+        return StudentDAO.all().map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
+    }
 
     override suspend fun updateStudentInvesting(
         id: Int,

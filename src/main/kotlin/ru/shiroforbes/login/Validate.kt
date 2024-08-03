@@ -2,6 +2,8 @@
 
 package ru.shiroforbes.login
 
+import kotlinx.coroutines.runBlocking
+import ru.shiroforbes.service.DbUserService
 import java.security.MessageDigest
 
 fun isAdmin(user: String?): Boolean = user == "admin"
@@ -10,7 +12,13 @@ fun isAdmin(user: String?): Boolean = user == "admin"
 fun validUser(
     login: String,
     password: String,
-): Boolean = password == md5("admin").toHexString()
+): Boolean {
+    return runBlocking {
+        val savedPassword = DbUserService.getUserByLogin(login)?.password ?: return@runBlocking false
+        val hashedPassword = md5(savedPassword).toHexString()
+        return@runBlocking password == hashedPassword
+    }
+}
 
 fun md5(password: String): ByteArray {
     val md = MessageDigest.getInstance("MD5")

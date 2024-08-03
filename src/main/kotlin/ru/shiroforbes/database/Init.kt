@@ -15,22 +15,29 @@ fun main() {
     )
 
     transaction {
-        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events)
-        println(StudentDAO.findById(1))
-        Students.insert { student ->
-            student[name] = "Name1"
-            student[login] = "Login1"
-            student[password] = "Password1"
-            student[group] = GroupType.Countryside
-            student[rating] = 121
-            student[wealth] = 1231
-            student[totalSolved] = 0
-            student[algebraSolved] = 0
-            student[geometrySolved] = 0
-            student[combinatoricsSolved] = 0
-            student[isExercised] = null
-            student[isBeaten] = false
-            student[isInvesting] = false
+        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events, Admins)
+//        println(StudentDAO.findById(1))
+//        Students.insert { student ->
+//            student[name] = "Name3"
+//            student[login] = "Login3"
+//            student[password] = "Pass3"
+//            student[group] = GroupType.Urban
+//            student[rating] = 2439
+//            student[wealth] = 23939
+//            student[totalSolved] = 3
+//            student[algebraSolved] = 15
+//            student[geometrySolved] = 0
+//            student[combinatoricsSolved] = 2
+//            student[isExercised] = false
+//            student[isBeaten] = true
+//            student[isInvesting] = false
+//        }
+//
+        Admins.insert {
+            it[name] = "vasya"
+            it[login] = "vasya566"
+            it[password] = "pass123"
+            it[group] = GroupType.Urban
         }
     }
 }
