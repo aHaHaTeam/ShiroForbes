@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShiroForbes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+<body>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8 grid">
+        <div class="s12" th:insert="~{components/header :: header(${user})}"></div>
+
+        <div class="s0 m1 l2"></div>
+
+        <div class="s12 m10 l8">
+            <h2 class="center-align">Конструктор транзакций</h2>
+            <form action="/event/new" method="POST">
+                <fieldset class="grid">
+                    <legend>Заполните все поля</legend>
+                    <div class="s0 m1 l2"></div>
+                    <div class="s12 m10 l8">
+                        <div class="field border label">
+                            <input required>
+                            <label>Название транзакции</label>
+                        </div>
+
+                        <div class="field label large prefix border round">
+                            <i class="front">search</i>
+                            <input type="text" id="searchBar">
+                            <label>Шировласик</label>
+                            <menu th:each="student, j: ${students}">
+                                <a class="row option">
+                                    <i>add</i>
+                                    <div th:text="${student.name}"></div>
+                                </a>
+                            </menu>
+                        </div>
+                    </div>
+                    <div class="s0 m1 l2"></div>
+
+
+                    <div id="listOfTransactions" class="s12"></div>
+
+                    <div class="s12">
+                        <button class="large center" type="submit">Начислить Златы</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <div class="s0 m1 l2"></div>
+    </div>
+    <div class="s0 m1 l2"></div>
+</div>
+<script src="/static/scripts/transactions.js"></script>
+</body>
+</html>

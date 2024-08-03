@@ -2,6 +2,7 @@ package ru.shiroforbes.database
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.model.GroupType
@@ -16,21 +17,23 @@ fun main() {
 
     transaction {
         create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events)
-        println(StudentDAO.findById(1))
-        Students.insert { student ->
-            student[name] = "Name1"
-            student[login] = "Login1"
-            student[password] = "Password1"
-            student[group] = GroupType.Countryside
-            student[rating] = 121
-            student[wealth] = 1231
-            student[totalSolved] = 0
-            student[algebraSolved] = 0
-            student[geometrySolved] = 0
-            student[combinatoricsSolved] = 0
-            student[isExercised] = null
-            student[isBeaten] = false
-            student[isInvesting] = false
+        Students.deleteAll()
+        for (i in 1..30) {
+            Students.insert { student ->
+                student[name] = "Name Mane$i"
+                student[login] = "Login$i"
+                student[password] = "Password$i"
+                student[group] = if (i % 2 == 0) GroupType.Countryside else GroupType.Urban
+                student[rating] = 721 + 13 * i - i * i
+                student[wealth] = 1231 + 2 * i - i * i
+                student[totalSolved] = 0
+                student[algebraSolved] = 0
+                student[geometrySolved] = 0
+                student[combinatoricsSolved] = 0
+                student[isExercised] = null
+                student[isBeaten] = true
+                student[isInvesting] = false
+            }
         }
     }
 }
