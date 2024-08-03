@@ -2,16 +2,28 @@
 
 package ru.shiroforbes.login
 
-import io.ktor.server.auth.*
+import kotlinx.coroutines.runBlocking
+import ru.shiroforbes.service.DbUserService
+import java.security.MessageDigest
 
-public fun validate(
+fun isAdmin(user: String?): Boolean = user == "admin"
+
+@OptIn(ExperimentalStdlibApi::class)
+fun validUser(
     login: String,
     password: String,
 ): Boolean {
-    if (login == "admin" && password == "admin") {
-        return true
+    return runBlocking {
+        val savedPassword = DbUserService.getUserByLogin(login)?.password ?: return@runBlocking false
+        val hashedPassword = md5(savedPassword).toHexString()
+        return@runBlocking password == hashedPassword
     }
-    return false
 }
 
-public fun isAdmin(user: String?): Boolean = true
+fun md5(password: String): ByteArray {
+    val md = MessageDigest.getInstance("MD5")
+    md.update(password.toByteArray())
+    return md.digest()
+}
+
+fun knownPasswords(): Map<String, ByteArray> = mapOf("admin" to md5("admin"))

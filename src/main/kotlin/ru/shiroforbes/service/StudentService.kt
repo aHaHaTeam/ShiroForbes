@@ -62,24 +62,30 @@ object DbStudentService : StudentService {
     }
 
     private fun daoToStudent(dao: StudentDAO): Student {
+        println("daoToStudent")
         val ratings = dao.ratingHistory.toList()
         val wealths = dao.wealthHistory.toList()
         return Student(dao, ratings, wealths)
     }
 
     override suspend fun getStudentByLogin(login: String): Student? {
-        return daoToStudent(
-            StudentDAO.find { Students.login eq login }.limit(1).let {
-                if (it.toList().isNotEmpty()) {
-                    return@let it.first()
-                } else {
-                    return null
-                }
-            },
-        )
+        return transaction {
+            return@transaction daoToStudent(
+                StudentDAO.find { Students.login eq login }.limit(1).let {
+                    if (it.toList().isNotEmpty()) {
+                        return@let it.first()
+                    } else {
+                        return@transaction null
+                    }
+                },
+            )
+        }
     }
 
-    override suspend fun getAllStudents(): List<Student> = StudentDAO.all().map { daoToStudent(it) }
+    override suspend fun getAllStudents(): List<Student> {
+        println("getAllStudents")
+        return StudentDAO.all().map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
+    }
 
     override suspend fun updateStudentInvesting(
         id: Int,

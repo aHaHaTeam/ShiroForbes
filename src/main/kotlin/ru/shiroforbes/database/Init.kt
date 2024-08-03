@@ -34,6 +34,12 @@ fun main() {
                 student[isBeaten] = true
                 student[isInvesting] = false
             }
+
+        Admins.insert {
+            it[name] = "vasya"
+            it[login] = "vasya566"
+            it[password] = "pass123"
+            it[group] = GroupType.Urban
         }
     }
 }
