@@ -75,6 +75,16 @@ fun Application.configureApp(config: Config) {
                 call.respondRedirect("/menu-no-login")
             }
         }
+
+        session<Session>("auth-session-no-redirect") {
+            validate { session ->
+                if (validUser(session.login, session.password)) {
+                    session
+                } else {
+                    null
+                }
+            }
+        }
     }
 
     install(Routing) {

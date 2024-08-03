@@ -177,9 +177,8 @@ fun Routing.routes(
     authenticate("auth-session") {
         get("/profile/{login}") {
             if ((call.principal<Session>()?.login != call.parameters["login"])) {
-                call.respond(HttpStatusCode.Unauthorized)
+                call.respondRedirect("/profile/" + call.parameters["login"] + "/view-only")
             }
-
             val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
             if (!user.HasAdminRights) {
                 user as Student
@@ -190,6 +189,33 @@ fun Routing.routes(
                             "user" to user,
                             "rating" to user.ratingHistory,
                             "wealth" to user.wealthHistory,
+                            "activeUser" to user,
+                        ),
+                    ),
+                )
+            } else {
+                call.respondRedirect("/menu")
+            }
+        }
+    }
+
+    authenticate("auth-session-no-redirect") {
+        get("/profile/{login}/view-only") {
+            var activeUser: Any = 0
+            if (call.principal<Session>() != null) {
+                activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
+            }
+            val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
+            if (!user.HasAdminRights) {
+                user as Student
+                call.respond(
+                    ThymeleafContent(
+                        "profile",
+                        mapOf(
+                            "user" to user,
+                            "rating" to user.ratingHistory,
+                            "wealth" to user.wealthHistory,
+                            "activeUser" to activeUser,
                         ),
                     ),
                 )
@@ -261,7 +287,6 @@ fun Routing.routes(
 
     get("/transactions/exercises/countryside") {
         val countryside = studentService!!.getGroup(GroupType.Countryside)
-        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
         call.respond(
             ThymeleafContent(
                 "exercises",
@@ -281,31 +306,30 @@ fun Routing.routes(
         )
     }
 
-    get("/mock/menu") {
-        val countryside = studentService!!.getGroup(GroupType.Countryside)
-        val urban = studentService.getGroup(GroupType.Urban)
-        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
-        call.respond(
-            ThymeleafContent(
-                "menu",
-                mapOf(
-                    "countrysideCampStudents" to countryside,
-                    "urbanCampStudents" to urban,
-                    "countrysideCampEvents" to listOf<Event>(),
-                    "urbanCampEvents" to listOf<Event>(),
-                    "user" to
-                        Admin(
-                            1,
-                            "vasya",
-                            "vasya566",
-                            "pass",
-                            GroupType.Countryside,
-                        ),
-                    // TODO() call for proper user
-                ),
-            ),
-        )
-    }
+//    get("/mock/menu") {
+//        val countryside = studentService!!.getGroup(GroupType.Countryside)
+//        val urban = studentService.getGroup(GroupType.Urban)
+//        val a = (Admin(1, "vasya", "vasya566", "pass", GroupType.Countryside).equals(0))
+//        call.respond(
+//            ThymeleafContent(
+//                "menu",
+//                mapOf(
+//                    "countrysideCampStudents" to countryside,
+//                    "urbanCampStudents" to urban,
+//                    "countrysideCampEvents" to listOf<Event>(),
+//                    "urbanCampEvents" to listOf<Event>(),
+//                    "user" to
+//                        Admin(
+//                            1,
+//                            "vasya",
+//                            "vasya566",
+//                            "pass",
+//                            GroupType.Countryside,
+//                        ),
+//                ),
+//            ),
+//        )
+//    }
 
 //    get("/mock/login") {
 //        call.respondText("login", ContentType.Text.Html)

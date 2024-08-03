@@ -17,7 +17,7 @@
 <div class="grid">
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
-        <div th:insert="~{components/header :: header(${user})}"></div>
+        <div th:insert="~{components/header :: header(${activeUser})}"></div>
         <main class="responsive grid">
             <div class="s6">
                 <br>
@@ -32,7 +32,7 @@
                 <br>
                 <div class="grid">
                     <p th:text="|Баланс: ${user.wealth}|" class="s12"></p>
-                    <div class="s12 field middle-align">
+                    <div class="s12 field middle-align" th:if="${!activeUser.equals(0) && user.login == activeUser.login}">
                         <nav style="padding-left: 0">
                             <div class="max">
                                 <p>Я инвестирую! Или нет? 🤔</p>
