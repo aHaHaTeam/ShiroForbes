@@ -63,7 +63,7 @@ fun Application.configureApp(config: Config) {
                 call.respondRedirect("/login")
             }
         }
-        session<Session>("auth-session-soft") {
+        session<Session>("auth-session-redirect-to-menu") {
             validate { session ->
                 if (validUser(session.login, session.password)) {
                     session
@@ -77,11 +77,12 @@ fun Application.configureApp(config: Config) {
         }
 
         session<Session>("auth-session-no-redirect") {
+            skipWhen { call -> call.sessions.get<Session>() == null }
             validate { session ->
                 if (validUser(session.login, session.password)) {
                     session
                 } else {
-                    null
+                    Session("", "")
                 }
             }
         }

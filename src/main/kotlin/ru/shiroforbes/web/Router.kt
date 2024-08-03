@@ -55,11 +55,13 @@ fun Routing.routes(
         call.respondRedirect(routerConfig!!.lzUrl)
     }
 
-    authenticate("auth-session-soft") {
+    authenticate("auth-session-redirect-to-menu") {
         get("/menu") {
             var user: Any = 0
             if (call.principal<Session>() != null) {
-                user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
+                if (call.principal<Session>()!!.login != "") {
+                    user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
+                }
             }
 
             call.respond(
@@ -174,7 +176,7 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-session") {
+    authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
             if ((call.principal<Session>()?.login != call.parameters["login"])) {
                 call.respondRedirect("/profile/" + call.parameters["login"] + "/view-only")
@@ -199,29 +201,29 @@ fun Routing.routes(
         }
     }
 
-    authenticate("auth-session-no-redirect") {
-        get("/profile/{login}/view-only") {
-            var activeUser: Any = 0
-            if (call.principal<Session>() != null) {
+    get("/profile/{login}/view-only") {
+        var activeUser: Any = 0
+        if (call.principal<Session>() != null) {
+            if (call.principal<Session>()!!.login != "") {
                 activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
             }
-            val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
-            if (!user.HasAdminRights) {
-                user as Student
-                call.respond(
-                    ThymeleafContent(
-                        "profile",
-                        mapOf(
-                            "user" to user,
-                            "rating" to user.ratingHistory,
-                            "wealth" to user.wealthHistory,
-                            "activeUser" to activeUser,
-                        ),
+        }
+        val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
+        if (!user.HasAdminRights) {
+            user as Student
+            call.respond(
+                ThymeleafContent(
+                    "profile",
+                    mapOf(
+                        "user" to user,
+                        "rating" to user.ratingHistory,
+                        "wealth" to user.wealthHistory,
+                        "activeUser" to activeUser,
                     ),
-                )
-            } else {
-                call.respondRedirect("/menu")
-            }
+                ),
+            )
+        } else {
+            call.respondRedirect("/menu")
         }
     }
 
