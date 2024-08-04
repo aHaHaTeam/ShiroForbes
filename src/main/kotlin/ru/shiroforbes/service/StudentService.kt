@@ -12,6 +12,7 @@ import ru.shiroforbes.database.*
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.Rating
 import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.Wealth
 
 /**
  * Service for accessing the student storage.
@@ -47,6 +48,11 @@ interface StudentService {
 
     suspend fun addRating(
         rating: Rating,
+        name: String,
+    ): Unit = throw NotImplementedError()
+
+    suspend fun addWealth(
+        wealth: Wealth,
         name: String,
     ): Unit = throw NotImplementedError()
 }
@@ -91,7 +97,9 @@ object DbStudentService : StudentService {
 
     override suspend fun getAllStudents(): List<Student> {
         println("getAllStudents")
-        return StudentDAO.all().map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
+        return StudentDAO
+            .all()
+            .map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
     }
 
     override suspend fun updateStudentInvesting(
@@ -169,6 +177,28 @@ object DbStudentService : StudentService {
 
         StudentRatings.insert {
             it[StudentRatings.rating] = ratingId
+            it[student] = studentId
+        }
+    }
+
+    override suspend fun addWealth(
+        wealth: Wealth,
+        name: String,
+    ) {
+        val studentId =
+            StudentDAO
+                .find { Students.name eq name }
+                .limit(1)
+                .first()
+                .id
+        val wealthId =
+            Wealths.insertAndGetId {
+                it[date] = wealth.date
+                it[Wealths.wealth] = wealth.wealth
+            }
+
+        StudentRatings.insert {
+            it[StudentRatings.rating] = wealthId
             it[student] = studentId
         }
     }
