@@ -15,25 +15,30 @@
 <main class="responsive grid">
     <div class="s0 m2 l3"></div>
     <div class="s12 m8 l6">
-        <article class="fill middle grid">
+        <article class="middle grid">
             <div class="s2"></div>
 
             <div class="s8">
-                <br>
-                <div class="center" th:insert="~{components/logo :: logo()}"></div>
-                <br>
-                <div class="field label border tiny min">
-                    <label for="login">Login</label>
-                    <input name="login" id="login" type="text" required>
-                </div>
-                <br>
-                <div class="field label border tiny min">
-                    <label for="password">Password</label>
-                    <input name="password" id="password" type="password" required>
-                </div>
-                <br>
-                <button class="extra round" id="signIn">Sign In</button>
-                <br>
+                <form>
+                    <div class="medium-space"></div>
+                    <div class="center" th:insert="~{components/logo :: logo()}"></div>
+                    <div class="medium-space"></div>
+                    <div class="field label border">
+                        <input name="login" id="login" type="text" required>
+                        <label for="login">Login</label>
+                    </div>
+                    <div class="medium-space"></div>
+                    <div class="field label border">
+                        <input name="password" id="password" type="password" required>
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="medium-space"></div>
+                    <button class="extra round center" id="signIn" type="submit">
+                        <span id="span">Sign In</span>
+                        <progress class="circle" id="progress" style="display: none"></progress>
+                    </button>
+                    <div class="medium-space"></div>
+                </form>
             </div>
 
             <div class="s2"></div>
@@ -44,13 +49,20 @@
 <script th:inline="javascript">
     const login = document.getElementById("login")
     const password = document.getElementById("password")
-    const button = document.getElementById("signIn")
+    const span = document.getElementById("span")
+    const progress = document.getElementById("progress")
+    const form = document.querySelector("form")
 
-    button.addEventListener("click", () => {
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
         const data = {
             "login": login.value,
             "password": CryptoJS.MD5(password.value).toString(CryptoJS.enc.Hex),
         }
+
+        span.style.display = "none"
+        progress.style.display = ""
         fetch("/login", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -59,6 +71,8 @@
             if (response.redirected) {
                 window.location.assign(response.url)
             } else {
+                span.style.display = ""
+                progress.style.display = "none"
                 alert("Неверный логин или пароль")
             }
         })

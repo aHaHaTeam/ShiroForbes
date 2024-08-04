@@ -14,6 +14,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import io.ktor.client.plugins.*
 import io.ktor.util.reflect.*
 import java.io.*
 import kotlin.reflect.KClass
@@ -92,13 +93,15 @@ class GoogleSheetsService<T : Any>(
     private val spreadsheetId: String,
     private val clazz: KClass<T>,
     private val dataRanges: List<String>,
+    private val defaultConversionClass: Class<*> = Class.forName("kotlin.text.StringsKt"),
 ) {
     constructor(
         connectionService: GoogleSheetsApiConnectionService,
         spreadsheetId: String,
         clazz: KClass<T>,
         vararg dataRanges: String,
-    ) : this(connectionService, spreadsheetId, clazz, dataRanges.toList())
+        defaultConversionClass: Class<*> = Class.forName("kotlin.text.StringsKt"),
+    ) : this(connectionService, spreadsheetId, clazz, dataRanges.toList(), defaultConversionClass)
 
     fun getRating(): List<T> {
         val response =
@@ -115,7 +118,7 @@ class GoogleSheetsService<T : Any>(
             println("No data found.")
             return listOf()
         }
-        val maxLength = valueRanges.maxOf { it.getValues().size }
+        val maxLength = valueRanges.maxOf { it.getValues()?.size ?: 0 }
         val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }
         for (range in valueRanges) {
             for (rowIndexed in range.getValues().withIndex()) {
@@ -147,21 +150,24 @@ class GoogleSheetsService<T : Any>(
         if (type.jvmErasure.simpleName == String::class.simpleName) {
             return str
         }
-        val conversionClass = Class.forName("kotlin.text.StringsKt")
-
         val typeName = type.jvmErasure.simpleName
         val conversionFuncName = "to${typeName}OrNull"
 
-        val conversionFunc =
-            try {
-                conversionClass.getMethod(conversionFuncName, String::class.java)
-            } catch (e: NoSuchMethodException) {
-                throw IllegalArgumentException("Type $type is not a valid string conversion target")
-            }
+        for (conversionClass in listOf(defaultConversionClass, Class.forName("kotlin.text.StringsKt"))) {
+            val conversionFunc =
+                try {
+                    conversionClass.getMethod(conversionFuncName, String::class.java)
+                } catch (e: NoSuchMethodException) {
+                    continue
+                }
 
-        conversionFunc.isAccessible = true
-        return conversionFunc.invoke(null, str)
-            ?: throw IllegalArgumentException("'$str' cannot be parsed to type $type")
+            conversionFunc.isAccessible = true
+            val res = conversionFunc.invoke(null, str)
+            if (res != null) {
+                return res
+            }
+        }
+        return null
     }
 }
 

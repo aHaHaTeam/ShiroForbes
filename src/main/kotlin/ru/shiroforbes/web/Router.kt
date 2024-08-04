@@ -68,8 +68,14 @@ fun Routing.routes(
                 ThymeleafContent(
                     "menu",
                     mapOf(
-                        "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
-                        "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
+                        "countrysideCampStudents" to
+                            studentService!!
+                                .getGroup(GroupType.Countryside)
+                                .sortedByDescending { it.rating + it.wealth },
+                        "urbanCampStudents" to
+                            studentService
+                                .getGroup(GroupType.Urban)
+                                .sortedByDescending { it.rating + it.wealth },
                         "user" to user,
                         "countrysideCampEvents" to listOf<Event>(),
                         "urbanCampEvents" to listOf<Event>(),
@@ -85,8 +91,14 @@ fun Routing.routes(
             ThymeleafContent(
                 "menu",
                 mapOf(
-                    "countrysideCampStudents" to studentService!!.getGroup(GroupType.Countryside),
-                    "urbanCampStudents" to studentService.getGroup(GroupType.Urban),
+                    "countrysideCampStudents" to
+                        studentService!!
+                            .getGroup(GroupType.Countryside)
+                            .sortedByDescending { it.rating + it.wealth },
+                    "urbanCampStudents" to
+                        studentService
+                            .getGroup(GroupType.Urban)
+                            .sortedByDescending { it.rating + it.wealth },
                     "user" to user,
                     "countrysideCampEvents" to listOf<Event>(),
                     "urbanCampEvents" to listOf<Event>(),
@@ -233,6 +245,27 @@ fun Routing.routes(
         call.respond(
             ThymeleafContent(
                 "exercises",
+                mapOf(
+                    "students" to countryside,
+                    "user" to
+                        Admin(
+                            1,
+                            "vasya",
+                            "vasya566",
+                            "pass",
+                            GroupType.Countryside,
+                        ),
+                    // TODO() call for proper user
+                ),
+            ),
+        )
+    }
+
+    get("/transactions/transactions/countryside") {
+        val countryside = studentService!!.getGroup(GroupType.Countryside)
+        call.respond(
+            ThymeleafContent(
+                "transactions",
                 mapOf(
                     "students" to countryside,
                     "user" to

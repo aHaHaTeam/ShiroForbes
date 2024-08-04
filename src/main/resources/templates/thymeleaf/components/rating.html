@@ -18,7 +18,7 @@
 
     <div class="s3"></div>
     <nav class="no-space center-align middle-align s6">
-        <button type="submit" onclick="window.open('/download/rating.pdf')" id="ratingDownloadButton">
+        <button type="submit" onclick="window.open('/download/urban/rating.pdf')" id="ratingDownloadButton">
             <span>Рейтинг</span>
             <i class="responsive">description</i>
         </button>
@@ -33,6 +33,7 @@
                 <th class="max">Name</th>
                 <th class="right-align">Rating</th>
                 <th class="right-align">Wealth</th>
+                <th class="right-align"><i>functions</i></th>
             </tr>
             </thead>
             <tbody>
@@ -41,6 +42,7 @@
                 <td ><a th:href="|profile/${student.login}|" th:text="${student.name}"></a></td>
                 <td class="right-align" th:text="${student.rating}"></td>
                 <td class="right-align" th:text="${student.wealth}"></td>
+                <td class="right-align" th:text="${student.rating + student.wealth}"></td>
             </tr>
             </tbody>
         </table>

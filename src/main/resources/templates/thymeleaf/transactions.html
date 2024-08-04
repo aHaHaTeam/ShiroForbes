@@ -34,8 +34,8 @@
                             <i class="front">search</i>
                             <input type="text" id="searchBar">
                             <label>Шировласик</label>
-                            <menu th:each="student, j: ${students}">
-                                <a class="row option">
+                            <menu>
+                                <a class="row option" th:each="student, j: ${students}">
                                     <i>add</i>
                                     <div th:text="${student.name}"></div>
                                 </a>
