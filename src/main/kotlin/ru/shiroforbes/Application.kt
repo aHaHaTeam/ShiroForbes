@@ -13,6 +13,7 @@ import org.quartz.CronScheduleBuilder
 import org.quartz.JobBuilder
 import org.quartz.TriggerBuilder
 import org.quartz.impl.StdSchedulerFactory
+import ru.shiroforbes.config.DbConfig
 import ru.shiroforbes.config.GoogleSheetsConfig
 import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.config.configureApp
@@ -22,6 +23,7 @@ import ru.shiroforbes.jobs.DailyResetExercise
 data class Config(
     val googleSheetsConfig: GoogleSheetsConfig,
     val routerConfig: RouterConfig,
+    val dbConfig: DbConfig,
 )
 
 internal val config: Config by lazy {

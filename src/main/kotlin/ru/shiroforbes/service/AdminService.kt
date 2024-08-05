@@ -2,6 +2,7 @@ package ru.shiroforbes.service
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.shiroforbes.config
 import ru.shiroforbes.database.AdminDAO
 import ru.shiroforbes.database.Admins
 import ru.shiroforbes.model.Admin
@@ -15,10 +16,10 @@ interface AdminService {
 object DbAdminService : AdminService {
     init {
         Database.connect(
-            "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-            driver = "org.postgresql.Driver",
-            user = "postgres.lsbuufukrknwuixafuuu",
-            password = "shiroforbes239",
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
         )
     }
 

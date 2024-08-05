@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import ru.shiroforbes.config
 import ru.shiroforbes.database.*
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.Rating
@@ -60,10 +61,10 @@ interface StudentService {
 object DbStudentService : StudentService {
     init {
         Database.connect(
-            "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-            driver = "org.postgresql.Driver",
-            user = "postgres.lsbuufukrknwuixafuuu",
-            password = "shiroforbes239",
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
         )
     }
 
