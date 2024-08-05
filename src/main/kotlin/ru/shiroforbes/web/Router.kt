@@ -248,8 +248,7 @@ fun Routing.routes(
                         it.solvedProblems,
                     )
                 }
-            call.respond(HttpStatusCode.OK)
-//            call.respondRedirect("/update/rating")
+            call.respondRedirect("/update/rating")
         }
     }
 
