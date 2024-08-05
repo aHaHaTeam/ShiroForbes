@@ -23,7 +23,7 @@
                 <button id="countryside" class="border left-round max"
                         th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
                     <i class="small">nature</i>
-                    <span>Настоящий лагерь</span>
+                    <span>Загородный лагерь</span>
                 </button>
                 <button id="urban" class="border right-round max"
                         th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
