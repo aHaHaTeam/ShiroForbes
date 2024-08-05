@@ -17,8 +17,34 @@
         <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
         <div th:insert="~{components/header :: header(${user})}"></div>
 
+        <div class="grid">
+            <div class="s2 m3 l3"></div>
+            <nav class="no-space center-align middle-align s8 m6 l6">
+                <button id="countryside" class="border left-round max"
+                        th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
+                    <i class="small">nature</i>
+                    <span>Загородный лагерь</span>
+                </button>
+                <button id="urban" class="border right-round max"
+                        th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
+                    <i class="small">home</i>
+                    <span>Городской лагерь</span>
+                </button>
+            </nav>
+            <div class="s2 m3 l3"></div>
+        </div>
+
         <main class="responsive">
-            <div th:insert="~{components/rating_diff :: rating(${students})}"></div>
+            <div id="countrysideContent"
+                 th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}"
+                 th:insert="~{components/rating_diff :: rating(${countrysideStudents})}">
+            </div>
+
+            <div id="urbanContent"
+                 th:hidden="${user.equals(0) || user.group.text != 'Urban'}"
+                 th:insert="~{components/rating_diff :: rating(${urbanStudents})}">
+            </div>
+
             <form>
                 <button class="extra round center" id="publishButton" type="submit">
                     <span id="span">Опубликовать</span>
@@ -29,6 +55,7 @@
     </div>
     <div class="s0 m1 l2"></div>
 </div>
+<script src="/static/scripts/switch_camps.js"></script>
 <script src="/static/scripts/update_rating.js"></script>
 </body>
 </html>

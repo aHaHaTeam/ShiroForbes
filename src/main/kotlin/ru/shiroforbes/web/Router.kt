@@ -23,8 +23,7 @@ import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.model.*
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
-import ru.shiroforbes.modules.googlesheets.RatingRow
+import ru.shiroforbes.modules.googlesheets.RatingDeserializer
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.*
 import java.io.ByteArrayOutputStream
@@ -35,7 +34,7 @@ fun Routing.routes(
     studentService: StudentService? = null,
     eventService: EventService? = null,
     ratingSerializer: RatingSerializer,
-    ratingDeserializer: GoogleSheetsService<RatingRow>,
+    ratingDeserializer: RatingDeserializer,
     routerConfig: RouterConfig? = null,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
@@ -168,35 +167,24 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/update/rating") {
-            val newRating =
-                ratingDeserializer.getRating().associateBy {
-                    it.lastName.trim() + " " + it.firstName.trim()
-                }
-            val studentsDeltas =
-                studentService!!
-                    .getGroup(GroupType.Countryside)
-                    .sortedByDescending { it.rating }
-                    .mapIndexed { i, student ->
-                        StudentDelta(
-                            student.name,
-                            i + 1,
-                            i + 1,
-                            newRating[student.name]!!.solvedProblems,
-                            newRating[student.name]!!.solvedProblems - student.totalSolved,
-                            newRating[student.name]!!.rating,
-                            newRating[student.name]!!.rating - student.rating,
-                        )
-                    }.sortedByDescending { it.rating }
-                    .mapIndexed { i, student ->
-                        student.copy(newRank = i + 1)
-                    }
+            val countrysideDeltas =
+                computeRatingDeltas(
+                    studentService!!.getGroup(GroupType.Countryside),
+                    ratingDeserializer.getCountrysideRating(),
+                )
+            val urbanDeltas =
+                computeRatingDeltas(
+                    studentService.getGroup(GroupType.Urban),
+                    ratingDeserializer.getUrbanRating(),
+                )
 
             call.respond(
                 ThymeleafContent(
                     "update_rating",
                     mapOf(
                         "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
-                        "students" to studentsDeltas,
+                        "countrysideStudents" to countrysideDeltas,
+                        "urbanStudents" to urbanDeltas,
                     ),
                 ),
             )
@@ -206,7 +194,7 @@ fun Routing.routes(
     authenticate("auth-session-admin-only") {
         post("/update/rating") {
             ratingDeserializer
-                .getRating()
+                .getAllRatings()
                 .forEach {
                     studentService!!.addRating(
                         Rating(
@@ -271,7 +259,10 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService!!.updateStudentExercised(id = id.toInt(), exercised = params[id].toString() == "true")
+                    studentService!!.updateStudentExercised(
+                        id = id.toInt(),
+                        exercised = params[id].toString() == "true",
+                    )
                 }
             }
 

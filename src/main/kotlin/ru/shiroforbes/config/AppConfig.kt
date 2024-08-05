@@ -2,7 +2,6 @@
 
 package ru.shiroforbes.config
 
-import com.google.api.services.sheets.v4.SheetsScopes
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
@@ -15,9 +14,7 @@ import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.knownPasswords
 import ru.shiroforbes.login.validAdmin
 import ru.shiroforbes.login.validUser
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
-import ru.shiroforbes.modules.googlesheets.RatingRow
+import ru.shiroforbes.modules.googlesheets.RatingDeserializer
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.DbEventService
 import ru.shiroforbes.service.DbStudentService
@@ -94,16 +91,7 @@ fun Application.configureApp(config: Config) {
         routes(
             studentService = DbStudentService,
             ratingSerializer = RatingSerializer(),
-            ratingDeserializer =
-                GoogleSheetsService(
-                    GoogleSheetsApiConnectionService(
-                        "/googlesheets/credentials.json",
-                        listOf(SheetsScopes.SPREADSHEETS_READONLY),
-                    ),
-                    config.googleSheetsConfig.ratingSpreadsheetId,
-                    RatingRow::class,
-                    config.googleSheetsConfig.ratingRanges,
-                ),
+            ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
             eventService = DbEventService,
             routerConfig = config.routerConfig,
         )
