@@ -11,7 +11,7 @@
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
 </head>
 <body>
-<div th:fragment="menu(events, students)">
+<div th:fragment="menu(events, students, camp)">
     <div th:if="${!events.isEmpty()}">
         <h2 class="center-align">Мероприятия</h2>
         <!--/*@thymesVar id="events" type="java.util.List<ru.shiroforbes.model.Event>"*/-->
@@ -23,7 +23,7 @@
     <br>
 
     <!--/*@thymesVar id="students" type="java.util.List<ru.shiroforbes.model.Student>"*/-->
-    <div th:insert="~{components/rating :: rating(${students})}"></div>
+    <div th:insert="~{components/rating :: rating(${students}, ${camp})}"></div>
 </div>
 </body>
 </html>
