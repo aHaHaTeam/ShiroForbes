@@ -63,6 +63,10 @@ fun main() {
             Events,
             Admins,
         )
+        Admins.deleteAll()
+        StudentWealth.deleteAll()
+        StudentTransaction.deleteAll()
+        StudentRatings.deleteAll()
         Students.deleteAll()
         val students =
             GoogleSheetsService(
@@ -73,7 +77,7 @@ fun main() {
                 "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
                 ConversionClass::class,
                 listOf(
-                    "ShV!A2:N31",
+                    "ShV!A2:N61",
                 ),
                 Class.forName("ru.shiroforbes.database.InitKt"),
             ).getRating()
@@ -94,7 +98,6 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-        Admins.deleteAll()
         Admins.insert {
             it[name] = "vasya"
             it[login] = "vasya566"

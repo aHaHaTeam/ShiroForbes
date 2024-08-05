@@ -17,18 +17,50 @@
         <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
         <div th:insert="~{components/header :: header(${user})}"></div>
 
-        <main class="responsive">
-            <div th:insert="~{components/rating_diff :: rating(${students})}"></div>
-            <form>
-                <button class="extra round center" id="publishButton" type="submit">
-                    <span id="span">Опубликовать</span>
-                    <progress class="circle" id="progress" style="display: none"></progress>
+        <div class="grid">
+            <div class="s2 m3 l3"></div>
+            <nav class="no-space center-align middle-align s8 m6 l6">
+                <button id="countryside" class="border left-round max"
+                        th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
+                    <i class="small">nature</i>
+                    <span>Загородный лагерь</span>
                 </button>
-            </form>
+                <button id="urban" class="border right-round max"
+                        th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
+                    <i class="small">home</i>
+                    <span>Городской лагерь</span>
+                </button>
+            </nav>
+            <div class="s2 m3 l3"></div>
+        </div>
+
+        <main class="responsive">
+            <div id="countrysideContent"
+                 th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}">
+                <div th:insert="~{components/rating_diff :: rating(${countrysideStudents})}"></div>
+                <form id="countrysideForm">
+                    <button class="extra round center" id="countrysidePublishButton" type="submit">
+                        <span id="countrysideSpan">Опубликовать</span>
+                        <progress class="circle" id="countrysideProgress" style="display: none"></progress>
+                    </button>
+                </form>
+            </div>
+
+            <div id="urbanContent"
+                 th:hidden="${user.equals(0) || user.group.text != 'Urban'}">
+                <div th:insert="~{components/rating_diff :: rating(${urbanStudents})}"></div>
+                <form id="urbanForm">
+                    <button class="extra round center" id="urbanPublishButton" type="submit">
+                        <span id="urbanSpan">Опубликовать</span>
+                        <progress class="circle" id="urbanProgress" style="display: none"></progress>
+                    </button>
+                </form>
+            </div>
         </main>
     </div>
     <div class="s0 m1 l2"></div>
 </div>
+<script src="/static/scripts/switch_camps.js"></script>
 <script src="/static/scripts/update_rating.js"></script>
 </body>
 </html>

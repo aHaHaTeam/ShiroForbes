@@ -1,6 +1,6 @@
 package ru.shiroforbes.model
 
-data class StudentDelta(
+data class RatingDelta(
     val name: String,
     val oldRank: Int,
     val newRank: Int,
