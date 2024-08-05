@@ -29,6 +29,9 @@
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/transactions/urban">Раздать
                         златы(город)</a>
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/update/rating">Опубликовать рейтинг</a>
+                    <a th:if="${!user.equals(0)}" href="/logout">
+                        Выйти
+                    </a>
 
                 </menu>
             </button>
