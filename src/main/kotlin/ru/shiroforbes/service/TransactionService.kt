@@ -3,10 +3,8 @@ package ru.shiroforbes.service
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.database.StudentTransaction
@@ -60,15 +58,20 @@ object DbTransactionService : TransactionService {
             .value
 
     override suspend fun makeTransaction(transaction: Transaction) {
-        val tansactionId =
-            Transactions.insertAndGetId {
-                it[Transactions.size] = transaction.size
-                it[Transactions.date] = transaction.date
-                it[Transactions.description] = transaction.description
+        transaction {
+            val tansactionId =
+                Transactions.insertAndGetId {
+                    it[Transactions.size] = transaction.size
+                    it[Transactions.date] = transaction.date
+                    it[Transactions.description] = transaction.description
+                }
+            StudentTransaction.insert {
+                it[StudentTransaction.transaction] = tansactionId
+                it[StudentTransaction.student] = transaction.studentId
             }
-        StudentTransaction.insert {
-            it[StudentTransaction.transaction] = tansactionId
-            it[StudentTransaction.student] = transaction.studentId
+            Students.update({ Students.id eq transaction.studentId }) {
+                it[wealth] = wealth + transaction.size
+            }
         }
     }
 

@@ -11,7 +11,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -23,9 +26,7 @@ import ru.shiroforbes.model.*
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
-import ru.shiroforbes.service.DbUserService
-import ru.shiroforbes.service.EventService
-import ru.shiroforbes.service.StudentService
+import ru.shiroforbes.service.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
@@ -38,6 +39,7 @@ fun Routing.routes(
     routerConfig: RouterConfig? = null,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
+
     get("/favicon.ico") {
         call.respondFile(File("src/main/resources/static/images/shiro&vlasik.png"))
     }
@@ -82,28 +84,6 @@ fun Routing.routes(
                 ),
             )
         }
-    }
-
-    get("/menu-no-login") {
-        val user: Any = 0
-        call.respond(
-            ThymeleafContent(
-                "menu",
-                mapOf(
-                    "countrysideCampStudents" to
-                        studentService!!
-                            .getGroup(GroupType.Countryside)
-                            .sortedByDescending { it.rating + it.wealth },
-                    "urbanCampStudents" to
-                        studentService
-                            .getGroup(GroupType.Urban)
-                            .sortedByDescending { it.rating + it.wealth },
-                    "user" to user,
-                    "countrysideCampEvents" to listOf<Event>(),
-                    "urbanCampEvents" to listOf<Event>(),
-                ),
-            ),
-        )
     }
 
     get("/login") {
@@ -335,6 +315,36 @@ fun Routing.routes(
                     ),
                 ),
             )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        post("/transactions/transactions") {
+            val formContent = call.receiveText()
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+            println(params)
+            val transactionName = params.jsonValue("transactionName")
+            for (login: String in params.keys) {
+                if (login == "transactionName") {
+                    continue
+                }
+                val size = params.jsonValue(login).toInt()
+                val studentId = DbStudentService.getStudentByLogin(login)!!.id
+                DbTransactionService.makeTransaction(
+                    Transaction(
+                        id = 0,
+                        studentId = studentId,
+                        size = size,
+                        date =
+                            Clock.System.now().toLocalDateTime(
+                                TimeZone.currentSystemDefault(),
+                            ),
+                        description = transactionName,
+                    ),
+                )
+            }
+
+            call.respond(HttpStatusCode.Accepted)
         }
     }
 
