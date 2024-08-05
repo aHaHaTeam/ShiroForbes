@@ -63,7 +63,7 @@
                 </article>
 
             </div>
-            <div th:unless="${user.isExercised==null}" class="s6">
+            <div th:if="${!activeUser.equals(0) && user.login == activeUser.login}" th:unless="${user.isExercised==null}" class="s6">
                 <div class="center fit-content">
                     <span class="large-text">Присутствие на зарядке</span>
                     <div class="chip fill extra">
@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </div>
-            <div th:unless="${user.isBeaten==null}" class="s6">
+            <div th:if="${!activeUser.equals(0) && user.login == activeUser.login}" th:unless="${user.isBeaten==null}" class="s6">
                 <div class="center fit-content">
                     <span class="large-text">Отбой вовремя</span>
                     <div class="chip fill extra">
