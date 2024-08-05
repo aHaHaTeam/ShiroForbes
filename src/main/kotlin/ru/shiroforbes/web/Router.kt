@@ -155,6 +155,11 @@ fun Routing.routes(
         }
     }
 
+    get("/logout") {
+        call.sessions.set(Session("", ""))
+        call.respondRedirect("/login")
+    }
+
     authenticate("auth-session") {
         get("/mock/admin") {
             call.respond(
@@ -271,7 +276,10 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService!!.updateStudentExercised(id = id.toInt(), exercised = params[id].toString() == "true")
+                    studentService!!.updateStudentExercised(
+                        id = id.toInt(),
+                        exercised = params[id].toString() == "true",
+                    )
                 }
             }
 
