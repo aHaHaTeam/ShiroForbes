@@ -13,6 +13,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import ru.shiroforbes.Config
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.knownPasswords
+import ru.shiroforbes.login.validAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
@@ -36,7 +37,7 @@ fun Application.configureApp(config: Config) {
     install(Sessions) {
         cookie<Session>("user_session") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60
+            cookie.maxAgeInSeconds = 60 * 10
         }
     }
 
@@ -63,18 +64,6 @@ fun Application.configureApp(config: Config) {
                 call.respondRedirect("/login")
             }
         }
-        session<Session>("auth-session-redirect-to-menu") {
-            validate { session ->
-                if (validUser(session.login, session.password)) {
-                    session
-                } else {
-                    null
-                }
-            }
-            challenge {
-                call.respondRedirect("/menu-no-login")
-            }
-        }
 
         session<Session>("auth-session-no-redirect") {
             skipWhen { call -> call.sessions.get<Session>() == null }
@@ -84,6 +73,19 @@ fun Application.configureApp(config: Config) {
                 } else {
                     Session("", "")
                 }
+            }
+        }
+
+        session<Session>("auth-session-admin-only") {
+            validate { session ->
+                if (validAdmin(session.login, session.password)) {
+                    session
+                } else {
+                    null
+                }
+            }
+            challenge {
+                call.respondRedirect("/login")
             }
         }
     }

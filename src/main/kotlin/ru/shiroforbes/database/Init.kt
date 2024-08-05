@@ -83,7 +83,7 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-
+        Admins.deleteAll()
         Admins.insert {
             it[name] = "vasya"
             it[login] = "vasya566"

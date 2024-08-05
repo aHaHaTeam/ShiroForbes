@@ -18,10 +18,7 @@ import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
-import ru.shiroforbes.model.Admin
-import ru.shiroforbes.model.Event
-import ru.shiroforbes.model.GroupType
-import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.*
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.modules.serialization.RatingSerializer
@@ -55,7 +52,7 @@ fun Routing.routes(
         call.respondRedirect(routerConfig!!.lzUrl)
     }
 
-    authenticate("auth-session-redirect-to-menu") {
+    authenticate("auth-session-no-redirect") {
         get("/menu") {
             var user: Any = 0
             if (call.principal<Session>() != null) {
@@ -168,8 +165,11 @@ fun Routing.routes(
 
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
-            if ((call.principal<Session>()?.login != call.parameters["login"])) {
-                call.respondRedirect("/profile/" + call.parameters["login"] + "/view-only")
+            var activeUser: Any = 0
+            if (call.principal<Session>() != null) {
+                if (call.principal<Session>()!!.login != "") {
+                    activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
+                }
             }
             val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
             if (!user.HasAdminRights) {
@@ -181,7 +181,7 @@ fun Routing.routes(
                             "user" to user,
                             "rating" to user.ratingHistory,
                             "wealth" to user.wealthHistory,
-                            "activeUser" to user,
+                            "activeUser" to activeUser,
                         ),
                     ),
                 )
@@ -191,38 +191,45 @@ fun Routing.routes(
         }
     }
 
-    get("/profile/{login}/view-only") {
-        var activeUser: Any = 0
-        if (call.principal<Session>() != null) {
-            if (call.principal<Session>()!!.login != "") {
-                activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
-            }
-        }
-        val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
-        if (!user.HasAdminRights) {
-            user as Student
-            call.respond(
-                ThymeleafContent(
-                    "profile",
-                    mapOf(
-                        "user" to user,
-                        "rating" to user.ratingHistory,
-                        "wealth" to user.wealthHistory,
-                        "activeUser" to activeUser,
-                    ),
-                ),
-            )
-        } else {
-            call.respondRedirect("/menu")
-        }
-    }
-
     authenticate("auth-session") {
         get("/mock/admin") {
             call.respond(
                 ThymeleafContent(
                     "admin",
                     mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        get("/update/rating") {
+            val studentsDeltas =
+                studentService!!
+                    .getGroup(GroupType.Countryside)
+                    .sortedByDescending { it.rating }
+                    .mapIndexed { i, student ->
+                        StudentDelta(
+                            student.name,
+                            i + 1,
+                            i + 1,
+                            student.totalSolved + 3,
+                            3,
+                            student.rating + 51,
+                            51,
+                        )
+                    }.sortedByDescending { it.rating }
+                    .mapIndexed { i, student ->
+                        student.copy(newRank = i + 1)
+                    }
+
+            call.respond(
+                ThymeleafContent(
+                    "update_rating",
+                    mapOf(
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                        "students" to studentsDeltas,
+                    ),
                 ),
             )
         }
@@ -289,7 +296,7 @@ fun Routing.routes(
     get("/event") {
         call.respond(
             ThymeleafContent(
-                "eventWorkshop",
+                "event_workshop",
                 mapOf(
                     "user" to 0, // TODO() call for proper user
                 ),
@@ -312,20 +319,26 @@ fun Routing.routes(
         call.respond(HttpStatusCode.Accepted)
     }
 
-    post("/profile/investing") {
-        val formContent = call.receiveText()
-        val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+    authenticate("auth-session") {
+        post("/profile/investing") {
+            val formContent = call.receiveText()
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
 
-        val id = params["userId"].toString().toInt()
-        val investing = params["isInvesting"].toString()
-        if (investing == "true") {
-            studentService?.updateStudentInvesting(id, true)
-        }
-        if (investing == "false") {
-            studentService?.updateStudentInvesting(id, false)
-        }
+            val id = params["userId"].toString().toInt()
+            val login = params.jsonValue("login")
+            if (login != call.principal<Session>()?.login) {
+                call.respond(HttpStatusCode.Unauthorized)
+            }
+            val investing = params["isInvesting"].toString()
+            if (investing == "true") {
+                studentService?.updateStudentInvesting(id, true)
+            }
+            if (investing == "false") {
+                studentService?.updateStudentInvesting(id, false)
+            }
 
-        call.respond(HttpStatusCode.NoContent)
+            call.respond(HttpStatusCode.NoContent)
+        }
     }
 }
 
