@@ -4,12 +4,16 @@ package ru.shiroforbes.service
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import ru.shiroforbes.database.StudentDAO
-import ru.shiroforbes.database.Students
+import ru.shiroforbes.config
+import ru.shiroforbes.database.*
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Rating
 import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.Wealth
 
 /**
  * Service for accessing the student storage.
@@ -42,15 +46,25 @@ interface StudentService {
     suspend fun updateAllStudentsBeaten(Beaten: Boolean): Unit = throw NotImplementedError()
 
     suspend fun getGroup(group: GroupType): List<Student> = throw NotImplementedError()
+
+    suspend fun addRating(
+        rating: Rating,
+        name: String,
+    ): Unit = throw NotImplementedError()
+
+    suspend fun addWealth(
+        wealth: Wealth,
+        name: String,
+    ): Unit = throw NotImplementedError()
 }
 
 object DbStudentService : StudentService {
     init {
         Database.connect(
-            "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-            driver = "org.postgresql.Driver",
-            user = "postgres.lsbuufukrknwuixafuuu",
-            password = "shiroforbes239",
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
         )
     }
 
@@ -84,7 +98,9 @@ object DbStudentService : StudentService {
 
     override suspend fun getAllStudents(): List<Student> {
         println("getAllStudents")
-        return StudentDAO.all().map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
+        return StudentDAO
+            .all()
+            .map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
     }
 
     override suspend fun updateStudentInvesting(
@@ -140,4 +156,51 @@ object DbStudentService : StudentService {
         transaction {
             return@transaction runBlocking { getAllStudents().filter { it.group == group } }
         }
+
+    override suspend fun addRating(
+        rating: Rating,
+        name: String,
+    ) {
+        val studentId =
+            StudentDAO
+                .find { Students.name eq name }
+                .limit(1)
+                .first()
+                .id
+        val ratingId =
+            Ratings.insertAndGetId {
+                it[date] = rating.date
+                it[total] = rating.total
+                it[algebra] = rating.algebra
+                it[geometry] = rating.geometry
+                it[combinatorics] = rating.combinatorics
+            }
+
+        StudentRatings.insert {
+            it[StudentRatings.rating] = ratingId
+            it[student] = studentId
+        }
+    }
+
+    override suspend fun addWealth(
+        wealth: Wealth,
+        name: String,
+    ) {
+        val studentId =
+            StudentDAO
+                .find { Students.name eq name }
+                .limit(1)
+                .first()
+                .id
+        val wealthId =
+            Wealths.insertAndGetId {
+                it[date] = wealth.date
+                it[Wealths.wealth] = wealth.wealth
+            }
+
+        StudentRatings.insert {
+            it[StudentRatings.rating] = wealthId
+            it[student] = studentId
+        }
+    }
 }

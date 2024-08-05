@@ -32,7 +32,8 @@
                 <br>
                 <div class="grid">
                     <p th:text="|Баланс: ${user.wealth}|" class="s12"></p>
-                    <div class="s12 field middle-align" th:if="${!activeUser.equals(0) && user.login == activeUser.login}">
+                    <div class="s12 field middle-align"
+                         th:if="${!activeUser.equals(0) && user.login == activeUser.login}">
                         <nav style="padding-left: 0">
                             <div class="max">
                                 <p>Я инвестирую! Или нет? 🤔</p>
@@ -92,8 +93,8 @@
                         <span>Златы</span>
                     </a>
                 </div>
-                <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id ="ratingChart"></div>
-                <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id = "wealthChart"></div>
+                <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id="ratingChart"></div>
+                <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id="wealthChart"></div>
             </div>
         </main>
     </div>
@@ -110,7 +111,8 @@
         investorStatus.textContent = "Думаю, не сегодня...";
     }
     const initialValue = investorCheckbox.checked
-    userId = /*[[${user.id}]]*/""
+    const userId = /*[[${user.id}]]*/""
+    const login = /*[[${user.login}]]*/""
     investorCheckbox.addEventListener("change", () => {
         this.checked = !this.checked
         if (this.checked !== initialValue) {
@@ -119,15 +121,19 @@
             investorStatus.textContent = "Думаю, не сегодня...";
         }
         const data = {
+            "userId": userId,
+            "login": login,
             "isInvesting": this.checked !== initialValue,
         }
-        fetch("/profile/investing/" + userId, {
+        fetch("/profile/investing", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
-        }).then(() => {
-            alert("Изменения записаны.")
-            console.log("updated")
+        }).then((response) => {
+            if (response.ok) {
+                alert("Изменения записаны.")
+                console.log("updated")
+            }
         })
     })
 </script>

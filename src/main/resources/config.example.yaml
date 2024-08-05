@@ -13,3 +13,9 @@ googleSheetsConfig:
     - Лист1!E3:E30
     - Лист1!F3:F30
     - Лист1!G3:G30
+
+dbConfig:
+  connectionUrl: "jdbc:postgresql://localhost:5432/shiroforbes"
+  driver: "org.postgresql.Driver"
+  user: "postgres"
+  password: "postgres"

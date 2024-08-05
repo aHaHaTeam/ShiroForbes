@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
@@ -44,14 +45,24 @@ internal fun kotlin.String.toBooleanOrNull(): Boolean? =
 
 fun main() {
     Database.connect(
-        "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-        driver = "org.postgresql.Driver",
-        user = "postgres.lsbuufukrknwuixafuuu",
-        password = "shiroforbes239",
+        config.dbConfig.connectionUrl,
+        config.dbConfig.driver,
+        config.dbConfig.user,
+        config.dbConfig.password,
     )
 
     transaction {
-        create(Students, Ratings, Wealths, Transactions, StudentRatings, StudentWealth, StudentTransaction, Events)
+        create(
+            Students,
+            Ratings,
+            Wealths,
+            Transactions,
+            StudentRatings,
+            StudentWealth,
+            StudentTransaction,
+            Events,
+            Admins,
+        )
         Students.deleteAll()
         val students =
             GoogleSheetsService(
@@ -83,7 +94,7 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-
+        Admins.deleteAll()
         Admins.insert {
             it[name] = "vasya"
             it[login] = "vasya566"

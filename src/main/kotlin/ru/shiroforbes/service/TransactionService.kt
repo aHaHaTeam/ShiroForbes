@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.shiroforbes.config
 import ru.shiroforbes.database.StudentTransaction
 import ru.shiroforbes.database.Students
 import ru.shiroforbes.database.TransactionDAO
@@ -38,10 +39,10 @@ interface TransactionService {
 object DbTransactionService : TransactionService {
     init {
         Database.connect(
-            "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-            driver = "org.postgresql.Driver",
-            user = "postgres.lsbuufukrknwuixafuuu",
-            password = "shiroforbes239",
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
         )
     }
 

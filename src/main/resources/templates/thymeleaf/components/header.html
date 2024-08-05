@@ -21,7 +21,8 @@
                     <a href="/grobarium">Гробарий</a>
                     <a href="/series">Серии</a>
                     <a href="/lz">Летнее задание</a>
-                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event">Создать новое событие</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event">Создать новое мероприятие</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/update/rating">Опубликовать рейтинг</a>
 
                 </menu>
             </button>
@@ -30,7 +31,6 @@
             <div class="s2 right-align">
                 <div th:if="${!user.equals(0)}">
                     <a th:href="|/profile/${user.login}|">
-                        <span th:text="${user.name}"></span>
                         <img th:src="|/static/images/${user.login}.jpg|" class="circle">
                     </a>
                 </div>

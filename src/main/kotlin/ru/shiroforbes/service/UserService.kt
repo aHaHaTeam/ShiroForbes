@@ -1,6 +1,7 @@
 package ru.shiroforbes.service
 
 import org.jetbrains.exposed.sql.Database
+import ru.shiroforbes.config
 import ru.shiroforbes.model.User
 
 interface UserService {
@@ -10,10 +11,10 @@ interface UserService {
 object DbUserService : UserService {
     init {
         Database.connect(
-            "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres?prepareThreshold=0",
-            driver = "org.postgresql.Driver",
-            user = "postgres.lsbuufukrknwuixafuuu",
-            password = "shiroforbes239",
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
         )
     }
 

@@ -7,6 +7,7 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
     <script type="module"
             src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
@@ -46,37 +47,6 @@
     </div>
     <div class="s0 m2 s3"></div>
 </main>
-<script th:inline="javascript">
-    const login = document.getElementById("login")
-    const password = document.getElementById("password")
-    const span = document.getElementById("span")
-    const progress = document.getElementById("progress")
-    const form = document.querySelector("form")
-
-
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const data = {
-            "login": login.value,
-            "password": CryptoJS.MD5(password.value).toString(CryptoJS.enc.Hex),
-        }
-
-        span.style.display = "none"
-        progress.style.display = ""
-        fetch("/login", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        }).then(response => {
-            if (response.redirected) {
-                window.location.assign(response.url)
-            } else {
-                span.style.display = ""
-                progress.style.display = "none"
-                alert("Неверный логин или пароль")
-            }
-        })
-    })
-</script>
+<script src="static/scripts/login.js"></script>
 </body>
 </html>
