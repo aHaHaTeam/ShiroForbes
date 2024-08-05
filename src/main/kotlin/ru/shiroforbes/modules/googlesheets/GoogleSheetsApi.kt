@@ -180,6 +180,7 @@ object Obj {
                 "Конд!B5:B33",
                 "Конд!D5:D33",
                 "Конд!E5:E33",
+                "Конд!L5:L33",
                 "Конд!G5:G33",
                 "Конд!I5:I33",
                 "Конд!K5:K33",
@@ -189,7 +190,7 @@ object Obj {
                 "/googlesheets/credentials.json",
                 listOf(SheetsScopes.SPREADSHEETS_READONLY),
             ),
-            "spreadsheetId",
+            "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
             RatingRow::class,
             dataRanges,
         ).getRating().map {

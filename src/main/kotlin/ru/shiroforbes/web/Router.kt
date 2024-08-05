@@ -11,6 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -27,6 +28,7 @@ import ru.shiroforbes.service.EventService
 import ru.shiroforbes.service.StudentService
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.time.LocalDate
 
 fun Routing.routes(
     studentService: StudentService? = null,
@@ -186,6 +188,10 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/update/rating") {
+            val newRating =
+                ratingDeserializer.getRating().associateBy {
+                    it.lastName.trim() + " " + it.firstName.trim()
+                }
             val studentsDeltas =
                 studentService!!
                     .getGroup(GroupType.Countryside)
@@ -195,10 +201,10 @@ fun Routing.routes(
                             student.name,
                             i + 1,
                             i + 1,
-                            student.totalSolved + 3,
-                            3,
-                            student.rating + 51,
-                            51,
+                            newRating[student.name]!!.solvedProblems,
+                            newRating[student.name]!!.solvedProblems - student.totalSolved,
+                            newRating[student.name]!!.rating,
+                            newRating[student.name]!!.rating - student.rating,
                         )
                     }.sortedByDescending { it.rating }
                     .mapIndexed { i, student ->
@@ -214,6 +220,36 @@ fun Routing.routes(
                     ),
                 ),
             )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        post("/update/rating") {
+            ratingDeserializer
+                .getRating()
+                .forEach {
+                    studentService!!.addRating(
+                        Rating(
+                            -1,
+                            -1,
+                            LocalDate.now().toKotlinLocalDate(),
+                            it.solvedProblems,
+                            it.rating,
+                            it.solvedPercentage,
+                            it.algebraPercentage,
+                            it.geometryPercentage,
+                            it.combinatoricsPercentage,
+                        ),
+                        it.lastName.trim() + " " + it.firstName.trim(),
+                    )
+                    studentService.updateRating(
+                        it.lastName.trim() + " " + it.firstName.trim(),
+                        it.rating,
+                        it.solvedProblems,
+                    )
+                }
+            call.respond(HttpStatusCode.OK)
+//            call.respondRedirect("/update/rating")
         }
     }
 

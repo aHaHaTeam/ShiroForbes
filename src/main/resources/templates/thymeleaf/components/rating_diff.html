@@ -31,18 +31,21 @@
             <tr th:each="student, j: ${students}">
                 <td>
                     <span th:text="${student.newRank}"></span>
-                    <span th:if="${student.newRank > student.oldRank}"
-                          th:text="|(+${student.newRank - student.oldRank})|" style="color: green"></span>
+                    <i th:if="${student.newRank < student.oldRank}" style="color: green">arrow_drop_up</i>
                     <span th:if="${student.newRank < student.oldRank}"
-                          th:text="|(-${student.oldRank - student.newRank})|" style="color: red"></span>
-                    <span th:if="${student.newRank == student.oldRank}" style="color: gray">(+0)</span>
+                          th:utext="|(+${student.oldRank - student.newRank})|" style="color: green"></span>
+                    <i th:if="${student.newRank > student.oldRank}" style="color: red">arrow_drop_down</i>
+                    <span th:if="${student.newRank > student.oldRank}"
+                          th:text="|(${student.oldRank - student.newRank})|" style="color: red"></span>
+                    <i th:if="${student.newRank == student.oldRank}" style="color: gray">remove</i>
+                    <span th:if="${student.newRank == student.oldRank}" style="color: gray">(0)</span>
                 </td>
                 <td th:text="${student.name}"></td>
                 <td class="right-align">
                     <span th:text="${student.solved}"></span>
                     <span th:if="${student.solvedDelta > 0}" th:text="|(+${student.solvedDelta})|"
                           style="color: green"></span>
-                    <span th:if="${student.solvedDelta < 0}" th:text="|(+${student.solvedDelta})|"
+                    <span th:if="${student.solvedDelta < 0}" th:text="|(${student.solvedDelta})|"
                           style="color: red"></span>
                     <span th:if="${student.solvedDelta == 0}" style="color: gray">(+0)</span>
                 </td>
@@ -50,7 +53,7 @@
                     <span th:text="${student.rating}"></span>
                     <span th:if="${student.ratingDelta > 0}" th:text="|(+${student.ratingDelta})|"
                           style="color: green"></span>
-                    <span th:if="${student.ratingDelta < 0}" th:text="|(+${student.ratingDelta})|"
+                    <span th:if="${student.ratingDelta < 0}" th:text="|(${student.ratingDelta})|"
                           style="color: red"></span>
                     <span th:if="${student.ratingDelta == 0}" style="color: gray">(+0)</span>
                 </td>
