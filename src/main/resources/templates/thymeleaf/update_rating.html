@@ -36,21 +36,26 @@
 
         <main class="responsive">
             <div id="countrysideContent"
-                 th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}"
-                 th:insert="~{components/rating_diff :: rating(${countrysideStudents})}">
+                 th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}">
+                <div th:insert="~{components/rating_diff :: rating(${countrysideStudents})}"></div>
+                <form id="countrysideForm">
+                    <button class="extra round center" id="countrysidePublishButton" type="submit">
+                        <span id="countrysideSpan">Опубликовать</span>
+                        <progress class="circle" id="countrysideProgress" style="display: none"></progress>
+                    </button>
+                </form>
             </div>
 
             <div id="urbanContent"
-                 th:hidden="${user.equals(0) || user.group.text != 'Urban'}"
-                 th:insert="~{components/rating_diff :: rating(${urbanStudents})}">
+                 th:hidden="${user.equals(0) || user.group.text != 'Urban'}">
+                <div th:insert="~{components/rating_diff :: rating(${urbanStudents})}"></div>
+                <form id="urbanForm">
+                    <button class="extra round center" id="urbanPublishButton" type="submit">
+                        <span id="urbanSpan">Опубликовать</span>
+                        <progress class="circle" id="urbanProgress" style="display: none"></progress>
+                    </button>
+                </form>
             </div>
-
-            <form>
-                <button class="extra round center" id="publishButton" type="submit">
-                    <span id="span">Опубликовать</span>
-                    <progress class="circle" id="progress" style="display: none"></progress>
-                </button>
-            </form>
         </main>
     </div>
     <div class="s0 m1 l2"></div>

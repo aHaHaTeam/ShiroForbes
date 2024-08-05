@@ -1,14 +1,16 @@
-const span = document.getElementById("span")
-const progress = document.getElementById("progress")
-const form = document.querySelector("form")
+const urbanSpan = document.getElementById("urbanSpan")
+const urbanProgress = document.getElementById("urbanProgress")
+const urbanForm = document.getElementById("urbanForm")
+const countrysideSpan = document.getElementById("countrysideSpan")
+const countrysideProgress = document.getElementById("countrysideProgress")
+const countrysideForm = document.getElementById("countrysideForm")
 
 
-form.addEventListener("submit", (e) => {
+urbanForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    span.style.display = "none"
-    progress.style.display = ""
-    fetch("/update/rating", {
+    urbanSpan.style.display = "none"
+    urbanProgress.style.display = ""
+    fetch("/update/urban/rating", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: "{}"
@@ -17,8 +19,27 @@ form.addEventListener("submit", (e) => {
             window.location.assign(response.url)
         } else {
             alert("Something went wrong")
-            span.style.display = ""
-            progress.style.display = "none"
+            urbanSpan.style.display = ""
+            urbanProgress.style.display = "none"
+        }
+    })
+})
+
+countrysideForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    countrysideSpan.style.display = "none"
+    countrysideProgress.style.display = ""
+    fetch("/update/countryside/rating", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: "{}"
+    }).then(response => {
+        if (response.redirected) {
+            window.location.assign(response.url)
+        } else {
+            alert("Something went wrong")
+            countrysideSpan.style.display = ""
+            countrysideProgress.style.display = "none"
         }
     })
 })
