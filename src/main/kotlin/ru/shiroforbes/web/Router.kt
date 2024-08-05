@@ -245,6 +245,35 @@ fun Routing.routes(
     }
 
     authenticate("auth-session-admin-only") {
+        post("/transactions/exercises/countryside") {
+            val formContent = call.receiveText()
+            println(formContent)
+            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+
+            if (params.jsonValue("activityType") == "exercises") {
+                for (id: String in params.keys) {
+                    if (id == "activityType") {
+                        continue
+                    }
+                    studentService!!.updateStudentExercised(id = id.toInt(), exercised = params[id].toString() == "true")
+                }
+            }
+
+            if (params.jsonValue("activityType") == "curfew") {
+                for (id: String in params.keys) {
+                    if (id == "activityType") {
+                        continue
+                    }
+                    studentService!!.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
+                }
+            }
+
+            call.respond(HttpStatusCode.Accepted)
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
         get("/transactions/transactions/countryside") {
             val countryside = studentService!!.getGroup(GroupType.Countryside)
             call.respond(
@@ -252,6 +281,21 @@ fun Routing.routes(
                     "transactions",
                     mapOf(
                         "students" to countryside,
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        get("/transactions/transactions/urban") {
+            val urban = studentService!!.getGroup(GroupType.Urban)
+            call.respond(
+                ThymeleafContent(
+                    "transactions",
+                    mapOf(
+                        "students" to urban,
                         "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
                     ),
                 ),

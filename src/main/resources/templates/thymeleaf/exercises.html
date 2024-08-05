@@ -35,9 +35,9 @@
                     <span>Отбой</span>
                 </a>
             </div>
-            <form action="/event/new" method="POST">
+            <form>
                 <fieldset>
-                    <legend>Заполните все поля</legend>
+                    <legend>Выберите участников</legend>
                     <div name="activityType" id="activityType" hidden>exercises</div>
                     <a href="" class="row">
                         <div class="max">
@@ -59,7 +59,7 @@
                         </div>
 
                         <label class="switch icon">
-                            <input type="checkbox" class="regularSwitch">
+                            <input type="checkbox" th:id="${student.id}" class="regularSwitch">
                             <span>
                                 <i>close</i>
                                 <i>done</i>
