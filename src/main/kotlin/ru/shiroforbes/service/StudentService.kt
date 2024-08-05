@@ -45,6 +45,17 @@ interface StudentService {
 
     suspend fun updateAllStudentsBeaten(Beaten: Boolean): Unit = throw NotImplementedError()
 
+    suspend fun updateRating(
+        name: String,
+        rating: Int,
+        solved: Int,
+    ): Unit = throw NotImplementedError()
+
+    suspend fun updateWealth(
+        name: String,
+        wealth: Int,
+    ): Unit = throw NotImplementedError()
+
     suspend fun getGroup(group: GroupType): List<Student> = throw NotImplementedError()
 
     suspend fun addRating(
@@ -152,6 +163,42 @@ object DbStudentService : StudentService {
         }
     }
 
+    override suspend fun updateRating(
+        name: String,
+        rating: Int,
+        solved: Int,
+    ) {
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            Students.update({ Students.id eq studentId }) {
+                it[this.rating] = rating
+                it[totalSolved] = solved
+            }
+        }
+    }
+
+    override suspend fun updateWealth(
+        name: String,
+        wealth: Int,
+    ) {
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            Students.update({ Students.id eq studentId }) {
+                it[this.wealth] = wealth
+            }
+        }
+    }
+
     override suspend fun getGroup(group: GroupType): List<Student> =
         transaction {
             return@transaction runBlocking { getAllStudents().filter { it.group == group } }
@@ -161,24 +208,26 @@ object DbStudentService : StudentService {
         rating: Rating,
         name: String,
     ) {
-        val studentId =
-            StudentDAO
-                .find { Students.name eq name }
-                .limit(1)
-                .first()
-                .id
-        val ratingId =
-            Ratings.insertAndGetId {
-                it[date] = rating.date
-                it[total] = rating.total
-                it[algebra] = rating.algebra
-                it[geometry] = rating.geometry
-                it[combinatorics] = rating.combinatorics
-            }
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            val ratingId =
+                Ratings.insertAndGetId {
+                    it[date] = rating.date
+                    it[total] = rating.solvedPercentage
+                    it[algebra] = rating.algebraPercentage
+                    it[geometry] = rating.geometryPercentage
+                    it[combinatorics] = rating.combinatoricsPercentage
+                }
 
-        StudentRatings.insert {
-            it[StudentRatings.rating] = ratingId
-            it[student] = studentId
+            StudentRatings.insert {
+                it[StudentRatings.rating] = ratingId
+                it[student] = studentId
+            }
         }
     }
 
@@ -186,21 +235,23 @@ object DbStudentService : StudentService {
         wealth: Wealth,
         name: String,
     ) {
-        val studentId =
-            StudentDAO
-                .find { Students.name eq name }
-                .limit(1)
-                .first()
-                .id
-        val wealthId =
-            Wealths.insertAndGetId {
-                it[date] = wealth.date
-                it[Wealths.wealth] = wealth.wealth
-            }
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            val wealthId =
+                Wealths.insertAndGetId {
+                    it[date] = wealth.date
+                    it[Wealths.wealth] = wealth.wealth
+                }
 
-        StudentRatings.insert {
-            it[StudentRatings.rating] = wealthId
-            it[student] = studentId
+            StudentRatings.insert {
+                it[StudentRatings.rating] = wealthId
+                it[student] = studentId
+            }
         }
     }
 }

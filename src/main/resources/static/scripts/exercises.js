@@ -2,6 +2,7 @@ const exercisesTab = document.getElementById("exercisesTab")
 const promenadeTab = document.getElementById("promenadeTab")
 const curfewTab = document.getElementById("curfewTab")
 const activityType = document.getElementById("activityType")
+const form = document.querySelector("form")
 
 exercisesTab.onclick = () => {
     exercisesTab.classList.add("active")
@@ -49,3 +50,30 @@ for (let j = 0; j < switches.length; j++) {
         }
     }
 }
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let data = {
+        "activityType": activityType.textContent,
+    }
+    for (let i = 0; i < 1000; i++){
+        const row = document.getElementById(i)
+        if (row==null){
+            continue
+        }
+        data[i] = row.checked
+    }
+    fetch("/transactions/exercises/countryside", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(response => {
+        if (response.redirected) {
+            window.location.assign(response.url)
+        } else {
+            if(response.ok){
+                alert("Успех")
+            }
+        }
+    })
+})

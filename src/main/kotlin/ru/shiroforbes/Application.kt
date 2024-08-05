@@ -34,7 +34,11 @@ internal val config: Config by lazy {
         .loadConfigOrThrow<Config>()
 }
 
-fun main() {
+fun main(args: Array<String>) {
+    if (args.contains("--init")) {
+        ru.shiroforbes.database.main()
+        return
+    }
     runBlocking {
         launch {
             val exercise =
@@ -69,7 +73,7 @@ fun main() {
             scheduler.scheduleJob(beat, evening)
         }
         launch {
-            embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+            embeddedServer(Netty, port = 80, host = "0.0.0.0", module = Application::module)
                 .start(wait = true)
         }
     }

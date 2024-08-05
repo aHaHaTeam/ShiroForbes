@@ -22,6 +22,12 @@
                     <a href="/series">Серии</a>
                     <a href="/lz">Летнее задание</a>
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event">Создать новое мероприятие</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/exercises/countryside">Зарядка/Отбой/Случайное
+                        событие</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/transactions/countryside">Раздать
+                        златы(лагерь)</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/transactions/urban">Раздать
+                        златы(город)</a>
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/update/rating">Опубликовать рейтинг</a>
 
                 </menu>
@@ -31,7 +37,7 @@
             <div class="s2 right-align">
                 <div th:if="${!user.equals(0)}">
                     <a th:href="|/profile/${user.login}|">
-                        <img th:src="|/static/images/${user.login}.jpg|" class="circle">
+                        <img th:src="|/static/images/${user.login}.jpg|" th:alt="${user.name}" class="circle">
                     </a>
                 </div>
 

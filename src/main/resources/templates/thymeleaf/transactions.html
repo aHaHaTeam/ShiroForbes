@@ -20,13 +20,13 @@
 
         <div class="s12 m10 l8">
             <h2 class="center-align">Конструктор транзакций</h2>
-            <form action="/event/new" method="POST">
+            <form>
                 <fieldset class="grid">
                     <legend>Заполните все поля</legend>
                     <div class="s0 m1 l2"></div>
                     <div class="s12 m10 l8">
                         <div class="field border label">
-                            <input required>
+                            <input required id="transactionName">
                             <label>Название транзакции</label>
                         </div>
 
@@ -38,6 +38,7 @@
                                 <a class="row option" th:each="student, j: ${students}">
                                     <i>add</i>
                                     <div th:text="${student.name}"></div>
+                                    <div th:text="${student.login}" hidden></div>
                                 </a>
                             </menu>
                         </div>

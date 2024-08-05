@@ -21,7 +21,7 @@
         <div class="s12 m10 l8">
             <h2 class="center-align">Конструктор мероприятий</h2>
 
-            <form action="/event/new" method="POST">
+            <form>
                 <fieldset>
                     <legend>Заполните все поля</legend>
                     <div class="field border label tiny min">
@@ -29,14 +29,14 @@
                         <label>Название</label>
                     </div>
 
-                    <div class="field textarea label border large min" id="timeAndPlace">
-                        <textarea name="timeAndPlace" required></textarea>
-                        <label for="timeAndPlace">Время и место</label>
+                    <div class="field textarea label border large min" id="timeAndPlaceDiv">
+                        <textarea name="timeAndPlace" required id="timeAndPlace"></textarea>
+                        <label for="timeAndPlaceDiv">Время и место</label>
                     </div>
 
-                    <div class="field textarea label border extra min" id="eventDescription">
-                        <textarea name="eventDescription" required></textarea>
-                        <label for="eventDescription">Описание</label>
+                    <div class="field textarea label border extra min" id="eventDescriptionDiv">
+                        <textarea name="eventDescription" id="eventDescription" required></textarea>
+                        <label for="eventDescriptionDiv">Описание</label>
                     </div>
 
                     <button class="large center" type="submit">Создать мероприятие</button>
@@ -48,5 +48,6 @@
     </div>
     <div class="s0 m1 l2"></div>
 </div>
+<script src="static/scripts/event.js"></script>
 </body>
 </html>

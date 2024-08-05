@@ -19,10 +19,16 @@
 
         <main class="responsive">
             <div th:insert="~{components/rating_diff :: rating(${students})}"></div>
-            <button class="center extra">Опубликовать</button>
+            <form>
+                <button class="extra round center" id="publishButton" type="submit">
+                    <span id="span">Опубликовать</span>
+                    <progress class="circle" id="progress" style="display: none"></progress>
+                </button>
+            </form>
         </main>
     </div>
     <div class="s0 m1 l2"></div>
 </div>
+<script src="/static/scripts/update_rating.js"></script>
 </body>
 </html>
