@@ -208,24 +208,26 @@ object DbStudentService : StudentService {
         rating: Rating,
         name: String,
     ) {
-        val studentId =
-            StudentDAO
-                .find { Students.name eq name }
-                .limit(1)
-                .first()
-                .id
-        val ratingId =
-            Ratings.insertAndGetId {
-                it[date] = rating.date
-                it[total] = rating.solvedPercentage
-                it[algebra] = rating.algebraPercentage
-                it[geometry] = rating.geometryPercentage
-                it[combinatorics] = rating.combinatoricsPercentage
-            }
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            val ratingId =
+                Ratings.insertAndGetId {
+                    it[date] = rating.date
+                    it[total] = rating.solvedPercentage
+                    it[algebra] = rating.algebraPercentage
+                    it[geometry] = rating.geometryPercentage
+                    it[combinatorics] = rating.combinatoricsPercentage
+                }
 
-        StudentRatings.insert {
-            it[StudentRatings.rating] = ratingId
-            it[student] = studentId
+            StudentRatings.insert {
+                it[StudentRatings.rating] = ratingId
+                it[student] = studentId
+            }
         }
     }
 
@@ -233,21 +235,23 @@ object DbStudentService : StudentService {
         wealth: Wealth,
         name: String,
     ) {
-        val studentId =
-            StudentDAO
-                .find { Students.name eq name }
-                .limit(1)
-                .first()
-                .id
-        val wealthId =
-            Wealths.insertAndGetId {
-                it[date] = wealth.date
-                it[Wealths.wealth] = wealth.wealth
-            }
+        transaction {
+            val studentId =
+                StudentDAO
+                    .find { Students.name eq name }
+                    .limit(1)
+                    .first()
+                    .id
+            val wealthId =
+                Wealths.insertAndGetId {
+                    it[date] = wealth.date
+                    it[Wealths.wealth] = wealth.wealth
+                }
 
-        StudentRatings.insert {
-            it[StudentRatings.rating] = wealthId
-            it[student] = studentId
+            StudentRatings.insert {
+                it[StudentRatings.rating] = wealthId
+                it[student] = studentId
+            }
         }
     }
 }
