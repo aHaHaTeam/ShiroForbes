@@ -18,8 +18,8 @@
         <div th:insert="~{components/header :: header(${user})}"></div>
 
         <div class="grid">
-            <div class="s3"></div>
-            <nav class="no-space center-align middle-align s6">
+            <div class="s2 m3 l3"></div>
+            <nav class="no-space center-align middle-align s8 m6 l6">
                 <button id="countryside" class="border left-round max"
                         th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
                     <i class="small">nature</i>
@@ -31,17 +31,17 @@
                     <span>Городской лагерь</span>
                 </button>
             </nav>
-            <div class="s3"></div>
+            <div class="s2 m3 l3"></div>
         </div>
 
         <div id="countrysideContent"
              th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}"
-             th:insert="~{menu_content :: menu(${countrysideCampEvents}, ${countrysideCampStudents})}">
+             th:insert="~{menu_content :: menu(${countrysideCampEvents}, ${countrysideCampStudents}, ${'countryside'})}">
         </div>
 
         <div id="urbanContent"
              th:hidden="${user.equals(0) || user.group.text != 'Urban'}"
-             th:insert="~{menu_content :: menu(${urbanCampEvents}, ${urbanCampStudents})}">
+             th:insert="~{menu_content :: menu(${urbanCampEvents}, ${urbanCampStudents}, ${'urban'})}">
         </div>
     </div>
     <div class="s0 m1 l2"></div>

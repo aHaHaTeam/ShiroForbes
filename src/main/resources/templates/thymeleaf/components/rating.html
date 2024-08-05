@@ -12,13 +12,20 @@
 </head>
 
 <body>
-<div class="grid" th:fragment="rating(students)">
+<div class="grid" th:fragment="rating(students, camp)">
 
     <h2 class="s12 center-align middle">Рейтинг</h2>
 
     <div class="s3"></div>
     <nav class="no-space center-align middle-align s6">
-        <button type="submit" onclick="window.open('/download/urban/rating.pdf')" id="ratingDownloadButton">
+        <button type="submit" onclick="window.open('/download/urban/rating.pdf')"
+                th:if="${camp == 'urban'}">
+            <span>Рейтинг</span>
+            <i class="responsive">description</i>
+        </button>
+
+        <button type="submit" onclick="window.open('/download/countryside/rating.pdf')"
+                th:if="${camp == 'countryside'}">
             <span>Рейтинг</span>
             <i class="responsive">description</i>
         </button>
@@ -39,7 +46,7 @@
             <tbody>
             <tr th:each="student, j: ${students}">
                 <td th:text="${j.index+1}"></td>
-                <td ><a th:href="|profile/${student.login}|" th:text="${student.name}"></a></td>
+                <td><a th:href="|profile/${student.login}|" th:text="${student.name}"></a></td>
                 <td class="right-align" th:text="${student.rating}"></td>
                 <td class="right-align" th:text="${student.wealth}"></td>
                 <td class="right-align" th:text="${student.rating + student.wealth}"></td>
