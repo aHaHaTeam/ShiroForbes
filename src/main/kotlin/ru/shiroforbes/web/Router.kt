@@ -104,29 +104,11 @@ fun Routing.routes(
         )
     }
 
-    get("/rating") {
-        call.respond(
-            ThymeleafContent(
-                "rating",
-                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
-            ),
-        )
-    }
-
     get("/login") {
         call.respond(
             ThymeleafContent(
                 "login",
                 mapOf(),
-            ),
-        )
-    }
-
-    get("/profile") {
-        call.respond(
-            ThymeleafContent(
-                "rating",
-                mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
             ),
         )
     }
@@ -247,76 +229,69 @@ fun Routing.routes(
         call.respondBytes(outputStream.toByteArray())
     }
 
-    get("/transactions/exercises/countryside") {
-        val countryside = studentService!!.getGroup(GroupType.Countryside)
-        call.respond(
-            ThymeleafContent(
-                "exercises",
-                mapOf(
-                    "students" to countryside,
-                    "user" to
-                        Admin(
-                            1,
-                            "vasya",
-                            "vasya566",
-                            "pass",
-                            GroupType.Countryside,
-                        ),
-                    // TODO() call for proper user
+    authenticate("auth-session-admin-only") {
+        get("/transactions/exercises/countryside") {
+            val countryside = studentService!!.getGroup(GroupType.Countryside)
+            call.respond(
+                ThymeleafContent(
+                    "exercises",
+                    mapOf(
+                        "students" to countryside,
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
-    get("/transactions/transactions/countryside") {
-        val countryside = studentService!!.getGroup(GroupType.Countryside)
-        call.respond(
-            ThymeleafContent(
-                "transactions",
-                mapOf(
-                    "students" to countryside,
-                    "user" to
-                        Admin(
-                            1,
-                            "vasya",
-                            "vasya566",
-                            "pass",
-                            GroupType.Countryside,
-                        ),
-                    // TODO() call for proper user
+    authenticate("auth-session-admin-only") {
+        get("/transactions/transactions/countryside") {
+            val countryside = studentService!!.getGroup(GroupType.Countryside)
+            call.respond(
+                ThymeleafContent(
+                    "transactions",
+                    mapOf(
+                        "students" to countryside,
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
     get("/") {
         call.respondRedirect("/menu")
     }
 
-    get("/event") {
-        call.respond(
-            ThymeleafContent(
-                "event_workshop",
-                mapOf(
-                    "user" to 0, // TODO() call for proper user
+    authenticate("auth-session-admin-only") {
+        get("/event") {
+            call.respond(
+                ThymeleafContent(
+                    "event_workshop",
+                    mapOf(
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
-    post("/event/new") {
-        val params = call.receiveParameters()
+    authenticate("auth-session-admin-only") {
+        post("/event/new") {
+            val formContent = call.receiveText()
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
 
-        val event =
-            Event(
-                -1,
-                params["eventName"].toString(),
-                params["timeAndPlace"].toString(),
-                params["eventDescription"].toString(),
-            )
+            val event =
+                Event(
+                    -1,
+                    params.jsonValue("eventName"),
+                    params.jsonValue("timeAndPlace"),
+                    params.jsonValue("eventDescription"),
+                )
 
-        eventService!!.addEvent(event)
-        call.respond(HttpStatusCode.Accepted)
+            eventService!!.addEvent(event)
+            call.respond(HttpStatusCode.Accepted)
+        }
     }
 
     authenticate("auth-session") {
