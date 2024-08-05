@@ -246,7 +246,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/exercises/countryside") {
-            val countryside = studentService!!.getGroup(GroupType.Countryside)
+            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "exercises",
@@ -262,8 +262,6 @@ fun Routing.routes(
     authenticate("auth-session-admin-only") {
         post("/transactions/exercises/countryside") {
             val formContent = call.receiveText()
-            println(formContent)
-            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
 
             if (params.jsonValue("activityType") == "exercises") {
@@ -290,7 +288,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/countryside") {
-            val countryside = studentService!!.getGroup(GroupType.Countryside)
+            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
@@ -305,7 +303,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/urban") {
-            val urban = studentService!!.getGroup(GroupType.Urban)
+            val urban = studentService!!.getGroup(GroupType.Urban).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
