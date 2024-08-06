@@ -2,7 +2,7 @@ package ru.shiroforbes.modules.markdown
 
 import org.commonmark.node.AbstractVisitor
 import org.commonmark.node.Heading
-import org.commonmark.node.Image
+import org.commonmark.node.Link
 import org.commonmark.node.Node
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.AttributeProvider
@@ -13,7 +13,7 @@ class MarkdownConverter {
     private val renderer =
         HtmlRenderer
             .builder()
-            .attributeProviderFactory { ImageAttributeProvider() }
+            .attributeProviderFactory { AttributeProvider() }
             .build()
 
     fun convert(text: String): String {
@@ -39,14 +39,14 @@ internal class HeadingVisitor : AbstractVisitor() {
     }
 }
 
-internal class ImageAttributeProvider : AttributeProvider {
+internal class AttributeProvider : AttributeProvider {
     override fun setAttributes(
         node: Node?,
         tagName: String?,
         attributes: MutableMap<String?, String?>,
     ) {
-        if (node is Image) {
-            attributes["styles"] = "{width: auto; height: auto; max-width: 100%; max-height: auto;}"
+        when (node) {
+            is Link -> attributes["style"] = "color: #0d47a1"
         }
     }
 }
