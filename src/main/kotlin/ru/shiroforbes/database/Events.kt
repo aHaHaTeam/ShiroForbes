@@ -19,7 +19,7 @@ object Events : IntIdTable("events", "event_id") {
         )
     val name = varchar("name", 100)
     val timeAndPlace = varchar("timeAndPlace", 200)
-    val description = varchar("description", 1000)
+    val description = text("description")
 }
 
 class EventDAO(

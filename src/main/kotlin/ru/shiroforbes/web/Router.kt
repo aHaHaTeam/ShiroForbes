@@ -388,7 +388,12 @@ fun Routing.routes(
                     GroupType.entries.find { it.text == params.jsonValue("group") }!!,
                     params.jsonValue("eventName"),
                     params.jsonValue("timeAndPlace"),
-                    params.jsonValue("eventDescription"),
+                    markdownConverter.convert(
+                        params
+                            .jsonValue("eventDescription")
+                            .split("\\n")
+                            .joinToString("\n"),
+                    ),
                 )
 
             eventService.addEvent(event)

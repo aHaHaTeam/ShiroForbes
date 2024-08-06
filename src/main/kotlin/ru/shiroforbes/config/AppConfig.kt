@@ -35,7 +35,7 @@ fun Application.configureApp(config: Config) {
     install(Sessions) {
         cookie<Session>("user_session") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60 * 10
+            cookie.maxAgeInSeconds = 60 * 100000
         }
     }
 

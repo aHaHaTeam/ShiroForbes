@@ -27,10 +27,8 @@
                 <span>Preview</span>
             </a>
         </div>
-
-        <div class="s0 m1 l2"></div>
-        <div class="s12 m10 l8">
-            <div id="writeBlock">
+        <div class="s0 m1 l1"></div>
+        <div class="s12 m10 l10" id="writeBlock">
             <form>
                 <fieldset>
                     <legend>Заполните все поля</legend>
@@ -73,15 +71,13 @@
                     <button class="large center" type="submit">Создать мероприятие</button>
                 </fieldset>
             </form>
-            </div>
-
-            <div id="previewBlock" hidden>
-                <progress class="circle center middle" id="progress"></progress>
-                <div class="s12 m10 l10 grid" th:insert="~{components/event :: event(${event})}" id="content"></div>
-            </div>
         </div>
+        <div class="s0 m1 l1"></div>
 
-        <div class="s0 m1 l2"></div>
+        <div class="s12" id="previewBlock" hidden>
+            <progress class="circle center middle" id="progress"></progress>
+            <div class="s12 m12 l12 grid" th:insert="~{components/event :: event(${event})}" id="content"></div>
+        </div>
     </div>
     <div class="s0 m1 l2"></div>
 </div>
