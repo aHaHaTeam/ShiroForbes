@@ -17,41 +17,55 @@
 
         <h2 class="s12 center-align">Конструктор мероприятий</h2>
 
-        <div class="s12 grid">
-            <div class="s2 m3 l3"></div>
-            <nav class="no-space center-align middle-align s8 m6 l6">
-                <button id="countryside" class="border left-round max"
-                        th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
-                    <i class="small">nature</i>
-                    <span>Загородный лагерь</span>
-                </button>
-                <button id="urban" class="border right-round max"
-                        th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
-                    <i class="small">home</i>
-                    <span>Городской лагерь</span>
-                </button>
-            </nav>
-            <div class="s2 m3 l3"></div>
+        <div class="tabs s12">
+            <a class="active" id="writeTab">
+                <i>home</i>
+                <span>Write</span>
+            </a>
+            <a id="previewTab">
+                <i>home</i>
+                <span>Preview</span>
+            </a>
         </div>
 
         <div class="s0 m1 l2"></div>
         <div class="s12 m10 l8">
-
+            <div id="writeBlock">
             <form>
                 <fieldset>
                     <legend>Заполните все поля</legend>
+
+                    <div class="s12 grid">
+                        <div class="s2 m3 l3"></div>
+                        <nav class="no-space center-align middle-align s8 m6 l6">
+                            <button id="countryside" class="border left-round max" type="button"
+                                    th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
+                                <i class="small">nature</i>
+                                <span>Загородный лагерь</span>
+                            </button>
+                            <button id="urban" class="border right-round max" type="button"
+                                    th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
+                                <i class="small">home</i>
+                                <span>Городской лагерь</span>
+                            </button>
+                        </nav>
+                        <div class="s2 m3 l3"></div>
+                    </div>
+
+                    <div class="small-space"></div>
+
                     <div class="field border label tiny min">
                         <input id="eventName" name="eventName" required>
                         <label>Название</label>
                     </div>
 
 
-                    <div class="field textarea label border large min" id="timeAndPlaceDiv">
+                    <div class="field textarea label border large max" id="timeAndPlaceDiv">
                         <textarea name="timeAndPlace" required id="timeAndPlace"></textarea>
                         <label for="timeAndPlaceDiv">Время и место</label>
                     </div>
 
-                    <div class="field textarea label border extra min" id="eventDescriptionDiv">
+                    <div class="field textarea label border extra max" id="eventDescriptionDiv">
                         <textarea name="eventDescription" id="eventDescription" required></textarea>
                         <label for="eventDescriptionDiv">Описание</label>
                     </div>
@@ -59,6 +73,12 @@
                     <button class="large center" type="submit">Создать мероприятие</button>
                 </fieldset>
             </form>
+            </div>
+
+            <div id="previewBlock" hidden>
+                <progress class="circle center middle" id="progress"></progress>
+                <div class="s12 m10 l10 grid" th:insert="~{components/event :: event(${event})}" id="content"></div>
+            </div>
         </div>
 
         <div class="s0 m1 l2"></div>

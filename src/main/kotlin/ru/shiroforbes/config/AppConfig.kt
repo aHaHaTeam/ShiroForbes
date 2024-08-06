@@ -15,6 +15,7 @@ import ru.shiroforbes.login.knownPasswords
 import ru.shiroforbes.login.validAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
+import ru.shiroforbes.modules.markdown.MarkdownConverter
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.DbEventService
 import ru.shiroforbes.service.DbStudentService
@@ -93,6 +94,7 @@ fun Application.configureApp(config: Config) {
             ratingSerializer = RatingSerializer(),
             ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
             eventService = DbEventService,
+            markdownConverter = MarkdownConverter(),
             routerConfig = config.routerConfig,
         )
     }

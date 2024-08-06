@@ -24,6 +24,7 @@ import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.model.*
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
+import ru.shiroforbes.modules.markdown.MarkdownConverter
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.*
 import java.io.ByteArrayOutputStream
@@ -31,11 +32,12 @@ import java.io.File
 import java.time.LocalDate
 
 fun Routing.routes(
-    studentService: StudentService? = null,
-    eventService: EventService? = null,
+    studentService: StudentService,
+    eventService: EventService,
     ratingSerializer: RatingSerializer,
     ratingDeserializer: RatingDeserializer,
-    routerConfig: RouterConfig? = null,
+    markdownConverter: MarkdownConverter,
+    routerConfig: RouterConfig,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
 
@@ -44,15 +46,15 @@ fun Routing.routes(
     }
 
     get("/grobarium") {
-        call.respondRedirect(routerConfig!!.grobariumUrl)
+        call.respondRedirect(routerConfig.grobariumUrl)
     }
 
     get("/series") {
-        call.respondRedirect(routerConfig!!.seriesUrl)
+        call.respondRedirect(routerConfig.seriesUrl)
     }
 
     get("/lz") {
-        call.respondRedirect(routerConfig!!.lzUrl)
+        call.respondRedirect(routerConfig.lzUrl)
     }
 
     authenticate("auth-session-no-redirect") {
@@ -64,13 +66,13 @@ fun Routing.routes(
                 }
             }
 
-            val events = eventService!!.getAllEvents()
+            val events = eventService.getAllEvents()
             call.respond(
                 ThymeleafContent(
                     "menu",
                     mapOf(
                         "countrysideCampStudents" to
-                            studentService!!
+                            studentService
                                 .getGroup(GroupType.Countryside)
                                 .sortedByDescending { it.rating + it.wealth },
                         "urbanCampStudents" to
@@ -120,7 +122,7 @@ fun Routing.routes(
                 call.respond(
                     ThymeleafContent(
                         "components/rating",
-                        mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
+                        mapOf("students" to studentService.getGroup(GroupType.Countryside)),
                     ),
                 )
             }
@@ -165,7 +167,7 @@ fun Routing.routes(
             call.respond(
                 ThymeleafContent(
                     "admin",
-                    mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
+                    mapOf("students" to studentService.getGroup(GroupType.Countryside)),
                 ),
             )
         }
@@ -175,7 +177,7 @@ fun Routing.routes(
         get("/update/rating") {
             val countrysideDeltas =
                 computeRatingDeltas(
-                    studentService!!.getGroup(GroupType.Countryside),
+                    studentService.getGroup(GroupType.Countryside),
                     ratingDeserializer.getCountrysideRating(),
                 )
             val urbanDeltas =
@@ -202,7 +204,7 @@ fun Routing.routes(
             ratingDeserializer
                 .getUrbanRating()
                 .forEach {
-                    studentService!!.addRating(
+                    studentService.addRating(
                         Rating(
                             -1,
                             -1,
@@ -228,33 +230,33 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         post("/update/countryside/rating") {
-            updateRating(studentService!!, ratingDeserializer.getCountrysideRating())
+            updateRating(studentService, ratingDeserializer.getCountrysideRating())
             call.respondRedirect("/update/rating")
         }
     }
 
     authenticate("auth-session-admin-only") {
         post("/update/urban/rating") {
-            updateRating(studentService!!, ratingDeserializer.getUrbanRating())
+            updateRating(studentService, ratingDeserializer.getUrbanRating())
             call.respondRedirect("/update/rating")
         }
     }
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Urban))
+        ratingSerializer.serialize(outputStream, studentService.getGroup(GroupType.Urban))
         call.respondBytes(outputStream.toByteArray())
     }
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
+        ratingSerializer.serialize(outputStream, studentService.getGroup(GroupType.Countryside))
         call.respondBytes(outputStream.toByteArray())
     }
 
     authenticate("auth-session-admin-only") {
         get("/transactions/exercises/countryside") {
-            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
+            val countryside = studentService.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "exercises",
@@ -277,7 +279,7 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService!!.updateStudentExercised(
+                    studentService.updateStudentExercised(
                         id = id.toInt(),
                         exercised = params[id].toString() == "true",
                     )
@@ -289,7 +291,7 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService!!.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
+                    studentService.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
                 }
             }
 
@@ -299,7 +301,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/countryside") {
-            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
+            val countryside = studentService.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
@@ -314,7 +316,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/urban") {
-            val urban = studentService!!.getGroup(GroupType.Urban).sortedBy { student -> student.name }
+            val urban = studentService.getGroup(GroupType.Urban).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
@@ -368,6 +370,7 @@ fun Routing.routes(
                     "event_workshop",
                     mapOf(
                         "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                        "event" to Event(1, GroupType.Urban, "", "", ""),
                     ),
                 ),
             )
@@ -388,7 +391,7 @@ fun Routing.routes(
                     params.jsonValue("eventDescription"),
                 )
 
-            eventService!!.addEvent(event)
+            eventService.addEvent(event)
             call.respond(HttpStatusCode.Accepted)
         }
     }
@@ -406,10 +409,17 @@ fun Routing.routes(
                     "event",
                     mapOf(
                         "user" to user,
-                        "event" to eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,
                     ),
                 ),
             )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        post("/convert/markdown") {
+            val data = call.receiveText()
+            call.respondText { markdownConverter.convert(data) }
         }
     }
 
@@ -425,10 +435,10 @@ fun Routing.routes(
             }
             val investing = params["isInvesting"].toString()
             if (investing == "true") {
-                studentService?.updateStudentInvesting(id, true)
+                studentService.updateStudentInvesting(id, true)
             }
             if (investing == "false") {
-                studentService?.updateStudentInvesting(id, false)
+                studentService.updateStudentInvesting(id, false)
             }
 
             call.respond(HttpStatusCode.NoContent)
