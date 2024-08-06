@@ -17,10 +17,12 @@
         <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
         <div th:insert="~{components/header :: header(${user})}"></div>
 
-        <br>
-
+        <div class="grid">
+            <div class="s0 m1 l1"></div>
         <!--/*@thymesVar id="event" type="ru.shiroforbes.model.Event"*/-->
-        <div class="grid" th:insert="~{components/event :: event(${event})}"></div>
+            <div class="s12 m10 l10 grid" th:insert="~{components/event :: event(${event})}"></div>
+            <div class="s0 m1 l1"></div>
+        </div>
     </div>
     <div class="s0 m1 l2"></div>
 </div>

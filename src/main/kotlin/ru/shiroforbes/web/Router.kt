@@ -64,6 +64,7 @@ fun Routing.routes(
                 }
             }
 
+            val events = eventService!!.getAllEvents()
             call.respond(
                 ThymeleafContent(
                     "menu",
@@ -77,8 +78,8 @@ fun Routing.routes(
                                 .getGroup(GroupType.Urban)
                                 .sortedByDescending { it.rating + it.wealth },
                         "user" to user,
-                        "countrysideCampEvents" to listOf<Event>(),
-                        "urbanCampEvents" to listOf<Event>(),
+                        "countrysideCampEvents" to events.filter { it.group == GroupType.Countryside },
+                        "urbanCampEvents" to events.filter { it.group == GroupType.Urban },
                     ),
                 ),
             )
@@ -389,6 +390,26 @@ fun Routing.routes(
 
             eventService!!.addEvent(event)
             call.respond(HttpStatusCode.Accepted)
+        }
+    }
+
+    authenticate("auth-session-no-redirect") {
+        get("/event/{id}") {
+            var user: Any = 0
+            if (call.principal<Session>() != null) {
+                if (call.principal<Session>()!!.login != "") {
+                    user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
+                }
+            }
+            call.respond(
+                ThymeleafContent(
+                    "event",
+                    mapOf(
+                        "user" to user,
+                        "event" to eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
+                    ),
+                ),
+            )
         }
     }
 

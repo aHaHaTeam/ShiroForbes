@@ -38,7 +38,7 @@ object DbEventService : EventService {
         }
     }
 
-    override suspend fun getAllEvents(): List<Event> = EventDAO.all().map { daoToEvent(it) }
+    override suspend fun getAllEvents(): List<Event> = transaction { EventDAO.all().map { daoToEvent(it) } }
 
     override suspend fun addEvent(event: Event): Event {
         return transaction {
