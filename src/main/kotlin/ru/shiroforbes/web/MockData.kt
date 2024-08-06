@@ -38,12 +38,14 @@ val events =
     mutableListOf<Event>(
         Event(
             0,
+            group = GroupType.Countryside,
             "Волейбол",
             "волейбольное поле, во время разбора",
             File("src/main/kotlin/ru/shiroforbes/web/MockEvent0Description.html").readText(),
         ),
         Event(
             1,
+            group = GroupType.Countryside,
             "Волейбол",
             "волейбольное поле, во время разбора",
             File("src/main/kotlin/ru/shiroforbes/web/MockEvent0Description.html").readText(),
@@ -56,7 +58,7 @@ object MockEventService : EventService {
     override suspend fun getEvent(id: Int): Event? = events.find { it.id == id }
 
     override suspend fun addEvent(event: Event): Event {
-        events.add(Event(events.size, event.name, event.timeAndPlace, event.description))
+        events.add(Event(events.size, event.group, event.name, event.timeAndPlace, event.description))
         return events.last()
     }
 

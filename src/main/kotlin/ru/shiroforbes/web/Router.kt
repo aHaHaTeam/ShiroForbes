@@ -377,10 +377,11 @@ fun Routing.routes(
         post("/event/new") {
             val formContent = call.receiveText()
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
-
+            println(formContent)
             val event =
                 Event(
                     -1,
+                    GroupType.entries.find { it.text == params.jsonValue("group") }!!,
                     params.jsonValue("eventName"),
                     params.jsonValue("timeAndPlace"),
                     params.jsonValue("eventDescription"),
