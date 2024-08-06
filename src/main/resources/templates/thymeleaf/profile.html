@@ -32,7 +32,7 @@
                 <div class="grid">
                     <p th:text="|Баланс: ${user.wealth}|" class="s12"></p>
                     <div class="s12 field middle-align"
-                         th:if="${!activeUser.equals(0) && user.login == activeUser.login}">
+                         th:if="${investingAllowed && !activeUser.equals(0) && user.login == activeUser.login}">
                         <nav style="padding-left: 0">
                             <div class="max">
                                 <p>Я инвестирую! Или нет? 🤔</p>
@@ -84,11 +84,11 @@
             <div class="s12">
                 <div class="tabs">
                     <a class="active" id="ratingChartSelector">
-                        <i>brain</i>
+                        <i>trophy</i>
                         <span>Рейтинг</span>
                     </a>
                     <a id="wealthChartSelector">
-                        <i>dollar</i>
+                        <i>money</i>
                         <span>Златы</span>
                     </a>
                 </div>
