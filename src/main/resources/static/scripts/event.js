@@ -54,10 +54,6 @@ previewTab.onclick = async () => {
     eventDescriptionPreview.innerHTML = html
 }
 
-function convert(markdown) {
-
-}
-
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const group = (document.getElementById("countryside").classList.contains("fill")) ? "Countryside" : "Urban";
@@ -83,3 +79,19 @@ form.addEventListener("submit", (e) => {
         }
     })
 })
+
+// Textarea resizing
+const tx = document.getElementsByTagName("textarea");
+
+for (let i = 0; i < tx.length; i++) {
+    tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+    tx[i].addEventListener("input", resize, false);
+}
+
+function resize() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + "px";
+    this.style.setProperty("--size", (this.scrollHeight) + "px")
+    this.parentElement.style.setProperty("---size", this.scrollHeight + this.paddingTop + "px");
+}
+

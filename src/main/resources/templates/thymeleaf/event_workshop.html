@@ -30,7 +30,7 @@
         <div class="s0 m1 l1"></div>
         <div class="s12 m10 l10" id="writeBlock">
             <form>
-                <fieldset>
+                <fieldset style="height: max-content">
                     <legend>Заполните все поля</legend>
 
                     <div class="s12 grid">
@@ -58,12 +58,13 @@
                     </div>
 
 
-                    <div class="field textarea label border large max" id="timeAndPlaceDiv">
-                        <textarea name="timeAndPlace" required id="timeAndPlace"></textarea>
+                    <div class="field textarea label border medium min" id="timeAndPlaceDiv">
+                        <input name="timeAndPlace" required id="timeAndPlace"></input>
                         <label for="timeAndPlaceDiv">Время и место</label>
                     </div>
 
-                    <div class="field textarea label border extra max" id="eventDescriptionDiv">
+                    <div class="field textarea label border small-text" style="resize: vertical;"
+                         id="eventDescriptionDiv">
                         <textarea name="eventDescription" id="eventDescription" required></textarea>
                         <label for="eventDescriptionDiv">Описание</label>
                         <a class="helper"
