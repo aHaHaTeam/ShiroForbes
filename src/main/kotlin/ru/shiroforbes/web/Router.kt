@@ -33,6 +33,7 @@ import java.time.LocalDate
 fun Routing.routes(
     studentService: StudentService? = null,
     eventService: EventService? = null,
+    transactionService: TransactionService,
     ratingSerializer: RatingSerializer,
     ratingDeserializer: RatingDeserializer,
     routerConfig: RouterConfig? = null,
@@ -338,7 +339,7 @@ fun Routing.routes(
                 }
                 val size = params.jsonValue(login).toInt()
                 val studentId = DbStudentService.getStudentByLogin(login)!!.id
-                DbTransactionService.makeTransaction(
+                transactionService.makeTransaction(
                     Transaction(
                         id = 0,
                         studentId = studentId,
@@ -353,6 +354,29 @@ fun Routing.routes(
             }
 
             call.respond(HttpStatusCode.Accepted)
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        get("/transactions/history") {
+            val students = studentService!!.getAllStudents().associateBy { it.id }
+            val transactions =
+                transactionService
+                    .getAllTransactions()
+                    .map {
+                        TransactionUtil(it.id, students[it.studentId]!!, it.size, it.date, it.description)
+                    }.sortedBy { it.date }
+                    .groupBy { it.student.group }
+            call.respond(
+                ThymeleafContent(
+                    "transactions_history",
+                    mapOf(
+                        "urbanTransactions" to (transactions[GroupType.Urban] ?: listOf()),
+                        "countrysideTransactions" to (transactions[GroupType.Countryside] ?: listOf()),
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
+                ),
+            )
         }
     }
 

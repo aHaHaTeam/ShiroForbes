@@ -18,6 +18,7 @@ import ru.shiroforbes.modules.googlesheets.RatingDeserializer
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.DbEventService
 import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.service.DbTransactionService
 import ru.shiroforbes.web.routes
 
 fun Application.configureApp(config: Config) {
@@ -93,6 +94,7 @@ fun Application.configureApp(config: Config) {
             ratingSerializer = RatingSerializer(),
             ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
             eventService = DbEventService,
+            transactionService = DbTransactionService,
             routerConfig = config.routerConfig,
         )
     }

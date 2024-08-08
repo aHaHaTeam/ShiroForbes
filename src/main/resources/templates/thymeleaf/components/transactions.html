@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>ShiroForbes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+
+<body>
+<div class="grid" th:fragment="history(transactions)">
+
+    <h2 class="s12 center-align middle">История транзакций</h2>
+
+    <!--    <div class="s3"></div>-->
+    <!--    <nav class="no-space center-align middle-align s6">-->
+    <!--        <button type="submit" onclick="window.open('/download/urban/rating.pdf')"-->
+    <!--                th:if="${camp == 'urban'}">-->
+    <!--            <span>Рейтинг</span>-->
+    <!--            <i class="responsive">description</i>-->
+    <!--        </button>-->
+    <!-- download history as xlsx/csv -->
+    <!--        <button type="submit" onclick="window.open('/download/countryside/rating.pdf')"-->
+    <!--                th:if="${camp == 'countryside'}">-->
+    <!--            <span>Рейтинг</span>-->
+    <!--            <i class="responsive">description</i>-->
+    <!--        </button>-->
+    <!--    </nav>-->
+    <!--    <div class="s3"></div>-->
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8">
+        <table class="stripes">
+            <thead>
+            <tr>
+                <th class="min">№</th>
+                <th class="max">Name</th>
+                <th class="right-align">Rating</th>
+                <th class="right-align">Wealth</th>
+                <th class="right-align"><i>functions</i></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--/*@thymesVar id="transactions" type="kotlin.collections.List<ru.shiroforbes.web.TransactionUtil>"*/-->
+            <tr th:each="transaction, j: ${transactions}">
+                <td th:text="${transaction.date.toString()}"></td>
+                <td th:text="${transaction.student.name}"></td>
+                <td class="right-align">
+                    <span th:if="${transaction.size > 0}" th:text="|(+${transaction.size})|"
+                          style="color: green"></span>
+                    <span th:if="${transaction.size < 0}" th:text="|(${transaction.size})|"
+                          style="color: red"></span>
+                </td>
+                <td class="right-align" th:text="${transaction.description}"
+                    style="white-space: nowrap; overflow: hidden;"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="s0 m1 l2"></div>
+</div>
+</body>
+
+</html>
