@@ -63,14 +63,14 @@ object DbTransactionService : TransactionService {
 
     override suspend fun makeTransaction(transaction: Transaction) {
         transaction {
-            val tansactionId =
+            val transactionId =
                 Transactions.insertAndGetId {
                     it[Transactions.size] = transaction.size
                     it[Transactions.date] = transaction.date
                     it[Transactions.description] = transaction.description
                 }
             StudentTransaction.insert {
-                it[StudentTransaction.transaction] = tansactionId
+                it[StudentTransaction.transaction] = transactionId
                 it[StudentTransaction.student] = transaction.studentId
             }
             Students.update({ Students.id eq transaction.studentId }) {

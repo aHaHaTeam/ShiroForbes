@@ -11,10 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinLocalDate
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -30,6 +29,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun Routing.routes(
     studentService: StudentService? = null,
     eventService: EventService? = null,
@@ -363,10 +363,17 @@ fun Routing.routes(
             val transactions =
                 transactionService
                     .getAllTransactions()
+                    .sortedByDescending { it.date }
                     .map {
-                        TransactionUtil(it.id, students[it.studentId]!!, it.size, it.date, it.description)
-                    }.sortedBy { it.date }
-                    .groupBy { it.student.group }
+                        TransactionUtil(
+                            it.id,
+                            students[it.studentId]!!,
+                            it.size,
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
+                            it.description,
+                        )
+                    }.groupBy { it.student.group }
             call.respond(
                 ThymeleafContent(
                     "transactions_history",

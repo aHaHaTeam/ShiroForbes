@@ -255,7 +255,7 @@ object DbStudentService : StudentService {
                 }
 
             StudentRatings.insert {
-                it[StudentRatings.rating] = wealthId
+                it[rating] = wealthId
                 it[student] = studentId
             }
         }
