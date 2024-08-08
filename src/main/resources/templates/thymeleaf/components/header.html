@@ -21,7 +21,7 @@
                     <a href="/grobarium">Гробарий</a>
                     <a href="/series">Серии</a>
                     <a href="/lz">Летнее задание</a>
-                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event">Создать новое мероприятие</a>
+                    <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event/new">Создать новое мероприятие</a>
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/exercises/countryside">Зарядка/Отбой/Случайное
                         событие</a>
                     <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/transactions/countryside">Раздать

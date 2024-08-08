@@ -364,13 +364,15 @@ fun Routing.routes(
     }
 
     authenticate("auth-session-admin-only") {
-        get("/event") {
+        get("/event/new") {
+            val user = DbUserService.getUserByLogin(call.principal<Session>()!!.login)!!
             call.respond(
                 ThymeleafContent(
-                    "event_workshop",
+                    "event_editing",
                     mapOf(
-                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
-                        "event" to Event(1, GroupType.Urban, "", "", ""),
+                        "user" to user,
+                        "event" to Event(1, user.group, "", "", ""),
+                        "isCreation" to true,
                     ),
                 ),
             )
@@ -401,6 +403,45 @@ fun Routing.routes(
         }
     }
 
+    authenticate("auth-session-admin-only") {
+        get("/event/edit/{id}") {
+            call.respond(
+                ThymeleafContent(
+                    "event_editing",
+                    mapOf(
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                        "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "isCreation" to false,
+                    ),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        post("/event/edit/{id}") {
+            val formContent = call.receiveText()
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+            println(formContent)
+            val event =
+                Event(
+                    call.parameters["id"]!!.toInt(),
+                    GroupType.entries.find { it.text == params.jsonValue("group") }!!,
+                    params.jsonValue("eventName"),
+                    params.jsonValue("timeAndPlace"),
+                    markdownConverter.convert(
+                        params
+                            .jsonValue("eventDescription")
+                            .split("\\n")
+                            .joinToString("\n"),
+                    ),
+                )
+
+            eventService.updateEvent(event)
+            call.respond(HttpStatusCode.Accepted)
+        }
+    }
+
     authenticate("auth-session-no-redirect") {
         get("/event/{id}") {
             var user: Any = 0
@@ -411,7 +452,7 @@ fun Routing.routes(
             }
             call.respond(
                 ThymeleafContent(
-                    "event",
+                    "event_viewing",
                     mapOf(
                         "user" to user,
                         "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,

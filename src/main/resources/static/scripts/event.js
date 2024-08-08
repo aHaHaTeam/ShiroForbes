@@ -65,7 +65,7 @@ form.addEventListener("submit", (e) => {
     }
 
 
-    fetch("/event/new", {
+    fetch(window.location.href, {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)

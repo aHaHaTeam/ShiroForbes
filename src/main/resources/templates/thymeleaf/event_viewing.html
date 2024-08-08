@@ -18,7 +18,7 @@
 
 
         <!--/*@thymesVar id="event" type="ru.shiroforbes.model.Event"*/-->
-        <div class="grid" th:insert="~{components/event :: event(${event})}"></div>
+        <div class="grid" th:insert="~{components/event_view :: event(${user}, ${false}, ${event})}"></div>
 
     </div>
     <div class="s0 m1 l2"></div>
