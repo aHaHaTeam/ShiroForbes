@@ -62,6 +62,7 @@ fun main() {
             StudentTransaction,
             Events,
             Admins,
+            Offers,
         )
         Admins.deleteAll()
         StudentWealth.deleteAll()

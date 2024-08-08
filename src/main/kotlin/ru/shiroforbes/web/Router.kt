@@ -154,6 +154,55 @@ fun Routing.routes(
         }
     }
 
+    authenticate("auth-session-no-redirect") {
+        get("/marketplace") {
+            var activeUser: Any = 0
+            if (call.principal<Session>() != null) {
+                if (call.principal<Session>()!!.login != "") {
+                    activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
+                }
+            }
+            call.respond(
+                ThymeleafContent(
+                    "marketplace",
+                    mapOf(
+                        "user" to activeUser,
+                        "offers" to
+                            DbOfferService.getAllOffers(),
+                    ),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        post("/marketplace") {
+            val formContent = call.receiveText()
+            val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
+            println(params)
+            if (params.jsonValue("action") == "add") {
+                val offer =
+                    Offer(
+                        id = -1,
+                        name = params.jsonValue("offerName"),
+                        description = params.jsonValue("offerDescription"),
+                        price = params.jsonValue("offerPrice").toInt(),
+                    )
+                println(offer.name)
+                println(offer.description)
+                println(offer.price)
+                DbOfferService.addOffer(offer)
+            }
+
+            if (params.jsonValue("action") == "remove") {
+                val offerId = params.jsonValue("id").toInt()
+                println(offerId)
+                DbOfferService.deleteOffer(offerId)
+            }
+            call.respondRedirect("/marketplace")
+        }
+    }
+
     get("/logout") {
         call.sessions.set(Session("", ""))
         call.respondRedirect("/login")
