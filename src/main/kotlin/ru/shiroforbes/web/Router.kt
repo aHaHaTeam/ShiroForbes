@@ -141,6 +141,7 @@ fun Routing.routes(
                     ThymeleafContent(
                         "profile",
                         mapOf(
+                            "investingAllowed" to false,
                             "user" to user,
                             "rating" to user.ratingHistory,
                             "wealth" to user.wealthHistory,
