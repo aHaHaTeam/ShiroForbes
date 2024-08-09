@@ -20,6 +20,7 @@ fun computeRatingDeltas(
     return current
         .sortedByDescending { it.rating }
         .mapIndexed { i, student ->
+            println(student.name)
             RatingDelta(
                 student.name,
                 i + 1,

@@ -26,7 +26,9 @@
                 <tr>
                     <th th:if="${!user.equals(0) && user.HasAdminRights}"></th>
                     <th class="min">№</th>
-                    <th class="max">Name</th>
+                    <th class="min">Название</th>
+                    <th class="max">Описание</th>
+                    <th class="min">Стоимость</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,35 +47,35 @@
             </table>
         </div>
         <div class="s0 m1 l1"></div>
+        <div class="s12 grid" th:if="${!user.equals(0) && user.HasAdminRights}">
+            <div class="s0 m1 l2"></div>
+            <div class="s12 m10 l8">
+                <h4 class="center-align">Новая услуга</h4>
 
-        <div class="s0 m1 l2"></div>
-        <div class="s12 m10 l8">
-            <h4 class="center-align">Новая услуга</h4>
+                <form>
+                    <fieldset>
+                        <legend>Заполните все поля</legend>
+                        <div class="field border label tiny min" id="offerNameDiv">
+                            <input id="offerName" name="offerName" required>
+                            <label for="offerNameDiv">Название</label>
+                        </div>
 
-            <form>
-                <fieldset>
-                    <legend>Заполните все поля</legend>
-                    <div class="field border label tiny min" id="offerNameDiv">
-                        <input id="offerName" name="offerName" required>
-                        <label for="offerNameDiv">Название</label>
-                    </div>
+                        <div class="field textarea label border extra min" id="offerDescriptionDiv">
+                            <textarea name="offerDescription" id="offerDescription" required></textarea>
+                            <label for="offerDescriptionDiv">Описание</label>
+                        </div>
 
-                    <div class="field textarea label border extra min" id="offerDescriptionDiv">
-                        <textarea name="offerDescription" id="offerDescription" required></textarea>
-                        <label for="offerDescriptionDiv">Описание</label>
-                    </div>
+                        <div class="field textarea label border large min" id="priceDiv">
+                            <input name="price" type="number" required id="price"></input>
+                            <label for="priceDiv">Стоимость</label>
+                        </div>
 
-                    <div class="field textarea label border large min" id="priceDiv">
-                        <input name="price" type="number" required id="price"></input>
-                        <label for="priceDiv">Стоимость</label>
-                    </div>
-
-                    <button class="large center" type="submit">Создать мероприятие</button>
-                </fieldset>
-            </form>
+                        <button class="large center" type="submit">Добавить услугу</button>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="s m1 l2"></div>
         </div>
-        <div class="s m1 l2"></div>
-
     </div>
 
 </div>
