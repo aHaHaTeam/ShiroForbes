@@ -10,8 +10,9 @@ import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
+import kotlin.reflect.KClass
 
-data class ConversionClass(
+data class ConversionClassStudent(
     val id: Int,
     val name: String = "",
     val login: String = "",
@@ -26,6 +27,14 @@ data class ConversionClass(
     val isExercised: Boolean?,
     val isBeaten: Boolean?,
     val isInvesting: Boolean?,
+)
+
+data class ConversionClassAdmin(
+    val id: Int,
+    val name: String = "",
+    val login: String = "",
+    val password: String = "",
+    val group: GroupType,
 )
 
 internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
@@ -68,7 +77,7 @@ fun main() {
         StudentTransaction.deleteAll()
         StudentRatings.deleteAll()
         Students.deleteAll()
-        fetchGoogleSheets("ShV!A2:N70").forEach { student ->
+        fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
             Students.insert {
                 it[name] = student.name
                 it[login] = student.login
@@ -85,7 +94,7 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-        fetchGoogleSheets("Admins!A2:N70").forEach { admin ->
+        fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:N70", ConversionClassAdmin::class).forEach { admin ->
             Admins.insert {
                 it[name] = admin.name
                 it[login] = admin.login
@@ -96,13 +105,16 @@ fun main() {
     }
 }
 
-private fun fetchGoogleSheets(table: String) = GoogleSheetsService(
+private fun <T : Any> fetchGoogleSheets(
+    table: String,
+    conversion: KClass<T>,
+) = GoogleSheetsService(
     GoogleSheetsApiConnectionService(
         "/googlesheets/credentials.json",
         listOf(SheetsScopes.SPREADSHEETS_READONLY),
     ),
     "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
-    ConversionClass::class,
+    conversion,
     listOf(
         table,
     ),
