@@ -3,16 +3,15 @@ package ru.shiroforbes.database
 import com.google.api.services.sheets.v4.SheetsScopes
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
-import kotlin.reflect.KClass
 
-data class ConversionClassStudent(
+data class ConversionClass(
     val id: Int,
     val name: String = "",
     val login: String = "",
@@ -27,14 +26,6 @@ data class ConversionClassStudent(
     val isExercised: Boolean?,
     val isBeaten: Boolean?,
     val isInvesting: Boolean?,
-)
-
-data class ConversionClassAdmin(
-    val id: Int,
-    val name: String = "",
-    val login: String = "",
-    val password: String = "",
-    val group: GroupType,
 )
 
 internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
@@ -61,6 +52,17 @@ fun main() {
     )
 
     transaction {
+        drop(
+            Students,
+            Ratings,
+            Wealths,
+            Transactions,
+            StudentRatings,
+            StudentWealth,
+            StudentTransaction,
+            Events,
+            Admins,
+        )
         create(
             Students,
             Ratings,
@@ -71,14 +73,21 @@ fun main() {
             StudentTransaction,
             Events,
             Admins,
-            Offers,
         )
-        Admins.deleteAll()
-        StudentWealth.deleteAll()
-        StudentTransaction.deleteAll()
-        StudentRatings.deleteAll()
-        Students.deleteAll()
-        fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
+        val students =
+            GoogleSheetsService(
+                GoogleSheetsApiConnectionService(
+                    "/googlesheets/credentials.json",
+                    listOf(SheetsScopes.SPREADSHEETS_READONLY),
+                ),
+                "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
+                ConversionClass::class,
+                listOf(
+                    "ShV!A2:N61",
+                ),
+                Class.forName("ru.shiroforbes.database.InitKt"),
+            ).getRating()
+        for (student in students) {
             Students.insert {
                 it[name] = student.name
                 it[login] = student.login
@@ -95,29 +104,11 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-        fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:N70", ConversionClassAdmin::class).forEach { admin ->
-            Admins.insert {
-                it[name] = admin.name
-                it[login] = admin.login
-                it[password] = admin.password
-                it[group] = admin.group
-            }
+        Admins.insert {
+            it[name] = "vasya"
+            it[login] = "vasya566"
+            it[password] = "pass123"
+            it[group] = GroupType.Urban
         }
     }
 }
-
-private fun <T : Any> fetchGoogleSheets(
-    table: String,
-    conversion: KClass<T>,
-) = GoogleSheetsService(
-    GoogleSheetsApiConnectionService(
-        "/googlesheets/credentials.json",
-        listOf(SheetsScopes.SPREADSHEETS_READONLY),
-    ),
-    "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
-    conversion,
-    listOf(
-        table,
-    ),
-    Class.forName("ru.shiroforbes.database.InitKt"),
-).getRating()
