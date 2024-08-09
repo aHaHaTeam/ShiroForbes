@@ -16,26 +16,36 @@
 <div class="grid">
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
-        <div th:insert="~{components/header :: header(true)}"></div>
+        <div th:insert="~{components/header :: header(user)}"></div>
         <main class="responsive">
 
             <div th:fragment="preview(event)" class="s12 grid">
-                <article class="border small-round s12">
+                <div class="s1"></div>
+                <article class="border small-round s10">
                     <!--/*@thymesVar id="event" type="ru.shiroforbes.model.Event"*/-->
                     <h6 th:text="${event.name}"></h6>
                     <p>Время/место: <span th:text="${event.timeAndPlace}"></span></p>
                 </article>
+                <div class="s1"></div>
             </div>
 
             <!--/*@thymesVar id="event" type="ru.shiroforbes.model.Event"*/-->
-            <div th:fragment="event(event)" class="s12">
-                <h2 th:text="${event.name}"></h2>
-                <hr>
-                <h6>Время/место:</h6>
-                <p th:text="${event.timeAndPlace}"></p>
-                <hr>
-                <h6>Описание:</h6>
-                <div th:utext="${event.description}"></div>
+            <div th:fragment="event(user, isPreview, event)" class="s12">
+                <div class="row">
+                    <h2 th:text="${event.name}" id="eventNamePreview" class="bold max"></h2>
+                    <a th:href="|/event/edit/${event.id}|">
+                        <button class="square round extra"
+                                th:if="${!user.equals(0) && user.HasAdminRights && !isPreview}">
+                            <i>edit</i>
+                        </button>
+                    </a>
+                </div>
+                <div class="medium-divider"></div>
+                <h6 th:text="${event.timeAndPlace}" id="timeAndPlacePreview"></h6>
+                <fieldset>
+                    <legend>Что будет?</legend>
+                    <div th:utext="${event.description}" id="eventDescriptionPreview"></div>
+                </fieldset>
             </div>
 
         </main>

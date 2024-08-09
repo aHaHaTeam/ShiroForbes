@@ -66,3 +66,7 @@ dependencies {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
 }
+
+dependencies {
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.22.0")
+}
