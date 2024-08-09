@@ -405,12 +405,14 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/event/edit/{id}") {
+            val event = eventService.getEvent(call.parameters["id"]!!.toInt())!!
             call.respond(
                 ThymeleafContent(
                     "event_editing",
                     mapOf(
                         "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
-                        "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "event" to event,
+                        "descriptionRows" to event.description.count { it == '\n' },
                         "isCreation" to false,
                     ),
                 ),

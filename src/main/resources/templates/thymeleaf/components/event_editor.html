@@ -61,8 +61,7 @@
 
                 <div class="field textarea label border small-text" style="resize: vertical;"
                      id="eventDescriptionDiv">
-                    <textarea name="eventDescription" id="eventDescription" required
-                              th:value="${event.description}"></textarea>
+                    <textarea name="eventDescription" id="eventDescription" th:rows="${descriptionRows}" required th:text="${event.description}"> </textarea>
                     <label for="eventDescriptionDiv">Описание</label>
                     <a class="helper"
                        style="color: #0d47a1"
