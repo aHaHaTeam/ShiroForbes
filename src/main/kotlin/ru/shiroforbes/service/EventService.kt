@@ -29,7 +29,7 @@ object DbEventService : EventService {
         )
     }
 
-    private fun daoToEvent(dao: EventDAO): Event = Event(dao.id.value, dao.name, dao.timeAndPlace, dao.description)
+    private fun daoToEvent(dao: EventDAO): Event = Event(dao.id.value, dao.group, dao.name, dao.timeAndPlace, dao.description)
 
     override suspend fun getEvent(id: Int): Event? {
         return transaction {
@@ -38,18 +38,20 @@ object DbEventService : EventService {
         }
     }
 
-    override suspend fun getAllEvents(): List<Event> = EventDAO.all().map { daoToEvent(it) }
+    override suspend fun getAllEvents(): List<Event> = transaction { EventDAO.all().map { daoToEvent(it) } }
 
     override suspend fun addEvent(event: Event): Event {
         return transaction {
             val id =
                 Events.insertAndGetId {
                     it[name] = event.name
+                    it[group] = event.group
                     it[timeAndPlace] = event.timeAndPlace
                     it[description] = event.description
                 }
             return@transaction Event(
                 id = id.value,
+                group = event.group,
                 name = event.name,
                 timeAndPlace = event.timeAndPlace,
                 description = event.description,

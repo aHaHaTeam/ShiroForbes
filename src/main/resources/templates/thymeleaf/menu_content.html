@@ -15,7 +15,7 @@
         <h2 class="center-align">Мероприятия</h2>
         <!--/*@thymesVar id="events" type="java.util.List<ru.shiroforbes.model.Event>"*/-->
         <a th:each="event, i: ${events}" th:href="|/event/${event.id}|" class="grid">
-            <div class="s12 grid" th:insert="~{components/event :: preview(${event})}"></div>
+            <div class="s12 grid" th:insert="~{components/event_view :: preview(${event})}"></div>
         </a>
     </div>
 

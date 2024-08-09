@@ -9,6 +9,7 @@ package ru.shiroforbes.model
 
 data class Event(
     val id: Int,
+    val group: GroupType,
     val name: String,
     val timeAndPlace: String,
     val description: String,
