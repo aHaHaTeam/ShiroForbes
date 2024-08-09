@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ShiroForbes</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/modules/beer/beer.min.css" rel="stylesheet">
+    <script type="module" src="/static/modules/beer/beer.min.js"></script>
+    <script type="module" src="/static/modules/beer/material-dynamic-colors.min.js"></script>
+    <link href="/static/styles/styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="grid">
+    <div class="s0 m1 l2"></div>
+    <div class="s12 m10 l8 grid">
+        <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
+        <div class="s12 l12" th:insert="~{components/header :: header(${user})}"></div>
+
+
+        <div class="s0 m1 l1"></div>
+
+        <div class="s12 m10 l10">
+
+            <table class="stripes">
+                <thead>
+                <tr>
+                    <th th:if="${!user.equals(0) && user.HasAdminRights}"></th>
+                    <th class="min">№</th>
+                    <th class="min">Название</th>
+                    <th class="max">Описание</th>
+                    <th class="min">Стоимость</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="offer, j: ${offers}" id="listOfOffers">
+                    <td th:if="${!user.equals(0) && user.HasAdminRights}">
+                        <button class="small circle removeOffer" th:id="${offer.id}">
+                            <i>remove</i>
+                        </button>
+                    </td>
+                    <td th:text="${j.index+1}"></td>
+                    <td th:text="${offer.name}"></td>
+                    <td th:text="${offer.description}"></td>
+                    <td th:text="${offer.price}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="s0 m1 l1"></div>
+        <div class="s12 grid" th:if="${!user.equals(0) && user.HasAdminRights}">
+            <div class="s0 m1 l2"></div>
+            <div class="s12 m10 l8">
+                <h4 class="center-align">Новая услуга</h4>
+
+                <form>
+                    <fieldset>
+                        <legend>Заполните все поля</legend>
+                        <div class="field border label tiny min" id="offerNameDiv">
+                            <input id="offerName" name="offerName" required>
+                            <label for="offerNameDiv">Название</label>
+                        </div>
+
+                        <div class="field textarea label border extra min" id="offerDescriptionDiv">
+                            <textarea name="offerDescription" id="offerDescription" required></textarea>
+                            <label for="offerDescriptionDiv">Описание</label>
+                        </div>
+
+                        <div class="field textarea label border large min" id="priceDiv">
+                            <input name="price" type="number" required id="price"></input>
+                            <label for="priceDiv">Стоимость</label>
+                        </div>
+
+                        <button class="large center" type="submit">Добавить услугу</button>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="s m1 l2"></div>
+        </div>
+    </div>
+
+</div>
+<script src="static/scripts/marketplace.js"></script>
+</body>
+</html>
