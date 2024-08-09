@@ -30,28 +30,30 @@ form.addEventListener("submit", (e) => {
     })
 })
 
-document.getElementById("listOfOffers").addEventListener('click', (event) => {
-    const isButton = event.target.nodeName === 'BUTTON';
-    if (!isButton) {
-        return;
-    }
-    const offerId = event.target.id
-    let data = {
-        "action": "remove",
-        "id" : offerId,
-    }
-
-    fetch("/marketplace", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    }).then(response => {
-        if (response.redirected) {
-            window.location.assign(response.url)
-        } else {
-            if (response.ok) {
-                alert("Успех")
-            }
+document.querySelectorAll("button").forEach(function (elem) {
+    elem.addEventListener('click', (event) => {
+        const isButton = event.target.classList.contains("removeOffer");
+        if (!isButton) {
+            return;
         }
+        const offerId = event.target.id
+        let data = {
+            "action": "remove",
+            "id": offerId,
+        }
+
+        fetch("/marketplace", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.redirected) {
+                window.location.assign(response.url)
+            } else {
+                if (response.ok) {
+                    alert("Успех")
+                }
+            }
+        })
     })
 })

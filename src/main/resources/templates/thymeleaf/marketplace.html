@@ -32,7 +32,7 @@
                 <tbody>
                 <tr th:each="offer, j: ${offers}" id="listOfOffers">
                     <td th:if="${!user.equals(0) && user.HasAdminRights}">
-                        <button class="small circle" th:id="${offer.id}">
+                        <button class="small circle removeOffer" th:id="${offer.id}">
                             <i>remove</i>
                         </button>
                     </td>
