@@ -107,12 +107,18 @@ object DbStudentService : StudentService {
         }
     }
 
-    override suspend fun getAllStudents(): List<Student> {
-        println("getAllStudents")
-        return StudentDAO
-            .all()
-            .map { Student(it, listOf(), listOf()) } // we don't need information about rating and wealth history there
-    }
+    override suspend fun getAllStudents(): List<Student> =
+        transaction {
+            StudentDAO
+                .all()
+                .map {
+                    Student(
+                        it,
+                        listOf(),
+                        listOf(),
+                    )
+                } // we don't need information about rating and wealth history there
+        }
 
     override suspend fun updateStudentInvesting(
         id: Int,
@@ -249,7 +255,7 @@ object DbStudentService : StudentService {
                 }
 
             StudentRatings.insert {
-                it[StudentRatings.rating] = wealthId
+                it[rating] = wealthId
                 it[student] = studentId
             }
         }

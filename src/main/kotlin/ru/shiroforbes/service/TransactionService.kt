@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package ru.shiroforbes.service
 
 import kotlinx.datetime.Clock
@@ -50,23 +52,25 @@ object DbTransactionService : TransactionService {
     ): Transaction = Transaction(dao.id.value, studentId, dao.size, dao.date, dao.description)
 
     private fun getStudentId(transactionId: Int): Int =
-        StudentTransaction
-            .select(StudentTransaction.student)
-            .where { StudentTransaction.transaction eq transactionId }
-            .limit(1)
-            .first()[StudentTransaction.student]
-            .value
+        transaction {
+            StudentTransaction
+                .select(StudentTransaction.student)
+                .where { StudentTransaction.transaction eq transactionId }
+                .limit(1)
+                .first()[StudentTransaction.student]
+                .value
+        }
 
     override suspend fun makeTransaction(transaction: Transaction) {
         transaction {
-            val tansactionId =
+            val transactionId =
                 Transactions.insertAndGetId {
                     it[Transactions.size] = transaction.size
                     it[Transactions.date] = transaction.date
                     it[Transactions.description] = transaction.description
                 }
             StudentTransaction.insert {
-                it[StudentTransaction.transaction] = tansactionId
+                it[StudentTransaction.transaction] = transactionId
                 it[StudentTransaction.student] = transaction.studentId
             }
             Students.update({ Students.id eq transaction.studentId }) {
@@ -84,17 +88,21 @@ object DbTransactionService : TransactionService {
     }
 
     override suspend fun getAllTransactions(): List<Transaction> =
-        TransactionDAO.all().map { daoToTransaction(it, getStudentId(it.id.value)) }
+        transaction {
+            TransactionDAO.all().map { daoToTransaction(it, getStudentId(it.id.value)) }
+        }
 
     override suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> =
-        Transactions.innerJoin(StudentTransaction).selectAll().where { Students.id eq studentId }.map {
-            Transaction(
-                it[Transactions.id].value,
-                studentId,
-                it[Transactions.size],
-                it[Transactions.date],
-                it[Transactions.description],
-            )
+        transaction {
+            Transactions.innerJoin(StudentTransaction).selectAll().where { Students.id eq studentId }.map {
+                Transaction(
+                    it[Transactions.id].value,
+                    studentId,
+                    it[Transactions.size],
+                    it[Transactions.date],
+                    it[Transactions.description],
+                )
+            }
         }
 
     override suspend fun sendMoneyByCondition(
