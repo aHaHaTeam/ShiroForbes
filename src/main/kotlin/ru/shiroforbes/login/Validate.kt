@@ -15,8 +15,7 @@ fun validUser(
     password: String,
 ): Boolean {
     return runBlocking {
-        val savedPassword = DbUserService.getUserByLogin(login)?.password ?: return@runBlocking false
-        val hashedPassword = md5(savedPassword).toHexString()
+        val hashedPassword = DbUserService.getUserByLogin(login)?.password ?: return@runBlocking false
         return@runBlocking password == hashedPassword
     }
 }
@@ -27,16 +26,15 @@ fun validAdmin(
     password: String,
 ): Boolean {
     return runBlocking {
-        val savedPassword = DbAdminService.getAdminByLogin(login)?.password ?: return@runBlocking false
-        val hashedPassword = md5(savedPassword).toHexString()
+        val hashedPassword = DbAdminService.getAdminByLogin(login)?.password ?: return@runBlocking false
         return@runBlocking password == hashedPassword
     }
 }
 
-fun md5(password: String): ByteArray {
-    val md = MessageDigest.getInstance("MD5")
-    md.update(password.toByteArray())
-    return md.digest()
+fun sha256(password: String): ByteArray {
+    val sha = MessageDigest.getInstance("SHA-256")
+    sha.update(password.toByteArray())
+    return sha.digest()
 }
 
-fun knownPasswords(): Map<String, ByteArray> = mapOf("admin" to md5("admin"))
+fun knownPasswords(): Map<String, ByteArray> = mapOf("admin" to sha256("admin"))

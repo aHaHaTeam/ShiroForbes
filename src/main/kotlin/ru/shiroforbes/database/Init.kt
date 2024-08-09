@@ -68,20 +68,7 @@ fun main() {
         StudentTransaction.deleteAll()
         StudentRatings.deleteAll()
         Students.deleteAll()
-        val students =
-            GoogleSheetsService(
-                GoogleSheetsApiConnectionService(
-                    "/googlesheets/credentials.json",
-                    listOf(SheetsScopes.SPREADSHEETS_READONLY),
-                ),
-                "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
-                ConversionClass::class,
-                listOf(
-                    "ShV!A2:N61",
-                ),
-                Class.forName("ru.shiroforbes.database.InitKt"),
-            ).getRating()
-        for (student in students) {
+        fetchGoogleSheets("ShV!A2:N70").forEach { student ->
             Students.insert {
                 it[name] = student.name
                 it[login] = student.login
@@ -98,11 +85,26 @@ fun main() {
                 it[isInvesting] = student.isInvesting
             }
         }
-        Admins.insert {
-            it[name] = "vasya"
-            it[login] = "vasya566"
-            it[password] = "pass123"
-            it[group] = GroupType.Urban
+        fetchGoogleSheets("Admins!A2:N70").forEach { admin ->
+            Admins.insert {
+                it[name] = admin.name
+                it[login] = admin.login
+                it[password] = admin.password
+                it[group] = admin.group
+            }
         }
     }
 }
+
+private fun fetchGoogleSheets(table: String) = GoogleSheetsService(
+    GoogleSheetsApiConnectionService(
+        "/googlesheets/credentials.json",
+        listOf(SheetsScopes.SPREADSHEETS_READONLY),
+    ),
+    "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
+    ConversionClass::class,
+    listOf(
+        table,
+    ),
+    Class.forName("ru.shiroforbes.database.InitKt"),
+).getRating()

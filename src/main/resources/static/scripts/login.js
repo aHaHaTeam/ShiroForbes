@@ -4,12 +4,11 @@ const span = document.getElementById("span")
 const progress = document.getElementById("progress")
 const form = document.querySelector("form")
 
-
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const data = {
         "login": login.value,
-        "password": CryptoJS.MD5(password.value).toString(CryptoJS.enc.Hex),
+        "password": CryptoJS.SHA256(password.value).toString(),
     }
 
     span.style.display = "none"
