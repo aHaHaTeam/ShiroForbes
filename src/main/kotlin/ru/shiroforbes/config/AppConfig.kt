@@ -19,6 +19,7 @@ import ru.shiroforbes.modules.markdown.MarkdownConverter
 import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.DbEventService
 import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.service.DbTransactionService
 import ru.shiroforbes.web.routes
 
 fun Application.configureApp(config: Config) {
@@ -35,7 +36,7 @@ fun Application.configureApp(config: Config) {
     install(Sessions) {
         cookie<Session>("user_session") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 60 * 100000
+            cookie.maxAgeInSeconds = 60 * 10
         }
     }
 
@@ -95,6 +96,7 @@ fun Application.configureApp(config: Config) {
             ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
             eventService = DbEventService,
             markdownConverter = MarkdownConverter(),
+            transactionService = DbTransactionService,
             routerConfig = config.routerConfig,
         )
     }

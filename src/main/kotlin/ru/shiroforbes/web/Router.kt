@@ -11,10 +11,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinLocalDate
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -31,9 +30,11 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun Routing.routes(
-    studentService: StudentService,
-    eventService: EventService,
+    studentService: StudentService? = null,
+    eventService: EventService? = null,
+    transactionService: TransactionService,
     ratingSerializer: RatingSerializer,
     ratingDeserializer: RatingDeserializer,
     markdownConverter: MarkdownConverter,
@@ -46,15 +47,15 @@ fun Routing.routes(
     }
 
     get("/grobarium") {
-        call.respondRedirect(routerConfig.grobariumUrl)
+        call.respondRedirect(routerConfig!!.grobariumUrl)
     }
 
     get("/series") {
-        call.respondRedirect(routerConfig.seriesUrl)
+        call.respondRedirect(routerConfig!!.seriesUrl)
     }
 
     get("/lz") {
-        call.respondRedirect(routerConfig.lzUrl)
+        call.respondRedirect(routerConfig!!.lzUrl)
     }
 
     authenticate("auth-session-no-redirect") {
@@ -72,7 +73,7 @@ fun Routing.routes(
                     "menu",
                     mapOf(
                         "countrysideCampStudents" to
-                            studentService
+                            studentService!!
                                 .getGroup(GroupType.Countryside)
                                 .sortedByDescending { it.rating + it.wealth },
                         "urbanCampStudents" to
@@ -122,7 +123,7 @@ fun Routing.routes(
                 call.respond(
                     ThymeleafContent(
                         "components/rating",
-                        mapOf("students" to studentService.getGroup(GroupType.Countryside)),
+                        mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
                     ),
                 )
             }
@@ -217,7 +218,7 @@ fun Routing.routes(
             call.respond(
                 ThymeleafContent(
                     "admin",
-                    mapOf("students" to studentService.getGroup(GroupType.Countryside)),
+                    mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
                 ),
             )
         }
@@ -227,7 +228,7 @@ fun Routing.routes(
         get("/update/rating") {
             val countrysideDeltas =
                 computeRatingDeltas(
-                    studentService.getGroup(GroupType.Countryside),
+                    studentService!!.getGroup(GroupType.Countryside),
                     ratingDeserializer.getCountrysideRating(),
                 )
             val urbanDeltas =
@@ -254,7 +255,7 @@ fun Routing.routes(
             ratingDeserializer
                 .getUrbanRating()
                 .forEach {
-                    studentService.addRating(
+                    studentService!!.addRating(
                         Rating(
                             -1,
                             -1,
@@ -280,33 +281,33 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         post("/update/countryside/rating") {
-            updateRating(studentService, ratingDeserializer.getCountrysideRating())
+            updateRating(studentService!!, ratingDeserializer.getCountrysideRating())
             call.respondRedirect("/update/rating")
         }
     }
 
     authenticate("auth-session-admin-only") {
         post("/update/urban/rating") {
-            updateRating(studentService, ratingDeserializer.getUrbanRating())
+            updateRating(studentService!!, ratingDeserializer.getUrbanRating())
             call.respondRedirect("/update/rating")
         }
     }
 
     get("/download/urban/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService.getGroup(GroupType.Urban))
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Urban))
         call.respondBytes(outputStream.toByteArray())
     }
 
     get("/download/countryside/rating.pdf") {
         val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService.getGroup(GroupType.Countryside))
+        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
         call.respondBytes(outputStream.toByteArray())
     }
 
     authenticate("auth-session-admin-only") {
         get("/transactions/exercises/countryside") {
-            val countryside = studentService.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
+            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "exercises",
@@ -329,7 +330,7 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService.updateStudentExercised(
+                    studentService!!.updateStudentExercised(
                         id = id.toInt(),
                         exercised = params[id].toString() == "true",
                     )
@@ -341,7 +342,7 @@ fun Routing.routes(
                     if (id == "activityType") {
                         continue
                     }
-                    studentService.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
+                    studentService!!.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
                 }
             }
 
@@ -351,7 +352,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/countryside") {
-            val countryside = studentService.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
+            val countryside = studentService!!.getGroup(GroupType.Countryside).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
@@ -366,7 +367,7 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/transactions/urban") {
-            val urban = studentService.getGroup(GroupType.Urban).sortedBy { student -> student.name }
+            val urban = studentService!!.getGroup(GroupType.Urban).sortedBy { student -> student.name }
             call.respond(
                 ThymeleafContent(
                     "transactions",
@@ -409,6 +410,36 @@ fun Routing.routes(
         }
     }
 
+    authenticate("auth-session-admin-only") {
+        get("/transactions/history") {
+            val students = studentService!!.getAllStudents().associateBy { it.id }
+            val transactions =
+                transactionService
+                    .getAllTransactions()
+                    .sortedByDescending { it.date }
+                    .map {
+                        TransactionUtil(
+                            it.id,
+                            students[it.studentId]!!,
+                            it.size,
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
+                            it.description,
+                        )
+                    }.groupBy { it.student.group }
+            call.respond(
+                ThymeleafContent(
+                    "transactions_history",
+                    mapOf(
+                        "urbanTransactions" to (transactions[GroupType.Urban] ?: listOf()),
+                        "countrysideTransactions" to (transactions[GroupType.Countryside] ?: listOf()),
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
+                ),
+            )
+        }
+    }
+
     get("/") {
         call.respondRedirect("/menu")
     }
@@ -433,7 +464,6 @@ fun Routing.routes(
         post("/event/new") {
             val formContent = call.receiveText()
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
-            println(formContent)
             val event =
                 Event(
                     -1,
@@ -448,14 +478,14 @@ fun Routing.routes(
                     ),
                 )
 
-            eventService.addEvent(event)
+            eventService!!.addEvent(event)
             call.respond(HttpStatusCode.Accepted)
         }
     }
 
     authenticate("auth-session-admin-only") {
         get("/event/edit/{id}") {
-            val event = eventService.getEvent(call.parameters["id"]!!.toInt())!!
+            val event = eventService!!.getEvent(call.parameters["id"]!!.toInt())!!
             call.respond(
                 ThymeleafContent(
                     "event_editing",
@@ -489,7 +519,7 @@ fun Routing.routes(
                     ),
                 )
 
-            eventService.updateEvent(event)
+            eventService!!.addEvent(event)
             call.respond(HttpStatusCode.Accepted)
         }
     }
@@ -533,10 +563,10 @@ fun Routing.routes(
             }
             val investing = params["isInvesting"].toString()
             if (investing == "true") {
-                studentService.updateStudentInvesting(id, true)
+                studentService?.updateStudentInvesting(id, true)
             }
             if (investing == "false") {
-                studentService.updateStudentInvesting(id, false)
+                studentService?.updateStudentInvesting(id, false)
             }
 
             call.respond(HttpStatusCode.NoContent)
