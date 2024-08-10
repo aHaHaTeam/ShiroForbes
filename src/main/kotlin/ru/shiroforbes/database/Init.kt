@@ -3,7 +3,7 @@ package ru.shiroforbes.database
 import com.google.api.services.sheets.v4.SheetsScopes
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
@@ -61,6 +61,17 @@ fun main() {
     )
 
     transaction {
+        drop(
+            Students,
+            Ratings,
+            Wealths,
+            Transactions,
+            StudentRatings,
+            StudentWealth,
+            StudentTransaction,
+            Events,
+            Admins,
+        )
         create(
             Students,
             Ratings,
