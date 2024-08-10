@@ -47,15 +47,15 @@ fun Routing.routes(
     }
 
     get("/grobarium") {
-        call.respondRedirect(routerConfig!!.grobariumUrl)
+        call.respondRedirect(routerConfig.grobariumUrl)
     }
 
     get("/series") {
-        call.respondRedirect(routerConfig!!.seriesUrl)
+        call.respondRedirect(routerConfig.seriesUrl)
     }
 
     get("/lz") {
-        call.respondRedirect(routerConfig!!.lzUrl)
+        call.respondRedirect(routerConfig.lzUrl)
     }
 
     authenticate("auth-session-no-redirect") {
@@ -67,7 +67,7 @@ fun Routing.routes(
                 }
             }
 
-            val events = eventService.getAllEvents()
+            val events = eventService?.getAllEvents()
             call.respond(
                 ThymeleafContent(
                     "menu",
@@ -81,7 +81,7 @@ fun Routing.routes(
                                 .getGroup(GroupType.Urban)
                                 .sortedByDescending { it.rating + it.wealth },
                         "user" to user,
-                        "countrysideCampEvents" to events.filter { it.group == GroupType.Countryside },
+                        "countrysideCampEvents" to events!!.filter { it.group == GroupType.Countryside },
                         "urbanCampEvents" to events.filter { it.group == GroupType.Urban },
                     ),
                 ),
@@ -537,7 +537,7 @@ fun Routing.routes(
                     "event_viewing",
                     mapOf(
                         "user" to user,
-                        "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "event" to eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
                     ),
                 ),
             )
