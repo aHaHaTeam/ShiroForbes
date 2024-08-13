@@ -56,6 +56,11 @@ interface StudentService {
         wealth: Int,
     ): Unit = throw NotImplementedError()
 
+    suspend fun updateWealth(
+        id: Int,
+        wealth: Int,
+    ): Unit = throw NotImplementedError()
+
     suspend fun getGroup(group: GroupType): List<Student> = throw NotImplementedError()
 
     suspend fun addRating(
@@ -200,6 +205,17 @@ object DbStudentService : StudentService {
                     .first()
                     .id
             Students.update({ Students.id eq studentId }) {
+                it[this.wealth] = wealth
+            }
+        }
+    }
+
+    override suspend fun updateWealth(
+        id: Int,
+        wealth: Int,
+    ) {
+        transaction {
+            Students.update({ Students.id eq id }) {
                 it[this.wealth] = wealth
             }
         }

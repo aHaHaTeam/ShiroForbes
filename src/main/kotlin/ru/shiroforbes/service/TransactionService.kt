@@ -4,6 +4,7 @@ package ru.shiroforbes.service
 
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
@@ -22,6 +23,8 @@ interface TransactionService {
     suspend fun makeTransaction(transaction: Transaction): Unit = throw NotImplementedError()
 
     suspend fun getTransaction(id: Int): Transaction? = throw NotImplementedError() // TODO
+
+    suspend fun deleteTransaction(id: Int): Unit = throw NotImplementedError()
 
     suspend fun getAllTransactions(): List<Transaction> = throw NotImplementedError() // TODO
 
@@ -84,6 +87,13 @@ object DbTransactionService : TransactionService {
             val dao = TransactionDAO.findById(id) ?: return@transaction null
             val studentId = getStudentId(id)
             return@transaction daoToTransaction(dao, studentId)
+        }
+    }
+
+    override suspend fun deleteTransaction(id: Int) {
+        transaction {
+            StudentTransaction.deleteWhere { StudentTransaction.transaction eq id }
+            Transactions.deleteWhere { Transactions.id eq id }
         }
     }
 

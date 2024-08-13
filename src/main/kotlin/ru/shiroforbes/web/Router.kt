@@ -429,6 +429,16 @@ fun Routing.routes(
     }
 
     authenticate("auth-session-admin-only") {
+        post("/transactions/delete/{id}") {
+            val transaction = transactionService.getTransaction(call.parameters["id"]!!.toInt())!!
+            val student = studentService!!.getStudentById(transaction.studentId)!!
+            studentService.updateWealth(student.id, student.wealth - transaction.size)
+            transactionService.deleteTransaction(call.parameters["id"]!!.toInt())
+            call.respond(HttpStatusCode.Accepted)
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
         get("/transactions/history") {
             val students = studentService!!.getAllStudents().associateBy { it.id }
             val transactions =

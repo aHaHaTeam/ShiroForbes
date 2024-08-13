@@ -15,24 +15,29 @@
 <div class="grid" th:fragment="history(transactions)">
     <h2 class="s12 center-align middle">История транзакций</h2>
 
-    <div class="s0 m1 l2"></div>
-    <div class="s12 m10 l8">
+    <div class="s0 m0 l1"></div>
+    <div class="s12 m12 l10">
         <table class="stripes">
             <thead>
             <tr>
+                <th class="min center-align" style="text-wrap: wrap;">Отменить транзакцию</th>
                 <th class="min center-align">Время</th>
                 <th class="min center-align">Дата</th>
-                <th class="max center-align">Имя</th>
-                <th class="center-align">ZLT</th>
-                <th class="center-align">Название</th>
+                <th class="min center-align">Имя</th>
+                <th class="min center-align">ZLT</th>
+                <th class="max center-align">Название</th>
             </tr>
             </thead>
             <tbody>
             <!--/*@thymesVar id="transactions" type="kotlin.collections.List<ru.shiroforbes.web.TransactionUtil>"*/-->
             <tr th:each="transaction, j: ${transactions}">
+                <td>
+                    <button class="circle remove-button"><i>remove</i><span hidden="hidden"
+                                                                            th:text="${transaction.id}"></span></button>
+                </td>
                 <td th:text="${transaction.time}"></td>
                 <td th:text="${transaction.date}"></td>
-                <td th:text="${transaction.student.name}"></td>
+                <td class="center-align" th:text="${transaction.student.name}"></td>
                 <td class="center-align">
                     <span th:if="${transaction.size > 0}" th:text="|(+${transaction.size})|"
                           style="color: green"></span>
@@ -40,12 +45,12 @@
                           style="color: red"></span>
                 </td>
                 <td th:text="${transaction.description}"
-                    style="white-space: nowrap; overflow: hidden;"></td>
+                    style="text-wrap: pretty;"></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="s0 m1 l2"></div>
+    <div class="s0 m0 l1"></div>
 </div>
 </body>
 
