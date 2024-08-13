@@ -24,6 +24,10 @@
                     <i>exercise</i>
                     <span>Зарядка</span>
                 </a>
+                <a id="cleaningTab">
+                    <i>vacuum</i>
+                    <span>Уборка</span>
+                </a>
                 <a id="promenadeTab">
                     <i>nature</i>
                     <span>Прогулка</span>
@@ -37,6 +41,10 @@
                 <fieldset>
                     <legend>Выберите участников</legend>
                     <div name="activityType" id="activityType" hidden>exercises</div>
+                    <div th:insert="~{components/date_time :: date_time()}"></div>
+
+                    <hr class="small">
+
                     <a href="" class="row">
                         <div class="max">
                             <h6 class="small">Шировласики</h6>

@@ -2,9 +2,7 @@
 
 package ru.shiroforbes.service
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -32,6 +30,8 @@ interface TransactionService {
     suspend fun sendMoneyByCondition(
         students: List<Student>,
         amount: Int,
+        dateTime: LocalDateTime,
+        description: String,
         condition: Student.() -> Boolean,
     ): Unit
 }
@@ -108,6 +108,8 @@ object DbTransactionService : TransactionService {
     override suspend fun sendMoneyByCondition(
         students: List<Student>,
         amount: Int,
+        dateTime: LocalDateTime,
+        description: String,
         condition: Student.() -> Boolean,
     ) {
         students.forEach {
@@ -117,8 +119,8 @@ object DbTransactionService : TransactionService {
                         0,
                         it.id,
                         amount,
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                        "successfully exercised",
+                        dateTime,
+                        description,
                     )
                 makeTransaction(transaction)
             }

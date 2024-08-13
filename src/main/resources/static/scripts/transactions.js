@@ -9,9 +9,9 @@ const form = document.querySelector("form")
 
 for (let i = 0; i < options.length; i++) {
     let div = options[i].getElementsByTagName("div")[0];
-    let div2= options[i].getElementsByTagName("div")[1];
+    let div2 = options[i].getElementsByTagName("div")[1];
     let txtValue = div.textContent || div.innerText;
-    let login = div2.textContent|| div2.innerText
+    let login = div2.textContent || div2.innerText
     transactions.set(txtValue.toLowerCase(), false)
     logins.set(txtValue.toLowerCase(), login)
 }
@@ -70,8 +70,12 @@ function removeTransaction(icon) {
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    let data = {"transactionName": document.getElementById("transactionName").value}
-    for (let [n, b] of  transactions.entries()) {
+    let data = {
+        "transactionName": document.getElementById("transactionName").value,
+        "date": document.getElementById("datePicker").value,
+        "time": document.getElementById("timePicker").value,
+    }
+    for (let [n, b] of transactions.entries()) {
         if (b) {
             data[logins.get(n)] = document.getElementById(n).value
         }

@@ -1,4 +1,5 @@
 const exercisesTab = document.getElementById("exercisesTab")
+const cleaningTab = document.getElementById("cleaningTab")
 const promenadeTab = document.getElementById("promenadeTab")
 const curfewTab = document.getElementById("curfewTab")
 const activityType = document.getElementById("activityType")
@@ -6,13 +7,23 @@ const form = document.querySelector("form")
 
 exercisesTab.onclick = () => {
     exercisesTab.classList.add("active")
+    cleaningTab.classList.remove("active")
     promenadeTab.classList.remove("active")
     curfewTab.classList.remove("active")
     activityType.textContent = "exercises"
 }
 
+cleaningTab.onclick = () => {
+    exercisesTab.classList.remove("active")
+    cleaningTab.classList.add("active")
+    promenadeTab.classList.remove("active")
+    curfewTab.classList.remove("active")
+    activityType.textContent = "cleaning"
+}
+
 promenadeTab.onclick = () => {
     exercisesTab.classList.remove("active")
+    cleaningTab.classList.remove("active")
     promenadeTab.classList.add("active")
     curfewTab.classList.remove("active")
     activityType.textContent = "promenade"
@@ -20,6 +31,7 @@ promenadeTab.onclick = () => {
 
 curfewTab.onclick = () => {
     exercisesTab.classList.remove("active")
+    cleaningTab.classList.remove("active")
     promenadeTab.classList.remove("active")
     curfewTab.classList.add("active")
     activityType.textContent = "curfew"
@@ -55,10 +67,12 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
     let data = {
         "activityType": activityType.textContent,
+        "date": document.getElementById("datePicker").value,
+        "time": document.getElementById("timePicker").value,
     }
-    for (let i = 0; i < 1000; i++){
+    for (let i = 0; i < 1000; i++) {
         const row = document.getElementById(i)
-        if (row==null){
+        if (row == null) {
             continue
         }
         data[i] = row.checked
@@ -71,7 +85,7 @@ form.addEventListener("submit", (e) => {
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
-            if(response.ok){
+            if (response.ok) {
                 alert("Успех")
             }
         }

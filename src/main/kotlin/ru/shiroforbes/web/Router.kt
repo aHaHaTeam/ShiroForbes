@@ -11,9 +11,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -325,25 +327,43 @@ fun Routing.routes(
             val formContent = call.receiveText()
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
 
-            if (params.jsonValue("activityType") == "exercises") {
-                for (id: String in params.keys) {
-                    if (id == "activityType") {
-                        continue
-                    }
-                    studentService!!.updateStudentExercised(
-                        id = id.toInt(),
-                        exercised = params[id].toString() == "true",
-                    )
+            val transactionDescription =
+                when (params.jsonValue("activityType")) {
+                    "excersises" -> "Зарядка"
+                    "cleaning" -> "Уборка палаты"
+                    "promenade" -> "Случайный момент"
+                    "curfew" -> "Успешный отбой"
+                    else -> params.jsonValue("activityType")
                 }
-            }
 
-            if (params.jsonValue("activityType") == "curfew") {
-                for (id: String in params.keys) {
-                    if (id == "activityType") {
-                        continue
-                    }
-                    studentService!!.updateStudentBeaten(id = id.toInt(), beaten = params[id].toString() == "true")
+            val transactionAmount =
+                when (params.jsonValue("activityType")) {
+                    "exercises" -> 40
+                    "cleaning" -> 40
+                    "promenade" -> 50
+                    "curfew" -> 20
+                    else -> 0
                 }
+
+            val transactionDateTime = LocalDateTime.parse(params.jsonValue("date") + "T" + params.jsonValue("time"))
+
+            val students =
+                params.keys
+                    .mapNotNull {
+                        if (it == "activityType" || it == "time" || it == "date") {
+                            null
+                        } else {
+                            it.toInt()
+                        }
+                    }.toSet()
+
+            transactionService.sendMoneyByCondition(
+                studentService!!.getAllStudents(),
+                transactionAmount,
+                transactionDateTime,
+                transactionDescription,
+            ) {
+                this.id in students
             }
 
             call.respond(HttpStatusCode.Accepted)
@@ -386,8 +406,9 @@ fun Routing.routes(
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
             println(params)
             val transactionName = params.jsonValue("transactionName")
+            val transactionDateTime = LocalDateTime.parse(params.jsonValue("date") + "T" + params.jsonValue("time"))
             for (login: String in params.keys) {
-                if (login == "transactionName") {
+                if (login == "transactionName" || login == "date" || login == "time") {
                     continue
                 }
                 val size = params.jsonValue(login).toInt()
@@ -397,10 +418,7 @@ fun Routing.routes(
                         id = 0,
                         studentId = studentId,
                         size = size,
-                        date =
-                            Clock.System.now().toLocalDateTime(
-                                TimeZone.currentSystemDefault(),
-                            ),
+                        date = transactionDateTime,
                         description = transactionName,
                     ),
                 )

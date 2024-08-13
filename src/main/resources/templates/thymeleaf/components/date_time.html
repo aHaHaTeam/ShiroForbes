@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>ShiroForbes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+</head>
+
+<body>
+<div th:fragment="date_time()" class="row">
+    <div class="max">
+        <button class="center large">
+            <i>today</i>
+            <span>Date</span>
+            <input type="date" id="datePicker">
+        </button>
+    </div>
+    <div class="max">
+        <button class="center large">
+            <i>schedule</i>
+            <span>Time</span>
+            <input type="time" id="timePicker">
+        </button>
+    </div>
+    <script src="/static/scripts/date_time.js"></script>
+</div>
+</body>
+
+</html>
