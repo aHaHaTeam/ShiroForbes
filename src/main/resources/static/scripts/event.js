@@ -56,6 +56,7 @@ previewTab.onclick = async () => {
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
+    //e.target.disable()
     const group = (document.getElementById("countryside").classList.contains("fill")) ? "Countryside" : "Urban";
     const data = {
         "group": group,

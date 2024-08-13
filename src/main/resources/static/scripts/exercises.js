@@ -3,6 +3,8 @@ const promenadeTab = document.getElementById("promenadeTab")
 const curfewTab = document.getElementById("curfewTab")
 const activityType = document.getElementById("activityType")
 const form = document.querySelector("form")
+const span = document.getElementById("span")
+const progress = document.getElementById("progress")
 
 exercisesTab.onclick = () => {
     exercisesTab.classList.add("active")
@@ -52,7 +54,10 @@ for (let j = 0; j < switches.length; j++) {
 }
 
 form.addEventListener("submit", (e) => {
+     // document.getElementById("submitButton").disable()
     e.preventDefault();
+    span.style.display = "none"
+    progress.style.display = ""
     let data = {
         "activityType": activityType.textContent,
     }
@@ -71,6 +76,7 @@ form.addEventListener("submit", (e) => {
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
+            document.getElementById("submitButton").enable()
             if(response.ok){
                 alert("Успех")
             }

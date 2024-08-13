@@ -2,6 +2,8 @@ const searchBar = document.getElementById("searchBar")
 const options = document.getElementsByClassName("option")
 const listOfTransactions = document.getElementById("listOfTransactions")
 let transactions = new Map();
+const span = document.getElementById("span")
+const progress = document.getElementById("progress")
 
 let logins = new Map();
 
@@ -69,7 +71,10 @@ function removeTransaction(icon) {
 }
 
 form.addEventListener("submit", (e) => {
+    // document.getElementById("submitButton").disable()
     e.preventDefault();
+    span.style.display = "none"
+    progress.style.display = ""
     let data = {"transactionName": document.getElementById("transactionName").value}
     for (let [n, b] of  transactions.entries()) {
         if (b) {
@@ -81,9 +86,12 @@ form.addEventListener("submit", (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     }).then(response => {
+        span.style.display = ""
+        progress.style.display = "none"
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
+            document.getElementById("submitButton").enable()
             if (response.ok) {
                 alert("Успех")
             }
