@@ -48,10 +48,10 @@ suspend fun updateRating(
                 LocalDate.now().toKotlinLocalDate(),
                 it.solvedProblems,
                 it.rating,
-                it.solvedPercentage,
-                it.algebraPercentage,
-                it.geometryPercentage,
-                it.combinatoricsPercentage,
+                0f,
+                it.algebraPercentage.toFloat(),
+                it.geometryPercentage.toFloat(),
+                it.combinatoricsPercentage.toFloat(),
             ),
             it.lastName.trim() + " " + it.firstName.trim(),
         )
@@ -59,6 +59,9 @@ suspend fun updateRating(
             it.lastName.trim() + " " + it.firstName.trim(),
             it.rating,
             it.solvedProblems,
+            it.algebraPercentage,
+            it.geometryPercentage,
+            it.combinatoricsPercentage,
         )
     }
 }

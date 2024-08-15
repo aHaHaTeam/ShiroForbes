@@ -28,7 +28,6 @@ import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.*
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.time.LocalDate
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun Routing.routes(
@@ -67,7 +66,7 @@ fun Routing.routes(
                 }
             }
 
-            val events = eventService.getAllEvents()
+            val events = eventService!!.getAllEvents()
             call.respond(
                 ThymeleafContent(
                     "menu",
@@ -104,6 +103,7 @@ fun Routing.routes(
         val name = params.jsonValue("login")
         val password = params.jsonValue("password")
         if (!validUser(name, password)) {
+            println("Login failed")
             return@post
         }
         call.sessions.set(Session(name, password))
@@ -141,6 +141,20 @@ fun Routing.routes(
             val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
             if (!user.HasAdminRights) {
                 user as Student
+                val transactions =
+                    DbTransactionService
+                        .getAllStudentTransactions(user.id)
+                        .sortedByDescending { it.date }
+                        .map {
+                            TransactionUtil(
+                                it.id,
+                                user,
+                                it.size,
+                                it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                                it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
+                                it.description,
+                            )
+                        }
                 call.respond(
                     ThymeleafContent(
                         "profile",
@@ -150,6 +164,7 @@ fun Routing.routes(
                             "rating" to user.ratingHistory,
                             "wealth" to user.wealthHistory,
                             "activeUser" to activeUser,
+                            "transactions" to transactions,
                         ),
                     ),
                 )
@@ -173,7 +188,7 @@ fun Routing.routes(
                     mapOf(
                         "user" to activeUser,
                         "offers" to
-                            DbOfferService.getAllOffers(),
+                            DbOfferService.getAllOffers().sortedBy { it.price },
                     ),
                 ),
             )
@@ -251,35 +266,6 @@ fun Routing.routes(
     }
 
     authenticate("auth-session-admin-only") {
-        post("/update/urban/rating") {
-            ratingDeserializer
-                .getUrbanRating()
-                .forEach {
-                    studentService!!.addRating(
-                        Rating(
-                            -1,
-                            -1,
-                            LocalDate.now().toKotlinLocalDate(),
-                            it.solvedProblems,
-                            it.rating,
-                            it.solvedPercentage,
-                            it.algebraPercentage,
-                            it.geometryPercentage,
-                            it.combinatoricsPercentage,
-                        ),
-                        it.lastName.trim() + " " + it.firstName.trim(),
-                    )
-                    studentService.updateRating(
-                        it.lastName.trim() + " " + it.firstName.trim(),
-                        it.rating,
-                        it.solvedProblems,
-                    )
-                }
-            call.respondRedirect("/update/rating")
-        }
-    }
-
-    authenticate("auth-session-admin-only") {
         post("/update/countryside/rating") {
             updateRating(studentService!!, ratingDeserializer.getCountrysideRating())
             call.respondRedirect("/update/rating")
@@ -346,7 +332,7 @@ fun Routing.routes(
                 }
             }
 
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -406,7 +392,7 @@ fun Routing.routes(
                 )
             }
 
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -479,7 +465,7 @@ fun Routing.routes(
                 )
 
             eventService!!.addEvent(event)
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -520,7 +506,7 @@ fun Routing.routes(
                 )
 
             eventService!!.addEvent(event)
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -537,7 +523,8 @@ fun Routing.routes(
                     "event_viewing",
                     mapOf(
                         "user" to user,
-                        "event" to eventService.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "event" to
+                            eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
                     ),
                 ),
             )

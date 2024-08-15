@@ -94,7 +94,7 @@ object DbTransactionService : TransactionService {
 
     override suspend fun getAllStudentTransactions(studentId: Int): List<Transaction> =
         transaction {
-            Transactions.innerJoin(StudentTransaction).selectAll().where { Students.id eq studentId }.map {
+            Transactions.innerJoin(StudentTransaction).selectAll().where { StudentTransaction.student eq studentId }.map {
                 Transaction(
                     it[Transactions.id].value,
                     studentId,

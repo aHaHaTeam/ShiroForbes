@@ -28,7 +28,7 @@ urbanForm.addEventListener("submit", (e) => {
 })
 
 countrysideForm.addEventListener("submit", (e) => {
-    document.getElementById("urbanPublishButton").disable()
+    //document.getElementById("urbanPublishButton").disable()
     e.preventDefault();
     countrysideSpan.style.display = "none"
     countrysideProgress.style.display = ""
