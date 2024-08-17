@@ -73,6 +73,12 @@ form.addEventListener("submit", (e) => {
         "date": document.getElementById("datePicker").value,
         "time": document.getElementById("timePicker").value,
     }
+    if (data["date"] === "") {
+        data["date"] = currentDate
+    }
+    if (data["time"] === "") {
+        data["time"] = currentTime
+    }
     for (let i = 0; i < 1000; i++) {
         const row = document.getElementById(i)
         if (row == null) {

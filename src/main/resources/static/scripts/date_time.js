@@ -9,6 +9,4 @@ if (dates[0].length === 1) {
 }
 
 const currentDate = dates[2] + "-" + dates[0] + "-" + dates[1];
-const currentTime = date.toLocaleTimeString().substring(0, 5);
-datePicker.value = currentDate;
-timePicker.value = currentTime;
+const currentTime = date.getHours().toString() + ":" + date.getMinutes().toString();
