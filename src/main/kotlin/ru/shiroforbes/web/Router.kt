@@ -340,7 +340,11 @@ fun Routing.routes(
                         if (it == "activityType" || it == "time" || it == "date") {
                             null
                         } else {
-                            it.toInt()
+                            if (params[it].toString() == "true") {
+                                it.toInt()
+                            } else {
+                                null
+                            }
                         }
                     }.toSet()
 
