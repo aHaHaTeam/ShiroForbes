@@ -33,9 +33,15 @@ fun main(args: Array<String>) {
         ru.shiroforbes.database.main()
         return
     }
+    var port = 80
+    for (arg in args) {
+        if (arg.startsWith("--port=")) {
+            port = arg.substringAfter("--port=").toInt()
+        }
+    }
     runBlocking {
         launch {
-            embeddedServer(Netty, port = 80, host = "0.0.0.0", module = Application::module)
+            embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
                 .start(wait = true)
         }
     }
