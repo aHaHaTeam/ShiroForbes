@@ -6,6 +6,7 @@ const form = document.querySelector("form")
 
 
 form.addEventListener("submit", (e) => {
+    // document.getElementById("submitButton").disable()
     e.preventDefault();
     let data = {
         "action": "add",
@@ -23,6 +24,7 @@ form.addEventListener("submit", (e) => {
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
+            document.getElementById("submitButton").enable()
             if (response.ok) {
                 alert("Успех")
             }
@@ -36,6 +38,7 @@ document.querySelectorAll("button").forEach(function (elem) {
         if (!isButton) {
             return;
         }
+        event.target.disable()
         const offerId = event.target.id
         let data = {
             "action": "remove",

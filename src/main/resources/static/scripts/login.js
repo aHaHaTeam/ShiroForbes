@@ -5,6 +5,7 @@ const progress = document.getElementById("progress")
 const form = document.querySelector("form")
 
 form.addEventListener("submit", (e) => {
+    // document.getElementById("signIn").disable()
     e.preventDefault();
     const data = {
         "login": login.value,
@@ -21,6 +22,7 @@ form.addEventListener("submit", (e) => {
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
+            document.getElementById("signIn").enable()
             span.style.display = ""
             progress.style.display = "none"
             password.parentElement.classList.add("invalid")

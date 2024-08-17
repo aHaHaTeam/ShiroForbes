@@ -5,8 +5,8 @@ data class RatingRow(
     val lastName: String,
     val solvedProblems: Int,
     val rating: Int,
-    val solvedPercentage: Float,
-    val algebraPercentage: Float,
-    val combinatoricsPercentage: Float,
-    val geometryPercentage: Float,
+    val algebraPercentage: Int,
+    val numbersTheoryPercentage: Int,
+    val combinatoricsPercentage: Int,
+    val geometryPercentage: Int,
 )

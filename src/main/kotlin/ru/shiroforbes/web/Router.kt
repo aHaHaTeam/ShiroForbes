@@ -49,15 +49,15 @@ fun Routing.routes(
     }
 
     get("/grobarium") {
-        call.respondRedirect(routerConfig.grobariumUrl)
+        call.respondRedirect(routerConfig!!.grobariumUrl)
     }
 
     get("/series") {
-        call.respondRedirect(routerConfig.seriesUrl)
+        call.respondRedirect(routerConfig!!.seriesUrl)
     }
 
     get("/lz") {
-        call.respondRedirect(routerConfig.lzUrl)
+        call.respondRedirect(routerConfig!!.lzUrl)
     }
 
     authenticate("auth-session-no-redirect") {
@@ -69,7 +69,7 @@ fun Routing.routes(
                 }
             }
 
-            val events = eventService?.getAllEvents()
+            val events = eventService!!.getAllEvents()
             call.respond(
                 ThymeleafContent(
                     "menu",
@@ -83,7 +83,7 @@ fun Routing.routes(
                                 .getGroup(GroupType.Urban)
                                 .sortedByDescending { it.rating + it.wealth },
                         "user" to user,
-                        "countrysideCampEvents" to events!!.filter { it.group == GroupType.Countryside },
+                        "countrysideCampEvents" to events.filter { it.group == GroupType.Countryside },
                         "urbanCampEvents" to events.filter { it.group == GroupType.Urban },
                     ),
                 ),
@@ -143,6 +143,20 @@ fun Routing.routes(
             val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
             if (!user.HasAdminRights) {
                 user as Student
+                val transactions =
+                    DbTransactionService
+                        .getAllStudentTransactions(user.id)
+                        .sortedByDescending { it.date }
+                        .map {
+                            TransactionUtil(
+                                it.id,
+                                user,
+                                it.size,
+                                it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                                it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
+                                it.description,
+                            )
+                        }
                 call.respond(
                     ThymeleafContent(
                         "profile",
@@ -152,6 +166,7 @@ fun Routing.routes(
                             "rating" to user.ratingHistory,
                             "wealth" to user.wealthHistory,
                             "activeUser" to activeUser,
+                            "transactions" to transactions,
                         ),
                     ),
                 )
@@ -175,7 +190,7 @@ fun Routing.routes(
                     mapOf(
                         "user" to activeUser,
                         "offers" to
-                            DbOfferService.getAllOffers(),
+                            DbOfferService.getAllOffers().sortedBy { it.price },
                     ),
                 ),
             )
@@ -249,35 +264,6 @@ fun Routing.routes(
                     ),
                 ),
             )
-        }
-    }
-
-    authenticate("auth-session-admin-only") {
-        post("/update/urban/rating") {
-            ratingDeserializer
-                .getUrbanRating()
-                .forEach {
-                    studentService!!.addRating(
-                        Rating(
-                            -1,
-                            -1,
-                            LocalDate.now().toKotlinLocalDate(),
-                            it.solvedProblems,
-                            it.rating,
-                            it.solvedPercentage,
-                            it.algebraPercentage,
-                            it.geometryPercentage,
-                            it.combinatoricsPercentage,
-                        ),
-                        it.lastName.trim() + " " + it.firstName.trim(),
-                    )
-                    studentService.updateRating(
-                        it.lastName.trim() + " " + it.firstName.trim(),
-                        it.rating,
-                        it.solvedProblems,
-                    )
-                }
-            call.respondRedirect("/update/rating")
         }
     }
 
@@ -366,7 +352,7 @@ fun Routing.routes(
                 this.id in students
             }
 
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -424,7 +410,7 @@ fun Routing.routes(
                 )
             }
 
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -507,7 +493,7 @@ fun Routing.routes(
                 )
 
             eventService!!.addEvent(event)
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -548,7 +534,7 @@ fun Routing.routes(
                 )
 
             eventService!!.addEvent(event)
-            call.respond(HttpStatusCode.Accepted)
+            call.respondRedirect("/menu")
         }
     }
 
@@ -565,7 +551,8 @@ fun Routing.routes(
                     "event_viewing",
                     mapOf(
                         "user" to user,
-                        "event" to eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
+                        "event" to
+                            eventService!!.getEvent(call.parameters["id"]!!.toInt())!!,
                     ),
                 ),
             )

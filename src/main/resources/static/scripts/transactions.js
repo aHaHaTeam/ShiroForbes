@@ -2,6 +2,8 @@ const searchBar = document.getElementById("searchBar")
 const options = document.getElementsByClassName("option")
 const listOfTransactions = document.getElementById("listOfTransactions")
 let transactions = new Map();
+const span = document.getElementById("span")
+const progress = document.getElementById("progress")
 
 let logins = new Map();
 
@@ -70,12 +72,14 @@ function removeTransaction(icon) {
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
+    span.style.display = "none"
+    progress.style.display = ""
     let data = {
         "transactionName": document.getElementById("transactionName").value,
         "date": document.getElementById("datePicker").value,
         "time": document.getElementById("timePicker").value,
     }
-    for (let [n, b] of transactions.entries()) {
+    for (let [n, b] of  transactions.entries()) {
         if (b) {
             data[logins.get(n)] = document.getElementById(n).value
         }
@@ -85,6 +89,8 @@ form.addEventListener("submit", (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     }).then(response => {
+        span.style.display = ""
+        progress.style.display = "none"
         if (response.redirected) {
             window.location.assign(response.url)
         } else {

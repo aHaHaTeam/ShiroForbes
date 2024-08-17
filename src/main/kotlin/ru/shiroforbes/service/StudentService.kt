@@ -49,6 +49,9 @@ interface StudentService {
         name: String,
         rating: Int,
         solved: Int,
+        algebra: Int,
+        combinatorics: Int,
+        geometry: Int,
     ): Unit = throw NotImplementedError()
 
     suspend fun updateWealth(
@@ -178,6 +181,9 @@ object DbStudentService : StudentService {
         name: String,
         rating: Int,
         solved: Int,
+        algebra: Int,
+        combinatorics: Int,
+        geometry: Int,
     ) {
         transaction {
             val studentId =
@@ -189,6 +195,9 @@ object DbStudentService : StudentService {
             Students.update({ Students.id eq studentId }) {
                 it[this.rating] = rating
                 it[totalSolved] = solved
+                it[algebraSolved] = algebra
+                it[combinatoricsSolved] = combinatorics
+                it[geometrySolved] = geometry
             }
         }
     }

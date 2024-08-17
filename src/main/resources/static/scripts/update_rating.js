@@ -7,6 +7,7 @@ const countrysideForm = document.getElementById("countrysideForm")
 
 
 urbanForm.addEventListener("submit", (e) => {
+    // document.getElementById("countrysidePublishButton").disable()
     e.preventDefault();
     urbanSpan.style.display = "none"
     urbanProgress.style.display = ""
@@ -19,6 +20,7 @@ urbanForm.addEventListener("submit", (e) => {
             window.location.assign(response.url)
         } else {
             alert("Something went wrong")
+            document.getElementById("countrysidePublishButton").enable()
             urbanSpan.style.display = ""
             urbanProgress.style.display = "none"
         }
@@ -26,6 +28,7 @@ urbanForm.addEventListener("submit", (e) => {
 })
 
 countrysideForm.addEventListener("submit", (e) => {
+    //document.getElementById("urbanPublishButton").disable()
     e.preventDefault();
     countrysideSpan.style.display = "none"
     countrysideProgress.style.display = ""
@@ -38,6 +41,7 @@ countrysideForm.addEventListener("submit", (e) => {
             window.location.assign(response.url)
         } else {
             alert("Something went wrong")
+            document.getElementById("urbanPublishButton").enable()
             countrysideSpan.style.display = ""
             countrysideProgress.style.display = "none"
         }

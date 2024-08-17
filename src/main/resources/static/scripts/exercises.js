@@ -4,6 +4,8 @@ const promenadeTab = document.getElementById("promenadeTab")
 const curfewTab = document.getElementById("curfewTab")
 const activityType = document.getElementById("activityType")
 const form = document.querySelector("form")
+const span = document.getElementById("span")
+const progress = document.getElementById("progress")
 
 exercisesTab.onclick = () => {
     exercisesTab.classList.add("active")
@@ -23,7 +25,6 @@ cleaningTab.onclick = () => {
 
 promenadeTab.onclick = () => {
     exercisesTab.classList.remove("active")
-    cleaningTab.classList.remove("active")
     promenadeTab.classList.add("active")
     curfewTab.classList.remove("active")
     activityType.textContent = "promenade"
@@ -65,6 +66,8 @@ for (let j = 0; j < switches.length; j++) {
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
+    span.style.display = "none"
+    progress.style.display = ""
     let data = {
         "activityType": activityType.textContent,
         "date": document.getElementById("datePicker").value,
@@ -85,7 +88,7 @@ form.addEventListener("submit", (e) => {
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
-            if (response.ok) {
+            if(response.ok){
                 alert("Успех")
             }
         }

@@ -95,6 +95,11 @@
                 <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id="ratingChart"></div>
                 <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id="wealthChart"></div>
             </div>
+            <div class="s12">
+                <div id="transactions" th:if="${!activeUser.equals(0) && user.login == activeUser.login}"
+                     th:insert="~{components/transactions :: history(${transactions}, ${false})}">
+                </div>
+            </div>
         </main>
     </div>
     <div class="s0 m1 l2"></div>
