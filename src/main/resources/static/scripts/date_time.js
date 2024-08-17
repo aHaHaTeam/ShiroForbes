@@ -2,11 +2,27 @@ const datePicker = document.getElementById("datePicker")
 const timePicker = document.getElementById("timePicker")
 
 const date = new Date();
-const dates = date.toLocaleDateString().split("/")
+const dates = date.toLocaleDateString().split(/[./-]/)
 
-if (dates[0].length === 1) {
-    dates[0] = "0" + dates[0]
+let currentDay = date.getDay().toString()
+while (currentDay.length < 2) {
+    currentDay = "0" + currentDay
+}
+let currentMonth = date.getMonth().toString()
+while (currentMonth.length < 2) {
+    currentMonth = "0" + currentMonth
+}
+let currentYear = date.getFullYear().toString()
+
+let currentDate = currentYear + "-" + currentMonth + "-" + currentDay;
+
+let currentMinutes = date.getMinutes().toString()
+while (currentMinutes.length < 2) {
+    currentMinutes = "0" + currentMinutes
 }
 
-const currentDate = dates[2] + "-" + dates[0] + "-" + dates[1];
-const currentTime = date.getHours().toString() + ":" + date.getMinutes().toString();
+let currentHours = date.getHours().toString()
+while (currentHours.length < 2) {
+    currentHours = "0" + currentHours
+}
+const currentTime = currentHours + ":" + currentMinutes;
