@@ -70,8 +70,8 @@ form.addEventListener("submit", (e) => {
     progress.style.display = ""
     let data = {
         "activityType": activityType.textContent,
-        "date": document.getElementById("datePicker").value,
-        "time": document.getElementById("timePicker").value,
+        "date": getDate(),
+        "time": getTime(),
     }
     if (data["date"] === "") {
         data["date"] = currentDate

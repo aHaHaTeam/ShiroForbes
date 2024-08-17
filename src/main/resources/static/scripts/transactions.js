@@ -76,8 +76,8 @@ form.addEventListener("submit", (e) => {
     progress.style.display = ""
     let data = {
         "transactionName": document.getElementById("transactionName").value,
-        "date": document.getElementById("datePicker").value,
-        "time": document.getElementById("timePicker").value,
+        "date": getDate(),
+        "time": getTime(),
     }
     for (let [n, b] of  transactions.entries()) {
         if (b) {
