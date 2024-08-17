@@ -15,7 +15,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -30,7 +30,7 @@ import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.*
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.time.LocalDate
+import java.time.LocalDateTime as JavaDateTime
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun Routing.routes(
@@ -49,15 +49,15 @@ fun Routing.routes(
     }
 
     get("/grobarium") {
-        call.respondRedirect(routerConfig!!.grobariumUrl)
+        call.respondRedirect(routerConfig.grobariumUrl)
     }
 
     get("/series") {
-        call.respondRedirect(routerConfig!!.seriesUrl)
+        call.respondRedirect(routerConfig.seriesUrl)
     }
 
     get("/lz") {
-        call.respondRedirect(routerConfig!!.lzUrl)
+        call.respondRedirect(routerConfig.lzUrl)
     }
 
     authenticate("auth-session-no-redirect") {
@@ -146,6 +146,7 @@ fun Routing.routes(
                 val transactions =
                     DbTransactionService
                         .getAllStudentTransactions(user.id)
+                        .filter { it.date.toJavaLocalDateTime().isBefore(JavaDateTime.now()) }
                         .sortedByDescending { it.date }
                         .map {
                             TransactionUtil(
