@@ -70,14 +70,7 @@ form.addEventListener("submit", (e) => {
     progress.style.display = ""
     let data = {
         "activityType": activityType.textContent,
-        "date": getDate(),
-        "time": getTime(),
-    }
-    if (data["date"] === "") {
-        data["date"] = currentDate
-    }
-    if (data["time"] === "") {
-        data["time"] = currentTime
+        "dateTime": getDateTime(),
     }
     for (let i = 0; i < 1000; i++) {
         const row = document.getElementById(i)

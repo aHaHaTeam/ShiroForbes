@@ -332,12 +332,12 @@ fun Routing.routes(
                     else -> 0
                 }
 
-            val transactionDateTime = LocalDateTime.parse(params.jsonValue("date") + "T" + params.jsonValue("time"))
+            val transactionDateTime = LocalDateTime.parse(params.jsonValue("dateTime"))
 
             val students =
                 params.keys
                     .mapNotNull {
-                        if (it == "activityType" || it == "time" || it == "date") {
+                        if (it == "activityType" || it == "dateTime") {
                             null
                         } else {
                             if (params[it].toString() == "true") {
@@ -397,9 +397,9 @@ fun Routing.routes(
             val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
             println(params)
             val transactionName = params.jsonValue("transactionName")
-            val transactionDateTime = LocalDateTime.parse(params.jsonValue("date") + "T" + params.jsonValue("time"))
+            val transactionDateTime = LocalDateTime.parse(params.jsonValue("dateTime"))
             for (login: String in params.keys) {
-                if (login == "transactionName" || login == "date" || login == "time") {
+                if (login == "transactionName" || login == "dateTime") {
                     continue
                 }
                 val size = params.jsonValue(login).toInt()
@@ -441,7 +441,7 @@ fun Routing.routes(
                             it.id,
                             students[it.studentId]!!,
                             it.size,
-                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm") }),
                             it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
                             it.description,
                         )

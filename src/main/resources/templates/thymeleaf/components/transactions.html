@@ -13,14 +13,13 @@
 
 <body>
 <div class="grid" th:fragment="history(transactions, nameNeeded)">
-    <h2 class="s12 center-align middle">История транзакций</h2>
-
     <div class="s0 m0 l1"></div>
     <div class="s12 m12 l10">
+        <h2 class="s12 center-align">История транзакций</h2>
         <table class="stripes">
             <thead>
             <tr>
-                <th th:if="${nameNeeded}" class="min center-align" style="text-wrap: wrap;">Отменить транзакцию</th>
+                <th th:if="${nameNeeded}" class="min center-align"></th>
                 <th class="min center-align">Время</th>
                 <th class="min center-align">Дата</th>
                 <th th:if="${nameNeeded}" class="min center-align">Имя</th>
@@ -32,8 +31,10 @@
             <!--/*@thymesVar id="transactions" type="kotlin.collections.List<ru.shiroforbes.web.TransactionUtil>"*/-->
             <tr th:each="transaction, j: ${transactions}">
                 <td th:if="${nameNeeded}">
-                    <button class="circle remove-button"><i>remove</i><span hidden="hidden"
-                                                                            th:text="${transaction.id}"></span></button>
+                    <button class="circle remove-button fill">
+                        <i>remove</i>
+                        <span hidden="hidden" th:text="${transaction.id}"></span>
+                    </button>
                 </td>
                 <td th:text="${transaction.time}"></td>
                 <td th:text="${transaction.date}"></td>

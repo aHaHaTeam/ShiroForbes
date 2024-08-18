@@ -14,17 +14,11 @@
 <body>
 <div th:fragment="date_time()" class="row">
     <div class="max">
-        <button class="center large">
+        <button class="center large" type="button">
             <i>today</i>
-            <span>Date</span>
-            <input type="date" id="datePicker">
-        </button>
-    </div>
-    <div class="max">
-        <button class="center large">
+            <span>Date/Time</span>
             <i>schedule</i>
-            <span>Time</span>
-            <input type="time" id="timePicker">
+            <input type="datetime-local" id="datetimePicker">
         </button>
     </div>
     <script src="/static/scripts/date_time.js"></script>
