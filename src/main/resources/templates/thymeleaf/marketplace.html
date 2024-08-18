@@ -24,9 +24,8 @@
             <table class="stripes">
                 <thead>
                 <tr>
-                    <th th:if="${!user.equals(0) && user.HasAdminRights}"></th>
+                    <th class="min" th:if="${!user.equals(0) && user.HasAdminRights}"></th>
                     <th class="min">№</th>
-                    <th class="min">Название</th>
                     <th class="max">Описание</th>
                     <th class="min">Стоимость</th>
                 </tr>
@@ -34,14 +33,13 @@
                 <tbody>
                 <tr th:each="offer, j: ${offers}" id="listOfOffers">
                     <td th:if="${!user.equals(0) && user.HasAdminRights}">
-                        <button class="small circle removeOffer" th:id="${offer.id}">
+                        <button class="small circle fill removeOffer" th:id="${offer.id}">
                             <i>remove</i>
                         </button>
                     </td>
                     <td th:text="${j.index+1}"></td>
                     <td th:text="${offer.name}"></td>
-                    <td th:text="${offer.description}"></td>
-                    <td th:text="${offer.price}"></td>
+                    <td class="center-align" th:text="${offer.price}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -55,17 +53,12 @@
                 <form>
                     <fieldset>
                         <legend>Заполните все поля</legend>
-                        <div class="field border label tiny min" id="offerNameDiv">
-                            <input id="offerName" name="offerName" required>
-                            <label for="offerNameDiv">Название</label>
+                        <div class="field border label extra min" id="offerNameDiv">
+                            <textarea type="text" id="offerName" name="offerName" required></textarea>
+                            <label for="offerNameDiv">Описание</label>
                         </div>
 
-                        <div class="field textarea label border extra min" id="offerDescriptionDiv">
-                            <textarea name="offerDescription" id="offerDescription" required></textarea>
-                            <label for="offerDescriptionDiv">Описание</label>
-                        </div>
-
-                        <div class="field textarea label border large min" id="priceDiv">
+                        <div class="field textarea label border min" id="priceDiv">
                             <input name="price" type="number" required id="price"></input>
                             <label for="priceDiv">Стоимость</label>
                         </div>

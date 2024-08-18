@@ -10,7 +10,7 @@ form.addEventListener("submit", (e) => {
     let data = {
         "action": "add",
         "offerName": offerName.value,
-        "offerDescription": offerDescription.value,
+        "offerDescription": offerName.value,
         "offerPrice": price.value,
     }
 
