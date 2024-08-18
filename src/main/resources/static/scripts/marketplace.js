@@ -6,7 +6,6 @@ const form = document.querySelector("form")
 
 
 form.addEventListener("submit", (e) => {
-    // document.getElementById("submitButton").disable()
     e.preventDefault();
     let data = {
         "action": "add",
@@ -38,8 +37,7 @@ document.querySelectorAll("button").forEach(function (elem) {
         if (!isButton) {
             return;
         }
-        event.target.disable()
-        const offerId = event.target.id
+        const offerId = elem.id
         let data = {
             "action": "remove",
             "id": offerId,
@@ -55,6 +53,7 @@ document.querySelectorAll("button").forEach(function (elem) {
             } else {
                 if (response.ok) {
                     alert("Успех")
+                    elem.hidden = true
                 }
             }
         })
