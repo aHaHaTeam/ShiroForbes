@@ -316,7 +316,7 @@ fun Routing.routes(
 
             val transactionDescription =
                 when (params.jsonValue("activityType")) {
-                    "excersises" -> "Зарядка"
+                    "exercises" -> "Зарядка"
                     "cleaning" -> "Уборка палаты"
                     "promenade" -> "Случайный момент"
                     "curfew" -> "Успешный отбой"
