@@ -35,12 +35,12 @@
 
         <div id="countrysideContent"
              th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}"
-             th:insert="~{components/transactions :: history(${countrysideTransactions}, ${true})}">
+             th:insert="~{components/transactions :: history(${null}, ${true})}">
         </div>
 
         <div id="urbanContent"
              th:hidden="${user.equals(0) || user.group.text != 'Urban'}"
-             th:insert="~{components/transactions :: history(${urbanTransactions}, ${true})}">
+             th:insert="~{components/transactions :: history(${null}, ${true})}">
         </div>
     </div>
     <div class="s0 m1 l2"></div>

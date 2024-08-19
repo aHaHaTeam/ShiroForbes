@@ -2,6 +2,7 @@
 
 package ru.shiroforbes.web
 
+import com.google.gson.Gson
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -431,6 +432,19 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/transactions/history") {
+            call.respond(
+                ThymeleafContent(
+                    "transactions_history",
+                    mapOf(
+                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                    ),
+                ),
+            )
+        }
+    }
+
+    authenticate("auth-session-admin-only") {
+        get("/transactions/all") {
             val students = studentService!!.getAllStudents().associateBy { it.id }
             val transactions =
                 transactionService
@@ -445,16 +459,9 @@ fun Routing.routes(
                             it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
                             it.description,
                         )
-                    }.groupBy { it.student.group }
+                    }.groupBy { it.student.group.toString() }
             call.respond(
-                ThymeleafContent(
-                    "transactions_history",
-                    mapOf(
-                        "urbanTransactions" to (transactions[GroupType.Urban] ?: listOf()),
-                        "countrysideTransactions" to (transactions[GroupType.Countryside] ?: listOf()),
-                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
-                    ),
-                ),
+                Gson().toJson(transactions).toString(),
             )
         }
     }
