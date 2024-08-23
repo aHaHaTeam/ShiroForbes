@@ -11,14 +11,14 @@ function addTransaction(listOfTransactions, transaction) {
     }
     listOfTransactions.insertAdjacentHTML("afterbegin",
         "<tr>" +
-        "   <td>\n" +
+        "   <td class='center-align'>\n" +
         "       <button class='circle remove-button fill'>\n" +
-        "           <i>remove</i>\n" +
         "           <span hidden='hidden'>" + transaction.id + "</span>\n" +
+        "           <i>remove</i>\n" +
         "       </button>\n" +
         "   </td>" +
-        "   <td>" + transaction.time + "</td>\n" +
-        "   <td>" + transaction.date + "</td>\n" +
+        "   <td class='center-align'>" + transaction.time + "</td>\n" +
+        "   <td class='center-align'>" + transaction.date + "</td>\n" +
         "   <td class='center-align'>" + transaction.student.name + "</td>\n" +
         "   <td class='center-align'>\n" +
         "       <span style='color: " + color + "'>" + sign + transaction.size + "</span>\n" +
@@ -35,14 +35,18 @@ fetch("/transactions/all").then(response => {
     }
     return response.json()
 }).then((transactions) => {
-    transactions["Countryside"].map(function (transaction) {
-        let countrysideList = document.getElementById("countrysideContent").getElementsByTagName("tbody")[0];
-        addTransaction(countrysideList, transaction)
-    })
-    transactions["Urban"].map(function (transaction) {
-        let urbanList = document.getElementById("urbanContent").getElementsByTagName("tbody")[0];
-        addTransaction(urbanList, transaction)
-    })
+    if (transactions.hasOwnProperty("Countryside")) {
+        transactions["Countryside"].map(function (transaction) {
+            let countrysideList = document.getElementById("countrysideContent").getElementsByTagName("tbody")[0];
+            addTransaction(countrysideList, transaction)
+        })
+    }
+    if (transactions.hasOwnProperty("Urban")) {
+        transactions["Urban"].map(function (transaction) {
+            let urbanList = document.getElementById("urbanContent").getElementsByTagName("tbody")[0];
+            addTransaction(urbanList, transaction)
+        })
+    }
 
     const removeButtons = document.getElementsByClassName("remove-button")
     for (let i = 0; i < removeButtons.length; i++) {
