@@ -96,8 +96,8 @@
                 <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id="wealthChart"></div>
             </div>
             <div class="s12">
-                <div id="transactions" th:if="${!activeUser.equals(0) && user.login == activeUser.login}"
-                     th:insert="~{components/transactions :: history(${transactions}, ${false})}">
+                <div id="transactions" th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}"
+                     th:insert="~{components/transactions :: history(${transactions}, ${false}, ${!activeUser.equals(0) && activeUser.HasAdminRights})}">
                 </div>
             </div>
         </main>
@@ -162,5 +162,6 @@
         wealthChart.hidden = false
     })
 </script>
+<script src="/static/scripts/transaction_history.js"></script>
 </body>
 </html>
