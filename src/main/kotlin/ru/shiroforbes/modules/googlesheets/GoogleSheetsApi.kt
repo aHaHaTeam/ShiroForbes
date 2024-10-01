@@ -103,7 +103,7 @@ class GoogleSheetsService<T : Any>(
         defaultConversionClass: Class<*> = Class.forName("kotlin.text.StringsKt"),
     ) : this(connectionService, spreadsheetId, clazz, dataRanges.toList(), defaultConversionClass)
 
-    fun getRating(): List<T> {
+    fun getWhileNotEmpty(): List<T> {
         val response =
             connectionService
                 .service
@@ -115,10 +115,12 @@ class GoogleSheetsService<T : Any>(
                 }.execute()
         val valueRanges = response.valueRanges
         if (valueRanges.isEmpty()) {
-            println("No data found.")
             return listOf()
         }
-        val maxLength = valueRanges.maxOf { it.getValues()?.size ?: 0 }
+        val maxLength =
+            valueRanges.maxOf { range ->
+                range.getValues()?.takeWhile { row -> row.all { it.toString() != "" } }?.size ?: 0
+            }
         val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }
         for (range in valueRanges) {
             for (rowIndexed in range.getValues().withIndex()) {
@@ -193,7 +195,7 @@ object Obj {
             "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
             RatingRow::class,
             dataRanges,
-        ).getRating().map {
+        ).getWhileNotEmpty().map {
             println(it)
         }
     }

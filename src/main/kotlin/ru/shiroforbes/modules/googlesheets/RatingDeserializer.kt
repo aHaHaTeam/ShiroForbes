@@ -27,9 +27,9 @@ class RatingDeserializer(
             config.countrysideRatingRanges,
         )
 
-    fun getCountrysideRating(): List<RatingRow> = countrysideDeserializer.getRating()
+    fun getCountrysideRating(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty()
 
-    fun getUrbanRating(): List<RatingRow> = urbanDeserializer.getRating()
+    fun getUrbanRating(): List<RatingRow> = urbanDeserializer.getWhileNotEmpty()
 
-    fun getAllRatings(): List<RatingRow> = countrysideDeserializer.getRating() + urbanDeserializer.getRating()
+    fun getAllRatings(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty() + urbanDeserializer.getWhileNotEmpty()
 }

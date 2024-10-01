@@ -135,4 +135,4 @@ private fun <T : Any> fetchGoogleSheets(
         table,
     ),
     Class.forName("ru.shiroforbes.database.InitKt"),
-).getRating()
+).getWhileNotEmpty()
