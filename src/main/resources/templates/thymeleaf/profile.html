@@ -15,70 +15,24 @@
 <body>
 <div class="grid">
     <div class="s0 m1 l2"></div>
-    <div class="s12 m10 l8">
+    <div class="s12 m10 l8" th:if="${!activeUser.equals(0) && (user.equals(activeUser) || activeUser.HasAdminRights)}">
         <div th:insert="~{components/header :: header(${activeUser})}"></div>
         <main class="responsive grid">
-            <div class="s6">
+            <div class="s12">
                 <br>
                 <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
                 <br>
-                <article class="border">
-                    <h6 class="large-text" th:text="|Решено: ${user.totalSolved}|"></h6>
-                    <h6 class="large-text" th:text="|Алгебра: ${user.algebraSolved}|"></h6>
-                    <h6 class="large-text" th:text="|Геометрия: ${user.geometrySolved}|"></h6>
-                    <h6 class="large-text" th:text="|Комбинаторика: ${user.combinatoricsSolved}|"></h6>
+                <article class="border grid">
+                    <h6 class="large-text s3" style="margin-top: 10%" th:text="|Решено: ${user.totalSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132" th:text="|Алгебра: ${user.algebraSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: green" th:text="|Геометрия: ${user.geometrySolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: #3F68AF" th:text="|Комбинаторика: ${user.combinatoricsSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%" th:text="|Решено: ${percentSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132" th:text="|Алгебра: ${percentSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: green" th:text="|Геометрия: ${percentSolved}|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: #3F68AF" th:text="|Комбинаторика: ${percentSolved}|"></h6>
                 </article>
                 <br>
-                <div class="grid">
-                    <p th:text="|Баланс: ${user.wealth}|" class="s12"></p>
-                    <div class="s12 field middle-align"
-                         th:if="${investingAllowed && !activeUser.equals(0) && user.login == activeUser.login}">
-                        <nav style="padding-left: 0">
-                            <div class="max">
-                                <p>Я инвестирую! Или нет? 🤔</p>
-                                <p id="investorStatus" class="small-text"></p>
-                            </div>
-                            <label class="switch icon">
-                                <input type="checkbox" id="investorCheckbox">
-
-                                <span>
-                                    <i>close</i>
-                                    <i>done</i>
-                                </span>
-                            </label>
-                            <script th:inline="javascript">
-                                document.getElementById("investorCheckbox").checked = /*[[${user.isInvesting}]]*/ false;
-                                console.log("checked:", document.getElementById("investorCheckbox").checked)
-                            </script>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-
-            <div id="moneyStats" class="s6 vertical grid">
-                <article id="picture" class="s12 middle center-align">
-                    <img class="responsive extra middle center-align" th:src="|/static/images/${user.login}.jpg|"
-                         th:alt="|Тут должна быть картинка ${user.name}|">
-                </article>
-
-            </div>
-            <div th:unless="${user.isExercised==null}" class="s6">
-                <div class="center fit-content">
-                    <span class="large-text">Присутствие на зарядке</span>
-                    <div class="chip fill extra">
-                        <i th:if="${user.isExercised}">done</i>
-                        <i th:unless="${user.isExercised}">close</i>
-                    </div>
-                </div>
-            </div>
-            <div th:unless="${user.isBeaten==null}" class="s6">
-                <div class="center fit-content">
-                    <span class="large-text">Отбой вовремя</span>
-                    <div class="chip fill extra">
-                        <i th:if="${user.isBeaten}">done</i>
-                        <i th:unless="${user.isBeaten}">close</i>
-                    </div>
-                </div>
             </div>
 
             <div class="s12" th:if="${false}">
@@ -87,81 +41,19 @@
                         <i>trophy</i>
                         <span>Рейтинг</span>
                     </a>
-                    <a id="wealthChartSelector">
-                        <i>money</i>
-                        <span>Златы</span>
-                    </a>
                 </div>
                 <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id="ratingChart"></div>
-                <div th:insert="~{components/chart :: chart(${wealth}, 'wealth')}" hidden id="wealthChart"></div>
-            </div>
-            <div class="s12">
-                <div id="transactions" th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}"
-                     th:insert="~{components/transactions :: history(${transactions}, ${false}, ${!activeUser.equals(0) && activeUser.HasAdminRights})}">
-                </div>
             </div>
         </main>
+    </div>
+    <div class="s12 m10 l8"
+         th:unless="${!activeUser.equals(0) && (user.equals(activeUser) || activeUser.HasAdminRights)}">
+        <br>
+        <h2 style="color: red; -webkit-text-stroke: 1px black;">Кажется, у <span style="color: black; font-weight: bold">В</span><span
+                style="font-weight: bold">ас</span> недостаточно прав для просмотра этой страницы</h2>
     </div>
     <div class="s0 m1 l2"></div>
 </div>
 
-<script th:inline="javascript">
-    const investorStatus = document.getElementById("investorStatus")
-    const investorCheckbox = document.getElementById("investorCheckbox")
-
-    if (investorCheckbox.checked) {
-        investorStatus.textContent = "Точно инвестирую!";
-    } else {
-        investorStatus.textContent = "Думаю, не сегодня...";
-    }
-    const initialValue = investorCheckbox.checked
-    const userId = /*[[${user.id}]]*/""
-    const login = /*[[${user.login}]]*/""
-    investorCheckbox.addEventListener("change", () => {
-        this.checked = !this.checked
-        if (this.checked !== initialValue) {
-            investorStatus.textContent = "Точно инвестирую!";
-        } else {
-            investorStatus.textContent = "Думаю, не сегодня...";
-        }
-        const data = {
-            "userId": userId,
-            "login": login,
-            "isInvesting": this.checked !== initialValue,
-        }
-        fetch("/profile/investing", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        }).then((response) => {
-            if (response.ok) {
-                alert("Изменения записаны.")
-                console.log("updated")
-            }
-        })
-    })
-</script>
-
-<script th:inline="javascript">
-    const ratingSelector = document.getElementById("ratingChartSelector")
-    const wealthSelector = document.getElementById("wealthChartSelector")
-    const ratingChart = document.getElementById("ratingChart")
-    const wealthChart = document.getElementById("wealthChart")
-
-    ratingSelector.addEventListener("click", () => {
-        wealthSelector.classList.remove("active")
-        ratingSelector.classList.add("active")
-        wealthChart.hidden = true
-        ratingChart.hidden = false
-    })
-
-    wealthSelector.addEventListener("click", () => {
-        ratingSelector.classList.remove("active")
-        wealthSelector.classList.add("active")
-        ratingChart.hidden = true
-        wealthChart.hidden = false
-    })
-</script>
-<script src="/static/scripts/transaction_history.js"></script>
 </body>
 </html>
