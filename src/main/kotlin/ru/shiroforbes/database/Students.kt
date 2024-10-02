@@ -61,3 +61,20 @@ class StudentDAO(
 
     val transactions by TransactionDAO via StudentTransaction
 }
+
+object StudentSeason2 : IntIdTable("student_season2", "id") {
+    val name: Column<String> = text("name")
+    val login: Column<String> = text("login")
+    val password: Column<String> = text("password")
+}
+
+class StudentDAO2(
+    id: EntityID<Int>,
+) : IntEntity(id) {
+    companion object : IntEntityClass<StudentDAO2>(StudentSeason2)
+
+    val name by StudentSeason2.name
+    val login by StudentSeason2.login
+    val password by StudentSeason2.password
+    var ratings: List<RatingDAO2> = listOf()
+}

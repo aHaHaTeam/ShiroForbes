@@ -68,33 +68,14 @@ fun Routing.routes(
                     user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
                 }
             }
-            if (user == 0)
-                {
-                    call.respondRedirect("/login")
-                }
+            if (user == 0) {
+                call.respondRedirect("/login")
+            }
             user as User
             if (user.HasAdminRights != true) {
                 call.respondRedirect("/profile/${user.login}")
             }
-            val events = eventService!!.getAllEvents()
-            call.respond(
-                ThymeleafContent(
-                    "menu",
-                    mapOf(
-                        "countrysideCampStudents" to
-                            studentService!!
-                                .getGroup(GroupType.Countryside)
-                                .sortedByDescending { it.rating + it.wealth },
-                        "urbanCampStudents" to
-                            studentService
-                                .getGroup(GroupType.Urban)
-                                .sortedByDescending { it.rating + it.wealth },
-                        "user" to user,
-                        "countrysideCampEvents" to events.filter { it.group == GroupType.Countryside },
-                        "urbanCampEvents" to events.filter { it.group == GroupType.Urban },
-                    ),
-                ),
-            )
+            call.respondRedirect("/update/rating")
         }
     }
 
@@ -124,21 +105,6 @@ fun Routing.routes(
         call.respondRedirect("/profile/${user!!.login}")
     }
 
-    authenticate("auth-session") {
-        get("/admin") {
-            if (!isAdmin(call.principal<Session>()?.login)) {
-                call.respond(HttpStatusCode.Unauthorized)
-            } else {
-                call.respond(
-                    ThymeleafContent(
-                        "components/rating",
-                        mapOf("students" to studentService!!.getGroup(GroupType.Countryside)),
-                    ),
-                )
-            }
-        }
-    }
-
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
             var activeUser: Any = 0
@@ -148,39 +114,38 @@ fun Routing.routes(
                 }
             }
             val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
-            if (!user.HasAdminRights) {
-                user as Student
-                val transactions =
-                    DbTransactionService
-                        .getAllStudentTransactions(user.id)
-                        .filter { it.date.toJavaLocalDateTime().isBefore(JavaDateTime.now()) }
-                        .sortedByDescending { it.date }
-                        .map {
-                            TransactionUtil(
-                                it.id,
-                                user,
-                                it.size,
-                                it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
-                                it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
-                                it.description,
-                            )
-                        }
-                call.respond(
-                    ThymeleafContent(
-                        "profile",
-                        mapOf(
-                            "investingAllowed" to false,
-                            "user" to user,
-                            "rating" to user.ratingHistory,
-                            "wealth" to user.wealthHistory,
-                            "activeUser" to activeUser,
-                            "transactions" to transactions,
-                        ),
-                    ),
-                )
-            } else {
+            if (user.HasAdminRights) {
                 call.respondRedirect("/menu")
             }
+            user as Student
+            val transactions =
+                DbTransactionService
+                    .getAllStudentTransactions(user.id)
+                    .filter { it.date.toJavaLocalDateTime().isBefore(JavaDateTime.now()) }
+                    .sortedByDescending { it.date }
+                    .map {
+                        TransactionUtil(
+                            it.id,
+                            user,
+                            it.size,
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
+                            it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
+                            it.description,
+                        )
+                    }
+            call.respond(
+                ThymeleafContent(
+                    "profile",
+                    mapOf(
+                        "investingAllowed" to false,
+                        "user" to user,
+                        "rating" to user.ratingHistory,
+                        "wealth" to user.wealthHistory,
+                        "activeUser" to activeUser,
+                        "transactions" to transactions,
+                    ),
+                ),
+            )
         }
     }
 
@@ -193,7 +158,7 @@ fun Routing.routes(
         get("/update/rating") {
             val countrysideDeltas =
                 computeRatingDeltas(
-                    studentService!!.getGroup(GroupType.Countryside),
+                    studentService!!.getAllStudents(),
                     ratingDeserializer.getCountrysideRating(),
                 )
             val urbanDeltas =

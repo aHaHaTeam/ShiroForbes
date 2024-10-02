@@ -18,13 +18,14 @@ fun computeRatingDeltas(
         }
 
     return current
+        .filter { stringRatingsMap.containsKey(it.name) }
         .sortedByDescending { it.rating }
         .mapIndexed { i, student ->
             println(student.name)
             RatingDelta(
                 student.name,
                 i + 1,
-                i + 1,
+                -1,
                 stringRatingsMap[student.name]!!.solvedProblems,
                 stringRatingsMap[student.name]!!.solvedProblems - student.totalSolved,
                 stringRatingsMap[student.name]!!.rating,

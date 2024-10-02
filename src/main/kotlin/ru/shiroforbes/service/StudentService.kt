@@ -3,11 +3,9 @@
 package ru.shiroforbes.service
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import ru.shiroforbes.config
 import ru.shiroforbes.database.*
 import ru.shiroforbes.model.GroupType
@@ -112,6 +110,31 @@ object DbStudentService : StudentService {
                     }
                 },
             )
+        }
+    }
+
+    fun getStudentByIdSeason2(id: Int): StudentDAO2 {
+        return transaction {
+            val student = StudentDAO2.find { StudentSeason2.id eq id }.first()
+            student.ratings = RatingDAO2.find { RatingSeason2.student eq id }.toList()
+            return@transaction student
+        }
+    }
+
+    suspend fun getAllStudentsSeason2(): List<StudentDAO2> {
+        return transaction {
+            return@transaction StudentSeason2
+                .join(RatingSeason2, JoinType.LEFT, StudentSeason2.id, RatingSeason2.student)
+                .selectAll()
+                .groupBy({ StudentDAO2.wrapRow(it) }, { it })
+                .map { (student, rows) ->
+                    val ratings =
+                        rows.map { row ->
+                            RatingDAO2.wrapRow(row)
+                        }
+                    student.ratings = ratings
+                    student
+                }
         }
     }
 

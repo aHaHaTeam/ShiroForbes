@@ -48,8 +48,9 @@
 
             <div class="s2 right-align">
                 <div th:if="${!user.equals(0)}">
-                    <a th:href="|/profile/${user.login}|">
-                        <img th:src="|/static/images/${user.login}.jpg|" th:alt="${user.name}" class="circle">
+                    <a class="circle transparent horizontal" href="/logout">
+                        <span>Выйти</span>
+                        <i>logout</i>
                     </a>
                 </div>
 

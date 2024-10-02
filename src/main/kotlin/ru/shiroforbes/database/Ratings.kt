@@ -25,3 +25,37 @@ class RatingDAO(
     val geometry by Ratings.geometry
     val combinatorics by Ratings.combinatorics
 }
+
+object RatingSeason2 : IntIdTable("ratings_season2", "rating_id") {
+    val date = date("date")
+    val student = reference("id", StudentSeason2)
+    val points = integer("points")
+    val total = integer("total")
+    val algebra = integer("algebra")
+    val geometry = float("geometry")
+    val combinatorics = float("combinatorics")
+
+    val totalPercent = float("total_percent")
+    val algebraPercent = float("algebra_percent")
+    val geometryPercent = float("geometry_percent")
+    val combinatoricsPercent = float("combinatorics_percent")
+}
+
+class RatingDAO2(
+    id: EntityID<Int>,
+) : IntEntity(id) {
+    companion object : IntEntityClass<RatingDAO2>(RatingSeason2)
+
+    val date by RatingSeason2.date
+    val student by RatingSeason2.student
+    val points by RatingSeason2.points
+    val total by RatingSeason2.total
+    val algebra by RatingSeason2.algebra
+    val geometry by RatingSeason2.geometry
+    val combinatorics by RatingSeason2.combinatorics
+
+    val totalPercent by RatingSeason2.totalPercent
+    val algebraPercent by RatingSeason2.algebraPercent
+    val geometryPercent by RatingSeason2.geometryPercent
+    val combinatoricsPercent by RatingSeason2.combinatoricsPercent
+}

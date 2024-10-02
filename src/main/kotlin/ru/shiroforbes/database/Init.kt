@@ -10,6 +10,7 @@ import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
+import ru.shiroforbes.service.DbStudentService
 import kotlin.reflect.KClass
 
 data class ConversionClassStudent(
@@ -71,6 +72,8 @@ fun main() {
             StudentTransaction,
             Events,
             Admins,
+            StudentSeason2,
+            RatingSeason2,
         )
         create(
             Students,
@@ -82,6 +85,8 @@ fun main() {
             StudentTransaction,
             Events,
             Admins,
+            StudentSeason2,
+            RatingSeason2,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
             Students.insert {
@@ -99,7 +104,14 @@ fun main() {
                 it[isBeaten] = student.isBeaten
                 it[isInvesting] = student.isInvesting
             }
+            StudentSeason2.insert {
+                it[name] = student.name
+                it[login] = student.login
+                it[password] = student.password
+            }
         }
+
+        DbStudentService.getStudentByIdSeason2(1)
         fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:N70", ConversionClassAdmin::class).forEach { admin ->
             Admins.insert {
                 it[name] = admin.name
