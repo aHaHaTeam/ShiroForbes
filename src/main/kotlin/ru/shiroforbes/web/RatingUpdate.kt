@@ -24,6 +24,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
             println(student.name)
             RatingDelta(
                 student.name,
+                student.login,
                 i + 1,
                 -1,
                 stringRatingsMap[student.name]!!.solvedProblems,

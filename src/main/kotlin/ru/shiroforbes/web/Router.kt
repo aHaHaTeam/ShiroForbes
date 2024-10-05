@@ -2,7 +2,6 @@
 
 package ru.shiroforbes.web
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
@@ -19,9 +18,10 @@ import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
-import ru.shiroforbes.model.*
+import ru.shiroforbes.model.User
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
-import ru.shiroforbes.service.*
+import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.service.DbUserService
 import java.io.File
 
 @OptIn(FormatStringsInDatetimeFormats::class)
@@ -113,15 +113,17 @@ fun Routing.routes(
                 return@get
                 // TODO()
             }
-            call.respond(
-                ThymeleafContent(
-                    "profile",
-                    mapOf(
-                        "user" to user,
-                        "activeUser" to activeUser,
+            if (activeUser != user.login) {
+                call.respond(
+                    ThymeleafContent(
+                        "profile",
+                        mapOf(
+                            "user" to user,
+                            "activeUser" to activeUser,
+                        ),
                     ),
-                ),
-            )
+                )
+            }
         }
     }
 

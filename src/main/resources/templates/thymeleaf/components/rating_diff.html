@@ -40,7 +40,7 @@
                     <i th:if="${student.newRank == student.oldRank}" style="color: gray">remove</i>
                     <span th:if="${student.newRank == student.oldRank}" style="color: gray">(0)</span>
                 </td>
-                <td th:text="${student.name}"></td>
+                <td><a th:href="|/profile/${student.login}|" th:text="${student.name}"></a></av></td>
                 <td class="right-align">
                     <span th:text="${student.solved}"></span>
                     <span th:if="${student.solvedDelta > 0}" th:text="|(+${student.solvedDelta})|"

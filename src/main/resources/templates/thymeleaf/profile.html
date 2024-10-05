@@ -15,7 +15,9 @@
 <body>
 <div class="grid">
     <div class="s0 m1 l2"></div>
-    <div class="s12 m10 l8" th:if="${!activeUser.equals(0) && (user.equals(activeUser) || activeUser.HasAdminRights)}">
+    <!--/*@thymesVar id="user" type="ru.shiroforbes.database.StudentDAO2"*/-->
+    <div class="s12 m10 l8"
+         th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
         <div th:insert="~{components/header :: header(${activeUser})}"></div>
         <main class="responsive grid">
             <div class="s12">
@@ -23,14 +25,18 @@
                 <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
                 <br>
                 <article class="border grid">
-                    <h6 class="large-text s3" style="margin-top: 10%" th:text="|Решено: ${user.totalSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132" th:text="|Алгебра: ${user.algebraSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: green" th:text="|Геометрия: ${user.geometrySolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: #3F68AF" th:text="|Комбинаторика: ${user.combinatoricsSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%" th:text="|Решено: ${percentSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132" th:text="|Алгебра: ${percentSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: green" th:text="|Геометрия: ${percentSolved}|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: #3F68AF" th:text="|Комбинаторика: ${percentSolved}|"></h6>
+                    <h6 class="large-text s12" style="margin-top: 10%"
+                        th:text="|Решено: ${user.ratings[0].total}(${user.ratings[0].totalPercent}%)|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132"
+                        th:text="|Алгебра: ${user.ratings[0].algebra}(${user.ratings[0].algebraPercent}%)|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: darkorange"
+                        th:text="|Теория чисел: ${user.ratings[0].numbersTheory}(${user.ratings[0].numbersTheoryPercent}%)|"></h6>
+                    <h6
+
+                            class="large-text s3" style="margin-top: 10%; color: #3F68AF"
+                            th:text="|Комбинаторика: ${user.ratings[0].combinatorics}(${user.ratings[0].combinatoricsPercent}%)|"></h6>
+                    <h6 class="large-text s3" style="margin-top: 10%; color: green"
+                        th:text="|Геометрия: ${user.ratings[0].geometry}(${user.ratings[0].geometryPercent}%)|"></h6>
                 </article>
                 <br>
             </div>
@@ -45,12 +51,6 @@
                 <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id="ratingChart"></div>
             </div>
         </main>
-    </div>
-    <div class="s12 m10 l8"
-         th:unless="${!activeUser.equals(0) && (user.equals(activeUser) || activeUser.HasAdminRights)}">
-        <br>
-        <h2 style="color: red; -webkit-text-stroke: 1px black;">Кажется, у <span style="color: black; font-weight: bold">В</span><span
-                style="font-weight: bold">ас</span> недостаточно прав для просмотра этой страницы</h2>
     </div>
     <div class="s0 m1 l2"></div>
 </div>

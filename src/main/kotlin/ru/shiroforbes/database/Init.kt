@@ -1,10 +1,14 @@
 package ru.shiroforbes.database
 
 import com.google.api.services.sheets.v4.SheetsScopes
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.SchemaUtils.drop
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
@@ -77,10 +81,32 @@ fun main() {
             RatingSeason2,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
-            StudentSeason2.insert {
-                it[name] = student.name
-                it[login] = student.login
-                it[password] = student.password
+            var id =
+                StudentSeason2.insertAndGetId {
+                    it[name] = student.name
+                    it[login] = student.login
+                    it[password] = student.password
+                }
+
+            RatingSeason2.insert {
+                it[RatingSeason2.student] = id.value
+                it[total] = 0
+                it[points] = 0
+                it[algebraPercent] = 0
+                it[numbersTheoryPercent] = 0
+                it[combinatoricsPercent] = 0
+                it[geometryPercent] = 0
+
+                it[totalPercent] = 0
+                it[algebra] = 0
+                it[numbersTheory] = 0
+                it[geometry] = 0
+                it[combinatorics] = 0
+                it[date] =
+                    Clock.System
+                        .now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
             }
         }
 
