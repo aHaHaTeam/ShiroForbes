@@ -2,6 +2,7 @@
 
 package ru.shiroforbes.web
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
@@ -10,6 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
+import io.ktor.util.*
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -24,7 +26,7 @@ import ru.shiroforbes.service.DbStudentService
 import ru.shiroforbes.service.DbUserService
 import java.io.File
 
-@OptIn(FormatStringsInDatetimeFormats::class)
+@OptIn(FormatStringsInDatetimeFormats::class, InternalAPI::class)
 fun Routing.routes(
     // studentService: StudentService? = null,
     ratingDeserializer: RatingDeserializer,
@@ -82,6 +84,8 @@ fun Routing.routes(
         val name = params.jsonValue("login")
         val password = params.jsonValue("password")
         if (!validUser(name, password)) {
+            call.response.status(HttpStatusCode.Unauthorized)
+            call.respondText("Invalid username or password")
             return@post
         }
         call.sessions.set(Session(name, password))

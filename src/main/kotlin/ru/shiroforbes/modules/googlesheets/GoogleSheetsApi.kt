@@ -121,7 +121,7 @@ class GoogleSheetsService<T : Any>(
             valueRanges.maxOf { range ->
                 range
                     .getValues()
-                    ?.takeWhile { row -> row.all { it.toString() != "" } && row.size > 0 }
+                    ?.takeWhile { row -> row.any { it.toString() != "" } && row.size > 0 }
                     ?.size ?: 0
             }
         val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }

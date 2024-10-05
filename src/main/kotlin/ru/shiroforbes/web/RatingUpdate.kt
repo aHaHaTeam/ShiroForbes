@@ -18,6 +18,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }
     }
     return current
+        .asSequence()
         .filter { stringRatingsMap.containsKey(it.name) }
         .sortedByDescending { it.getScore() }
         .mapIndexed { i, student ->
@@ -35,7 +36,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }.sortedByDescending { it.rating }
         .mapIndexed { i, student ->
             student.copy(newRank = i + 1)
-        }
+        }.toList()
 }
 
 suspend fun updateRating(rating: List<RatingRow>) {

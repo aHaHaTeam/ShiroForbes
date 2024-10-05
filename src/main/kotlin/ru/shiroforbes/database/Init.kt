@@ -81,7 +81,7 @@ fun main() {
             RatingSeason2,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
-            var id =
+            val id =
                 StudentSeason2.insertAndGetId {
                     it[name] = student.name
                     it[login] = student.login
@@ -111,7 +111,7 @@ fun main() {
         }
 
         DbStudentService.getStudentByIdSeason2(1)
-        fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:N70", ConversionClassAdmin::class).forEach { admin ->
+        fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:E", ConversionClassAdmin::class).forEach { admin ->
             Admins.insert {
                 it[name] = admin.name
                 it[login] = admin.login
