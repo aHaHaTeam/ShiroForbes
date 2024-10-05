@@ -119,11 +119,17 @@ class GoogleSheetsService<T : Any>(
         }
         val maxLength =
             valueRanges.maxOf { range ->
-                range.getValues()?.takeWhile { row -> row.all { it.toString() != "" } }?.size ?: 0
+                range
+                    .getValues()
+                    ?.takeWhile { row -> row.all { it.toString() != "" } && row.size > 0 }
+                    ?.size ?: 0
             }
         val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }
         for (range in valueRanges) {
             for (rowIndexed in range.getValues().withIndex()) {
+                if (rowIndexed.index >= maxLength) {
+                    break
+                }
                 argLists[rowIndexed.index].addAll(rowIndexed.value)
             }
         }
