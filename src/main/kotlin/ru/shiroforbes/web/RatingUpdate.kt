@@ -1,6 +1,6 @@
 package ru.shiroforbes.web
 
-import ru.shiroforbes.database.RatingDAO2
+import org.jetbrains.exposed.sql.exposedLogger
 import ru.shiroforbes.database.StudentDAO2
 import ru.shiroforbes.model.RatingDelta
 import ru.shiroforbes.modules.googlesheets.RatingRow
@@ -13,7 +13,9 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }
     val current = mutableListOf<StudentDAO2>()
     stringRatingsMap.forEach {
-        DbStudentService.getStudentByNameSeason2(it.key)?.let { it1 -> current.add(it1) }
+        DbStudentService.getStudentByNameSeason2(it.key).let { it1 ->
+            if (it1 != null)current.add(it1) else exposedLogger.debug("${it.key} not found")
+        }
     }
     return current
         .filter { stringRatingsMap.containsKey(it.name) }
@@ -39,7 +41,7 @@ suspend fun updateRating(rating: List<RatingRow>) {
     rating.forEach {
         DbStudentService
             .updateRatingSeason2(
-                RatingDAO2(it),
+                it,
             )
     }
 }

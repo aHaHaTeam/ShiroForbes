@@ -1,15 +1,10 @@
 package ru.shiroforbes.database
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.date
-import ru.shiroforbes.modules.googlesheets.RatingRow
-import ru.shiroforbes.service.DbStudentService
 
 object Ratings : IntIdTable("rating", "rating_id") {
     val date = date("date")
@@ -33,13 +28,13 @@ class RatingDAO(
 
 object RatingSeason2 : IntIdTable("ratings_season2", "ratingId") {
     val date = date("date")
-    val student = reference("studentId", StudentSeason2)
+    val student = integer("studentId")
     val points = integer("points")
     val total = integer("total")
     val algebra = integer("algebra")
     val numbersTheory = integer("numbers_theory")
-    val geometry = float("geometry")
-    val combinatorics = float("combinatorics")
+    val geometry = integer("geometry")
+    val combinatorics = integer("combinatorics")
 
     val totalPercent = integer("total_percent")
     val algebraPercent = integer("algebra_percent")
@@ -52,21 +47,6 @@ class RatingDAO2(
     id: EntityID<Int>,
 ) : IntEntity(id) {
     companion object : IntEntityClass<RatingDAO2>(RatingSeason2)
-
-    constructor(row: RatingRow) : this(EntityID(1, RatingSeason2)) {
-        date =
-            Clock.System
-                .now()
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .date
-        student = DbStudentService.getStudentByNameSeason2(row.lastName.trim() + " " + row.firstName.trim())!!.id
-        points = row.rating
-        total = row.solvedProblems
-        algebraPercent = row.algebraPercentage
-        numbersTheoryPercent = row.numbersTheoryPercentage
-        geometryPercent = row.numbersTheoryPercentage
-        combinatoricsPercent = row.numbersTheoryPercentage
-    }
 
     var date by RatingSeason2.date
     var student by RatingSeason2.student

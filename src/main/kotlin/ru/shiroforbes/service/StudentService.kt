@@ -2,12 +2,15 @@
 
 package ru.shiroforbes.service
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.database.*
 import ru.shiroforbes.model.Rating
+import ru.shiroforbes.modules.googlesheets.RatingRow
 
 /**
  * Service for accessing the student storage.
@@ -52,7 +55,7 @@ object DbStudentService {
         return transaction {
             val students = StudentDAO2.find { StudentSeason2.name eq name }
             val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id }.toList()
+            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList()
             return@transaction student
         }
     }
@@ -61,7 +64,7 @@ object DbStudentService {
         return transaction {
             val students = StudentDAO2.find { StudentSeason2.login eq login }
             val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id }.toList()
+            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList()
             return@transaction student
         }
     }
@@ -85,21 +88,32 @@ object DbStudentService {
         }
     }
 
-    suspend fun updateRatingSeason2(ratingDAO2: RatingDAO2) {
+    suspend fun updateRatingSeason2(row: RatingRow) {
         transaction {
+            val student = getStudentByNameSeason2(row.name())
+            if (student == null) {
+                exposedLogger.debug("Updating rating")
+                return@transaction
+            }
             RatingSeason2.insert {
-                it[student] = ratingDAO2.student
-                it[total] = ratingDAO2.total
-                it[algebra] = ratingDAO2.algebra
-                it[numbersTheory] = ratingDAO2.numbersTheory
-                it[combinatorics] = ratingDAO2.combinatorics
-                it[geometry] = ratingDAO2.geometry
+                it[RatingSeason2.student] = student.id.value
+                it[total] = row.solvedProblems
+                it[points] = row.rating
+                it[algebraPercent] = row.algebraPercentage
+                it[numbersTheoryPercent] = row.numbersTheoryPercentage
+                it[combinatoricsPercent] = row.combinatoricsPercentage
+                it[geometryPercent] = row.geometryPercentage
 
-                it[totalPercent] = ratingDAO2.totalPercent
-                it[algebraPercent] = ratingDAO2.algebraPercent
-                it[numbersTheoryPercent] = ratingDAO2.numbersTheoryPercent
-                it[combinatoricsPercent] = ratingDAO2.numbersTheoryPercent
-                it[geometryPercent] = ratingDAO2.geometryPercent
+                it[totalPercent] = 0
+                it[algebra] = 0 // TODO
+                it[numbersTheory] = 0
+                it[geometry] = 0
+                it[combinatorics] = 0
+                it[date] =
+                    Clock.System
+                        .now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
             }
         }
     }

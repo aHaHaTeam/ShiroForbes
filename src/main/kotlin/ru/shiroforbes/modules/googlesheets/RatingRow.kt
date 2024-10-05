@@ -9,4 +9,6 @@ data class RatingRow(
     val numbersTheoryPercentage: Int,
     val combinatoricsPercentage: Int,
     val geometryPercentage: Int,
-)
+) {
+    fun name(): String = "$lastName $firstName"
+}
