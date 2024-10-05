@@ -19,7 +19,8 @@ object DbUserService : UserService {
     }
 
     override suspend fun getUserByLogin(login: String): User? {
-        var user: User? = DbStudentService.getStudentByLogin(login)
+        val student = DbStudentService.getStudentByLoginSeason2(login)
+        var user: User? = if (student == null) null else User(student)
         if (user == null) {
             user = DbAdminService.getAdminByLogin(login)
         }

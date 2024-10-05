@@ -15,11 +15,6 @@ import ru.shiroforbes.login.knownPasswords
 import ru.shiroforbes.login.validAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
-import ru.shiroforbes.modules.markdown.MarkdownConverter
-import ru.shiroforbes.modules.serialization.RatingSerializer
-import ru.shiroforbes.service.DbEventService
-import ru.shiroforbes.service.DbStudentService
-import ru.shiroforbes.service.DbTransactionService
 import ru.shiroforbes.web.routes
 
 fun Application.configureApp(config: Config) {
@@ -91,12 +86,8 @@ fun Application.configureApp(config: Config) {
 
     install(Routing) {
         routes(
-            studentService = DbStudentService,
-            ratingSerializer = RatingSerializer(),
+            // studentService = DbStudentService,
             ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
-            eventService = DbEventService,
-            markdownConverter = MarkdownConverter(),
-            transactionService = DbTransactionService,
             routerConfig = config.routerConfig,
         )
     }

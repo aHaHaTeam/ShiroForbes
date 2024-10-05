@@ -1,25 +1,23 @@
 package ru.shiroforbes.web
 
-import kotlinx.datetime.toKotlinLocalDate
-import ru.shiroforbes.model.Rating
+import ru.shiroforbes.database.RatingDAO2
+import ru.shiroforbes.database.StudentDAO2
 import ru.shiroforbes.model.RatingDelta
-import ru.shiroforbes.model.Student
 import ru.shiroforbes.modules.googlesheets.RatingRow
-import ru.shiroforbes.service.StudentService
-import java.time.LocalDate
+import ru.shiroforbes.service.DbStudentService
 
-fun computeRatingDeltas(
-    current: List<Student>,
-    newRatings: List<RatingRow>,
-): List<RatingDelta> {
+fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
     val stringRatingsMap =
         newRatings.associateBy {
             it.lastName.trim() + " " + it.firstName.trim()
         }
-
+    val current = mutableListOf<StudentDAO2>()
+    stringRatingsMap.forEach {
+        DbStudentService.getStudentByNameSeason2(it.key)?.let { it1 -> current.add(it1) }
+    }
     return current
         .filter { stringRatingsMap.containsKey(it.name) }
-        .sortedByDescending { it.rating }
+        .sortedByDescending { it.getScore() }
         .mapIndexed { i, student ->
             println(student.name)
             RatingDelta(
@@ -27,9 +25,9 @@ fun computeRatingDeltas(
                 i + 1,
                 -1,
                 stringRatingsMap[student.name]!!.solvedProblems,
-                stringRatingsMap[student.name]!!.solvedProblems - student.totalSolved,
+                stringRatingsMap[student.name]!!.solvedProblems - student.getTotal(),
                 stringRatingsMap[student.name]!!.rating,
-                stringRatingsMap[student.name]!!.rating - student.rating,
+                stringRatingsMap[student.name]!!.rating - student.getScore(),
             )
         }.sortedByDescending { it.rating }
         .mapIndexed { i, student ->
@@ -37,32 +35,11 @@ fun computeRatingDeltas(
         }
 }
 
-suspend fun updateRating(
-    studentService: StudentService,
-    rating: List<RatingRow>,
-) {
+suspend fun updateRating(rating: List<RatingRow>) {
     rating.forEach {
-        studentService.addRating(
-            Rating(
-                -1,
-                -1,
-                LocalDate.now().toKotlinLocalDate(),
-                it.solvedProblems,
-                it.rating,
-                0f,
-                it.algebraPercentage.toFloat(),
-                it.geometryPercentage.toFloat(),
-                it.combinatoricsPercentage.toFloat(),
-            ),
-            it.lastName.trim() + " " + it.firstName.trim(),
-        )
-        studentService.updateRating(
-            it.lastName.trim() + " " + it.firstName.trim(),
-            it.rating,
-            it.solvedProblems,
-            it.algebraPercentage,
-            it.geometryPercentage,
-            it.combinatoricsPercentage,
-        )
+        DbStudentService
+            .updateRatingSeason2(
+                RatingDAO2(it),
+            )
     }
 }

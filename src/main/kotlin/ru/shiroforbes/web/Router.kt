@@ -11,11 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -25,21 +21,13 @@ import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
 import ru.shiroforbes.model.*
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
-import ru.shiroforbes.modules.markdown.MarkdownConverter
-import ru.shiroforbes.modules.serialization.RatingSerializer
 import ru.shiroforbes.service.*
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.time.LocalDateTime as JavaDateTime
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun Routing.routes(
-    studentService: StudentService? = null,
-    eventService: EventService? = null,
-    transactionService: TransactionService,
-    ratingSerializer: RatingSerializer,
+    // studentService: StudentService? = null,
     ratingDeserializer: RatingDeserializer,
-    markdownConverter: MarkdownConverter,
     routerConfig: RouterConfig,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
@@ -113,36 +101,24 @@ fun Routing.routes(
                     activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
                 }
             }
-            val user = DbUserService.getUserByLogin(call.parameters["login"]!!)!!
-            if (user.HasAdminRights) {
+            val tmp = DbUserService.getUserByLogin(call.parameters["login"]!!)
+            if (tmp == null) {
+                return@get
+            }
+            if (tmp.HasAdminRights) {
                 call.respondRedirect("/menu")
             }
-            user as Student
-            val transactions =
-                DbTransactionService
-                    .getAllStudentTransactions(user.id)
-                    .filter { it.date.toJavaLocalDateTime().isBefore(JavaDateTime.now()) }
-                    .sortedByDescending { it.date }
-                    .map {
-                        TransactionUtil(
-                            it.id,
-                            user,
-                            it.size,
-                            it.date.format(LocalDateTime.Format { byUnicodePattern("HH:mm:ss") }),
-                            it.date.format(LocalDateTime.Format { byUnicodePattern("dd.MM.yyyy") }),
-                            it.description,
-                        )
-                    }
+            val user = DbStudentService.getStudentByLoginSeason2(call.parameters["login"]!!)
+            if (user == null) {
+                return@get
+                // TODO()
+            }
             call.respond(
                 ThymeleafContent(
                     "profile",
                     mapOf(
-                        "investingAllowed" to false,
                         "user" to user,
-                        "rating" to user.ratingHistory,
-                        "wealth" to user.wealthHistory,
                         "activeUser" to activeUser,
-                        "transactions" to transactions,
                     ),
                 ),
             )
@@ -158,12 +134,10 @@ fun Routing.routes(
         get("/update/rating") {
             val countrysideDeltas =
                 computeRatingDeltas(
-                    studentService!!.getAllStudents(),
                     ratingDeserializer.getCountrysideRating(),
                 )
             val urbanDeltas =
                 computeRatingDeltas(
-                    studentService.getGroup(GroupType.Urban),
                     ratingDeserializer.getUrbanRating(),
                 )
 
@@ -182,28 +156,16 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         post("/update/countryside/rating") {
-            updateRating(studentService!!, ratingDeserializer.getCountrysideRating())
+            updateRating(ratingDeserializer.getCountrysideRating())
             call.respondRedirect("/update/rating")
         }
     }
 
     authenticate("auth-session-admin-only") {
         post("/update/urban/rating") {
-            updateRating(studentService!!, ratingDeserializer.getUrbanRating())
+            updateRating(ratingDeserializer.getUrbanRating())
             call.respondRedirect("/update/rating")
         }
-    }
-
-    get("/download/urban/rating.pdf") {
-        val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Urban))
-        call.respondBytes(outputStream.toByteArray())
-    }
-
-    get("/download/countryside/rating.pdf") {
-        val outputStream = ByteArrayOutputStream()
-        ratingSerializer.serialize(outputStream, studentService!!.getGroup(GroupType.Countryside))
-        call.respondBytes(outputStream.toByteArray())
     }
 
     get("/") {

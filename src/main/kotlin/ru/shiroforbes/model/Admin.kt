@@ -5,5 +5,4 @@ class Admin(
     name: String = "",
     login: String = "",
     password: String = "",
-    group: GroupType,
-) : User(name, login, password, group, true)
+) : User(name, login, password, true)

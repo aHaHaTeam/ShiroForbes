@@ -63,47 +63,20 @@ fun main() {
 
     transaction {
         drop(
-            Students,
-            Ratings,
-            Wealths,
-            Transactions,
-            StudentRatings,
-            StudentWealth,
-            StudentTransaction,
-            Events,
+            // Students,
+            // Ratings,
             Admins,
             StudentSeason2,
             RatingSeason2,
         )
         create(
-            Students,
-            Ratings,
-            Wealths,
-            Transactions,
-            StudentRatings,
-            StudentWealth,
-            StudentTransaction,
-            Events,
+            // Students,
+            // Ratings,
             Admins,
             StudentSeason2,
             RatingSeason2,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
-            Students.insert {
-                it[name] = student.name
-                it[login] = student.login
-                it[password] = student.password
-                it[group] = student.group
-                it[rating] = student.rating
-                it[wealth] = student.wealth
-                it[totalSolved] = student.totalSolved
-                it[algebraSolved] = student.algebraSolved
-                it[geometrySolved] = student.geometrySolved
-                it[combinatoricsSolved] = student.combinatoricsSolved
-                it[isExercised] = student.isExercised
-                it[isBeaten] = student.isBeaten
-                it[isInvesting] = student.isInvesting
-            }
             StudentSeason2.insert {
                 it[name] = student.name
                 it[login] = student.login
@@ -117,7 +90,6 @@ fun main() {
                 it[name] = admin.name
                 it[login] = admin.login
                 it[password] = admin.password
-                it[group] = admin.group
             }
         }
     }

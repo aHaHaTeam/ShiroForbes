@@ -23,7 +23,7 @@ object DbAdminService : AdminService {
         )
     }
 
-    private fun daoToAdmin(dao: AdminDAO): Admin = Admin(dao.id.value, dao.name, dao.login, dao.password, dao.group)
+    private fun daoToAdmin(dao: AdminDAO): Admin = Admin(dao.id.value, dao.name, dao.login, dao.password)
 
     override suspend fun getAdminById(id: Int): Admin? {
         return transaction {

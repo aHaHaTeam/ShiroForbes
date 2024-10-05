@@ -20,12 +20,12 @@
             <div class="s2 m3 l3"></div>
             <nav class="no-space center-align middle-align s8 m6 l6">
                 <button id="countryside" class="border left-round max"
-                        th:classappend="${user.equals(0) || user.group.text == 'Countryside'} ? 'fill'">
+                        th:classappend="${user.equals(0)} ? 'fill'">
                     <i class="small">nature</i>
                     <span>Загородный лагерь</span>
                 </button>
                 <button id="urban" class="border right-round max"
-                        th:classappend="${!user.equals(0) && user.group.text == 'Urban'} ? 'fill'">
+                        th:classappend="${!user.equals(0)} ? 'fill'">
                     <i class="small">home</i>
                     <span>Городской лагерь</span>
                 </button>
@@ -35,7 +35,7 @@
 
         <main class="responsive">
             <div id="countrysideContent"
-                 th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}">
+                 th:hidden="${!user.equals(0)}">
                 <div th:insert="~{components/rating_diff :: rating(${countrysideStudents})}"></div>
                 <form id="countrysideForm">
                     <button class="extra round center" id="countrysidePublishButton" type="submit">
@@ -46,7 +46,7 @@
             </div>
 
             <div id="urbanContent"
-                 th:hidden="${user.equals(0) || user.group.text != 'Urban'}">
+                 th:hidden="${user.equals(0)}">
                 <div th:insert="~{components/rating_diff :: rating(${urbanStudents})}"></div>
                 <form id="urbanForm">
                     <button class="extra round center" id="urbanPublishButton" type="submit">
