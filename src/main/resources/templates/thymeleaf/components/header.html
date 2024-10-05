@@ -15,34 +15,15 @@
 <div th:fragment="header(user)">
     <header class="fixed fill small-round">
         <nav class="grid">
-            <div class="s2">
-                <button th:if="${!user.equals(0) && user.HasAdminRights}" class="circle transparent right"
-                        data-ui="#menu">
-                    <i>menu</i>
-                    <menu id="menu" class="right no-wrap small-round">
-                        <a href="/marketplace">Магазин</a>
-                        <a href="/grobarium">Гробарий</a>
-                        <a href="/series">Серии</a>
-                        <a href="/lz">Летнее задание</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/event/new">Создать новое
-                            мероприятие</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/exercises/countryside">Зарядка/Отбой/Случайное
-                            событие</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}"
-                           href="/transactions/transactions/countryside">Раздать
-                            златы(лагерь)</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/transactions/urban">Раздать
-                            златы(город)</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/transactions/history">История
-                            транзакций</a>
-                        <a th:if="${!user.equals(0) && user.HasAdminRights}" href="/update/rating">Опубликовать
-                            рейтинг</a>
-                        <a th:if="${!user.equals(0)}" href="/logout">
-                            Выйти
-                        </a>
-
-                    </menu>
-                </button>
+            <div class="s2 center">
+                <div th:if="${!user.equals(0)}">
+                    <a class="circle transparent horizontal" href="/grobarium">
+                        <i class="extra">
+                            <img src="/static/images/overleaf-o-logo-primary.png"
+                                 alt="Гробарий">
+                        </i>
+                    </a>
+                </div>
             </div>
             <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
@@ -54,12 +35,12 @@
                     </a>
                 </div>
 
-                <div th:unless="${!user.equals(0)}">
-                    <a class="circle transparent horizontal" href="/login">
-                        <span>Войти</span>
-                        <i>login</i>
-                    </a>
-                </div>
+                <!--                <div th:unless="${!user.equals(0)}">-->
+                <!--                    <a class="circle transparent horizontal" href="/login">-->
+                <!--                        <span>Войти</span>-->
+                <!--                        <i>login</i>-->
+                <!--                    </a>-->
+                <!--                </div>-->
             </div>
         </nav>
     </header>
