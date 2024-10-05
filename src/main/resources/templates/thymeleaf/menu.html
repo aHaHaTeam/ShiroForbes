@@ -35,12 +35,12 @@
 
         <div id="countrysideContent"
              th:hidden="${!user.equals(0) && user.group.text != 'Countryside'}"
-             th:insert="~{menu_content :: menu(${countrysideCampEvents}, ${countrysideCampStudents}, ${'countryside'})}">
+             th:insert="~{menu_content :: menu(${countrysideCampStudents}, ${'countryside'})}">
         </div>
 
         <div id="urbanContent"
              th:hidden="${user.equals(0) || user.group.text != 'Urban'}"
-             th:insert="~{menu_content :: menu(${urbanCampEvents}, ${urbanCampStudents}, ${'urban'})}">
+             th:insert="~{menu_content :: menu(${urbanCampStudents}, ${'urban'})}">
         </div>
     </div>
     <div class="s0 m1 l2"></div>
