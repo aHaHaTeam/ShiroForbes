@@ -1,8 +1,8 @@
 package ru.shiroforbes.modules.googlesheets
 
 data class RatingRow(
-    val lastName: String,
     val firstName: String,
+    val lastName: String,
     val solvedProblems: Float,
     val rating: Float,
     val algebraPercentage: Int,
