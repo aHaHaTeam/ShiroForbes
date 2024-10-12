@@ -24,20 +24,53 @@
                 <br>
                 <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
                 <br>
-                <article class="border grid">
-                    <h6 class="large-text s12" style="margin-top: 10%"
-                        th:text="|Решено: ${user.ratings[0].total}(${user.ratings[0].totalPercent}%)|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: #EA6132"
-                        th:text="|Алгебра: ${user.ratings[0].algebra}(${user.ratings[0].algebraPercent}%)|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: darkorange"
-                        th:text="|Теория чисел: ${user.ratings[0].numbersTheory}(${user.ratings[0].numbersTheoryPercent}%)|"></h6>
-                    <h6
-
-                            class="large-text s3" style="margin-top: 10%; color: #3F68AF"
-                            th:text="|Комбинаторика: ${user.ratings[0].combinatorics}(${user.ratings[0].combinatoricsPercent}%)|"></h6>
-                    <h6 class="large-text s3" style="margin-top: 10%; color: green"
-                        th:text="|Геометрия: ${user.ratings[0].geometry}(${user.ratings[0].geometryPercent}%)|"></h6>
-                </article>
+                <div class="grid">
+                    <article class="s12 m6 l4 round blue-grey2">
+                        <div class="row">
+                            <button class="circle blue-grey8"><i class="circle">functions</i></button>
+                            <div class="max center-align">
+                                <h6 th:text="|Решено:|"></h6>
+                                <p th:text="|${user.ratings[0].total} (${user.ratings[0].totalPercent}%)|"></p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="s12 m6 l4 round deep-orange2">
+                        <div class="row">
+                            <button class="circle deep-orange8"><i class="circle">function</i></button>
+                            <div class="max center-align">
+                                <h6 th:text="|Алгебра:|"></h6>
+                                <p th:text="|${user.ratings[0].algebra} (${user.ratings[0].algebraPercent}%)|"></p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="s12 m6 l4 round orange2">
+                        <div class="row">
+                            <button class="circle orange8"><i class="circle">calculate</i></button>
+                            <div class="max center-align">
+                                <h6 th:text="|Теория чисел:|"></h6>
+                                <p th:text="|${user.ratings[0].numbersTheory} (${user.ratings[0].numbersTheoryPercent}%)|"></p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="s12 m6 l4 round blue2">
+                        <div class="row">
+                            <button class="circle blue8"><i class="circle">playing_cards</i></button>
+                            <div class="max center-align">
+                                <h6 th:text="|Комбинаторика:|"></h6>
+                                <p th:text="|${user.ratings[0].combinatorics} (${user.ratings[0].combinatoricsPercent}%)|"></p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="s12 m6 l4 round green2">
+                        <div class="row">
+                            <button class="circle green8"><i class="circle">architecture</i></button>
+                            <div class="max center-align">
+                                <h6 th:text="|Геометрия:|"></h6>
+                                <p th:text="|${user.ratings[0].geometry} (${user.ratings[0].geometryPercent}%)|"></p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
                 <br>
             </div>
 
