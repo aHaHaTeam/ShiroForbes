@@ -15,7 +15,9 @@ import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import io.ktor.client.plugins.*
+import io.ktor.util.logging.*
 import io.ktor.util.reflect.*
+import org.jetbrains.exposed.sql.exposedLogger
 import java.io.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -136,12 +138,30 @@ class GoogleSheetsService<T : Any>(
         return argLists.map {
             val args =
                 it.mapIndexed { index, value ->
-                    convert(
-                        value as? String,
-                        clazz.primaryConstructor!!.parameters[index].type,
-                    )
+                    val converted =
+                        convert(
+                            value as? String,
+                            clazz.primaryConstructor!!.parameters[index].type,
+                        )
+                    if (converted == null) {
+                        exposedLogger.debug(
+                            "Cannot convert \"{}\" to \"{}\"",
+                            value,
+                            clazz.primaryConstructor!!.parameters[index].type,
+                        )
+                    }
+                    return@mapIndexed converted
                 }
-            clazz.primaryConstructor!!.call(*(args.toTypedArray()))
+            try {
+                clazz.primaryConstructor!!.call(*(args.toTypedArray()))
+            } catch (e: Exception) {
+                exposedLogger.error(
+                    "Cannot convert \"${
+                        args.toTypedArray().joinToString(", ")
+                    }\" to \"${clazz.simpleName}\"",
+                )
+                throw e
+            }
         }
     }
 

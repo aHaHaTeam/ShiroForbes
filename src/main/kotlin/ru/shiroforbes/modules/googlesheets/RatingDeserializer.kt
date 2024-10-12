@@ -15,6 +15,7 @@ class RatingDeserializer(
             config.ratingSpreadsheetId,
             RatingRow::class,
             config.urbanRatingRanges,
+            Class.forName("ru.shiroforbes.database.InitKt"),
         )
     private val countrysideDeserializer =
         GoogleSheetsService(
@@ -25,6 +26,7 @@ class RatingDeserializer(
             config.ratingSpreadsheetId,
             RatingRow::class,
             config.countrysideRatingRanges,
+            Class.forName("ru.shiroforbes.database.InitKt"),
         )
 
     fun getCountrysideRating(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty()

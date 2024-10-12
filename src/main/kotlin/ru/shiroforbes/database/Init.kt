@@ -44,7 +44,6 @@ data class ConversionClassAdmin(
 
 internal fun kotlin.String.toFloatOrNull(): Float? =
     try {
-        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         this
             .filter { !it.isWhitespace() }
             .split(',')
