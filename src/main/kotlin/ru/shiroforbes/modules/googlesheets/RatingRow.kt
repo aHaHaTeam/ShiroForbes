@@ -1,10 +1,10 @@
 package ru.shiroforbes.modules.googlesheets
 
 data class RatingRow(
-    val firstName: String,
     val lastName: String,
-    val solvedProblems: Int,
-    val rating: Int,
+    val firstName: String,
+    val solvedProblems: Float,
+    val rating: Float,
     val algebraPercentage: Int,
     val numbersTheoryPercentage: Int,
     val combinatoricsPercentage: Int,

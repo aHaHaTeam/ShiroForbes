@@ -77,21 +77,19 @@ class StudentDAO2(
     val password by StudentSeason2.password
     var ratings: List<RatingDAO2> = listOf()
 
-    fun getScore(): Int =
+    fun getScore(): Float =
         ratings.sortedByDescending { it.date }.let {
-            if (it.isEmpty())
-                {
-                    return@let 0
-                }
+            if (it.isEmpty()) {
+                return@let 0F
+            }
             return@let it.first().points
         }
 
-    fun getTotal(): Int =
+    fun getTotal(): Float =
         ratings.sortedByDescending { it.date }.let {
-            if (it.isEmpty())
-                {
-                    return@let 0
-                }
+            if (it.isEmpty()) {
+                return@let 0F
+            }
             return@let it.first().total
         }
 }

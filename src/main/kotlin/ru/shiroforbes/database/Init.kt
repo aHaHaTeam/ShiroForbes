@@ -42,6 +42,18 @@ data class ConversionClassAdmin(
     val group: GroupType,
 )
 
+internal fun kotlin.String.toFloatOrNull(): Float? =
+    try {
+        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        this
+            .filter { !it.isWhitespace() }
+            .split(',')
+            .joinToString(".")
+            .toFloat()
+    } catch (e: Exception) {
+        null
+    }
+
 internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
 
 internal fun kotlin.String.toBooleanOrNull(): Boolean? =
@@ -90,8 +102,8 @@ fun main() {
 
             RatingSeason2.insert {
                 it[RatingSeason2.student] = id.value
-                it[total] = 0
-                it[points] = 0
+                it[total] = 0F
+                it[points] = 0F
                 it[algebraPercent] = 0
                 it[numbersTheoryPercent] = 0
                 it[combinatoricsPercent] = 0

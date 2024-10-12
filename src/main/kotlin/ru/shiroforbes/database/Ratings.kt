@@ -6,31 +6,31 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 
-object Ratings : IntIdTable("rating", "rating_id") {
-    val date = date("date")
-    val total = float("total")
-    val algebra = float("algebra")
-    val geometry = float("geometry")
-    val combinatorics = float("combinatorics")
-}
-
-class RatingDAO(
-    id: EntityID<Int>,
-) : IntEntity(id) {
-    companion object : IntEntityClass<RatingDAO>(Ratings)
-
-    val date by Ratings.date
-    val total by Ratings.total
-    val algebra by Ratings.algebra
-    val geometry by Ratings.geometry
-    val combinatorics by Ratings.combinatorics
-}
+// object Ratings : IntIdTable("rating", "rating_id") {
+//    val date = date("date")
+//    val total = float("total")
+//    val algebra = float("algebra")
+//    val geometry = float("geometry")
+//    val combinatorics = float("combinatorics")
+// }
+//
+// class RatingDAO(
+//    id: EntityID<Int>,
+// ) : IntEntity(id) {
+//    companion object : IntEntityClass<RatingDAO>(Ratings)
+//
+//    val date by Ratings.date
+//    val total by Ratings.total
+//    val algebra by Ratings.algebra
+//    val geometry by Ratings.geometry
+//    val combinatorics by Ratings.combinatorics
+// }
 
 object RatingSeason2 : IntIdTable("ratings_season2", "ratingId") {
     val date = date("date")
     val student = integer("studentId")
-    val points = integer("points")
-    val total = integer("total")
+    val points = float("points")
+    val total = float("total")
     val algebra = integer("algebra")
     val numbersTheory = integer("numbers_theory")
     val geometry = integer("geometry")
