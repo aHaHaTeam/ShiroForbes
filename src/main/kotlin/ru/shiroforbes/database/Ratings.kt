@@ -5,16 +5,17 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object RatingSeason2 : IntIdTable("ratings_season2", "ratingId") {
-    val date = date("date")
+    val date = datetime("date")
     val student = integer("studentId")
     val points = float("points")
     val total = float("total")
-    val algebra = integer("algebra")
-    val numbersTheory = integer("numbers_theory")
-    val geometry = integer("geometry")
-    val combinatorics = integer("combinatorics")
+    val algebra = float("algebra")
+    val numbersTheory = float("numbers_theory")
+    val geometry = float("geometry")
+    val combinatorics = float("combinatorics")
 
     val totalPercent = integer("total_percent")
     val algebraPercent = integer("algebra_percent")

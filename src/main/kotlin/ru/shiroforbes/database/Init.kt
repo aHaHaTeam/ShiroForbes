@@ -109,15 +109,14 @@ fun main() {
                 it[geometryPercent] = 0
 
                 it[totalPercent] = 0
-                it[algebra] = 0
-                it[numbersTheory] = 0
-                it[geometry] = 0
-                it[combinatorics] = 0
+                it[algebra] = 0f
+                it[numbersTheory] = 0f
+                it[geometry] = 0f
+                it[combinatorics] = 0f
                 it[date] =
                     Clock.System
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .date
             }
         }
 

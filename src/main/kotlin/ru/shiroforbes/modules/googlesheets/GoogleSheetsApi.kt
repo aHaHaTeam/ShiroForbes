@@ -128,6 +128,7 @@ class GoogleSheetsService<T : Any>(
             }
         val argLists = MutableList<MutableList<Any?>>(maxLength) { mutableListOf() }
         for (range in valueRanges) {
+            println(range.range)
             for (rowIndexed in range.getValues().withIndex()) {
                 if (rowIndexed.index >= maxLength) {
                     break

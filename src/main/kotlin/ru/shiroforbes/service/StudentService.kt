@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.database.*
+import ru.shiroforbes.database.RatingSeason2.total
 import ru.shiroforbes.model.Rating
 import ru.shiroforbes.modules.googlesheets.RatingRow
 
@@ -64,7 +65,7 @@ object DbStudentService {
         return transaction {
             val students = StudentDAO2.find { StudentSeason2.login eq login }
             val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList()
+            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList().sortedByDescending { it.total }
             return@transaction student
         }
     }
@@ -95,6 +96,7 @@ object DbStudentService {
                 exposedLogger.debug("Updating rating")
                 return@transaction
             }
+
             RatingSeason2.insert {
                 it[RatingSeason2.student] = student.id.value
                 it[total] = row.solvedProblems
@@ -104,16 +106,15 @@ object DbStudentService {
                 it[combinatoricsPercent] = row.combinatoricsPercentage
                 it[geometryPercent] = row.geometryPercentage
 
-                it[totalPercent] = 0
-                it[algebra] = 0 // TODO
-                it[numbersTheory] = 0
-                it[geometry] = 0
-                it[combinatorics] = 0
+                it[totalPercent] = 0 // TODO
+                it[algebra] = row.algebraSolved
+                it[numbersTheory] = row.numbersTheorySolved
+                it[geometry] = row.geometrySolved
+                it[combinatorics] = row.combinatoricsSolved
                 it[date] =
                     Clock.System
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
-                        .date
             }
         }
     }
