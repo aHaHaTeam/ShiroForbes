@@ -14,7 +14,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
     val current = mutableListOf<StudentDAO2>()
     stringRatingsMap.forEach {
         DbStudentService.getStudentByNameSeason2(it.key).let { it1 ->
-            if (it1 != null)current.add(it1) else exposedLogger.debug("${it.key} not found")
+            if (it1 != null) current.add(it1) else exposedLogger.debug("${it.key} not found")
         }
     }
     return current

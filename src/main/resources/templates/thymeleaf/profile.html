@@ -22,14 +22,14 @@
         <main class="responsive grid">
             <div class="s12">
                 <br>
-                <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
+                <h3 id="name" class="bold center-align" th:text="${user.name}"></h3>
                 <br>
                 <div class="grid">
                     <article class="s12 m6 l4 round blue-grey2">
                         <div class="row">
                             <button class="circle blue-grey8"><i class="circle">functions</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Решено:|"></h6>
+                                <h6 class="bold" th:text="|Решено:|"></h6>
                                 <p th:text="|${user.ratings[0].total} (${user.ratings[0].totalPercent}%)|"></p>
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                         <div class="row">
                             <button class="circle deep-orange8"><i class="circle">function</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Алгебра:|"></h6>
+                                <h6 class="bold" th:text="|Алгебра:|"></h6>
                                 <p th:text="|${user.ratings[0].algebra} (${user.ratings[0].algebraPercent}%)|"></p>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                         <div class="row">
                             <button class="circle orange8"><i class="circle">calculate</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Теория чисел:|"></h6>
+                                <h6 class="bold" th:text="|Теория чисел:|"></h6>
                                 <p th:text="|${user.ratings[0].numbersTheory} (${user.ratings[0].numbersTheoryPercent}%)|"></p>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                         <div class="row">
                             <button class="circle blue8"><i class="circle">playing_cards</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Комбинаторика:|"></h6>
+                                <h6 class="bold" th:text="|Комбинаторика:|"></h6>
                                 <p th:text="|${user.ratings[0].combinatorics} (${user.ratings[0].combinatoricsPercent}%)|"></p>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                         <div class="row">
                             <button class="circle green8"><i class="circle">architecture</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Геометрия:|"></h6>
+                                <h6 class="bold" th:text="|Геометрия:|"></h6>
                                 <p th:text="|${user.ratings[0].geometry} (${user.ratings[0].geometryPercent}%)|"></p>
                             </div>
                         </div>
