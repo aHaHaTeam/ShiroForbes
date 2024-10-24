@@ -91,7 +91,7 @@ fun main() {
             StudentSeason2,
             RatingSeason2,
         )
-        fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N70", ConversionClassStudent::class).forEach { student ->
+        fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N", ConversionClassStudent::class).forEach { student ->
             val id =
                 StudentSeason2.insertAndGetId {
                     it[name] = student.name

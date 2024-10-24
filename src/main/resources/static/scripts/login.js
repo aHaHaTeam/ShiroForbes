@@ -19,10 +19,10 @@ form.addEventListener("submit", (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     }).then(response => {
+        console.log(response)
         if (response.redirected) {
             window.location.assign(response.url)
         } else {
-            document.getElementById("signIn").enable()
             span.style.display = ""
             progress.style.display = "none"
             password.parentElement.classList.add("invalid")

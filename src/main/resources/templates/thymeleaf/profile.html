@@ -14,77 +14,59 @@
 </head>
 <body>
 <div class="grid">
-    <div class="s0 m1 l2"></div>
+    <div class="s0 l2"></div>
     <!--/*@thymesVar id="user" type="ru.shiroforbes.database.StudentDAO2"*/-->
-    <div class="s12 m10 l8"
+    <div class="s12 l8"
          th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
         <div th:insert="~{components/header :: header(${activeUser})}"></div>
         <main class="responsive grid">
             <div class="s12">
                 <br>
-                <h5 id="name" class="bold center-align" th:text="${user.name}"></h5>
+                <h3 id="name" class="bold center-align" th:text="${user.name}"></h3>
                 <br>
                 <div class="grid">
-                    <article class="s12 l12 round amber2" th:unless="${user.ratings[0].grobs==0}">
+                    <article class="s12 m6 l4 round blue-grey2">
                         <div class="row">
-                            <button class="circle amber8 large"><i class="circle">Trophy</i></button>
-                            <div class="max center-align" >
-                                <h6 th:text="|Рейтинг|"></h6>
-                                <span th:text="|${user.ratings[0].grobs}|"></span>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 l4 round pink2">
-                        <div class="row">
-                            <button class="circle pink8"><i class="circle">functions</i></button>
+                            <button class="circle blue-grey8"><i class="circle">functions</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Решено|"></h6>
+                                <h6 class="bold" th:text="|Решено|"></h6>
                                 <p th:text="|${user.ratings[0].total} (${user.ratings[0].totalPercent}%)|"></p>
                             </div>
                         </div>
                     </article>
-                    <article class="s12 l4 round blue2">
+                    <article class="s12 m6 l4 round deep-orange2">
                         <div class="row">
-                            <button class="circle blue8"><i class="circle">function</i></button>
+                            <button class="circle deep-orange8"><i class="circle">function</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Алгебра|"></h6>
+                                <h6 class="bold" th:text="|Алгебра|"></h6>
                                 <p th:text="|${user.ratings[0].algebra} (${user.ratings[0].algebraPercent}%)|"></p>
                             </div>
                         </div>
                     </article>
-                    <article class="s12 l4 round orange2">
+                    <article class="s12 m6 l4 round orange2">
                         <div class="row">
                             <button class="circle orange8"><i class="circle">calculate</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Теория чисел|"></h6>
+                                <h6 class="bold" th:text="|Теория чисел|"></h6>
                                 <p th:text="|${user.ratings[0].numbersTheory} (${user.ratings[0].numbersTheoryPercent}%)|"></p>
                             </div>
                         </div>
                     </article>
-                    <article class="s12 l4 round deep-orange2">
+                    <article class="s12 m6 l4 round blue2">
                         <div class="row">
-                            <button class="circle deep-orange8"><i class="circle">playing_cards</i></button>
+                            <button class="circle blue8"><i class="circle">playing_cards</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Комбинаторика|"></h6>
+                                <h6 class="bold" th:text="|Комбинаторика|"></h6>
                                 <p th:text="|${user.ratings[0].combinatorics} (${user.ratings[0].combinatoricsPercent}%)|"></p>
                             </div>
                         </div>
                     </article>
-                    <article class="s12 l4 round green2">
+                    <article class="s12 m6 l4 round green2">
                         <div class="row">
                             <button class="circle green8"><i class="circle">architecture</i></button>
                             <div class="max center-align">
-                                <h6 th:text="|Геометрия|"></h6>
+                                <h6 class="bold" th:text="|Геометрия|"></h6>
                                 <p th:text="|${user.ratings[0].geometry} (${user.ratings[0].geometryPercent}%)|"></p>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 l4 round purple2" th:unless="${user.ratings[0].grobs==0}">
-                        <div class="row">
-                            <button class="circle purple8"><i class="circle">Skull</i></button>
-                            <div class="max center-align">
-                                <h6 th:text="|Гробы|"></h6>
-                                <p th:text="|${user.ratings[0].grobs}|"></p>
                             </div>
                         </div>
                     </article>
@@ -107,5 +89,4 @@
 </div>
 
 </body>
-
 </html>
