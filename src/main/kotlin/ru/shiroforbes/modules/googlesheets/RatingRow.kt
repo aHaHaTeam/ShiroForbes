@@ -4,7 +4,8 @@ data class RatingRow(
     val firstName: String,
     val lastName: String,
     val solvedProblems: Float,
-    val rating: Float,
+    val solvedPercentage: Float,
+    val rating: Int,
     val algebraSolved: Float,
     val algebraPercentage: Int,
     val numbersTheorySolved: Float,
@@ -13,6 +14,7 @@ data class RatingRow(
     val combinatoricsPercentage: Int,
     val geometrySolved: Float,
     val geometryPercentage: Int,
+    val grobs: Int,
 ) {
     fun name(): String = "$lastName $firstName"
 }

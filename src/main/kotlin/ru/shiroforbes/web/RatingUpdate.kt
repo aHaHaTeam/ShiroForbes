@@ -14,7 +14,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
     val current = mutableListOf<StudentDAO2>()
     stringRatingsMap.forEach {
         DbStudentService.getStudentByNameSeason2(it.key).let { it1 ->
-            if (it1 != null)current.add(it1) else exposedLogger.debug("${it.key} not found")
+            if (it1 != null) current.add(it1) else exposedLogger.debug("${it.key} not found")
         }
     }
     return current
@@ -29,7 +29,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
                 i + 1,
                 -1,
                 stringRatingsMap[student.name]!!.solvedProblems,
-                stringRatingsMap[student.name]!!.solvedProblems - student.getTotal(),
+                (stringRatingsMap[student.name]!!.solvedProblems - student.getTotal()), // TODO round to 0.1
                 stringRatingsMap[student.name]!!.rating,
                 stringRatingsMap[student.name]!!.rating - student.getScore(),
             )
@@ -40,9 +40,10 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
 }
 
 suspend fun updateRating(rating: List<RatingRow>) {
-    rating.forEach {
+    rating.sortedBy { it.rating }.forEachIndexed { pos, it ->
         DbStudentService
             .updateRatingSeason2(
+                pos,
                 it,
             )
     }

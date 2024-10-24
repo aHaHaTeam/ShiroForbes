@@ -65,7 +65,12 @@ object DbStudentService {
         return transaction {
             val students = StudentDAO2.find { StudentSeason2.login eq login }
             val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList().sortedByDescending { it.total }
+            student?.ratings =
+                RatingDAO2
+                    .find {
+                        RatingSeason2.student eq student!!.id.value
+                    }.toList()
+                    .sortedByDescending { it.date }
             return@transaction student
         }
     }
@@ -89,7 +94,10 @@ object DbStudentService {
         }
     }
 
-    suspend fun updateRatingSeason2(row: RatingRow) {
+    suspend fun updateRatingSeason2(
+        pos: Int,
+        row: RatingRow,
+    ) {
         transaction {
             val student = getStudentByNameSeason2(row.name())
             if (student == null) {
@@ -106,11 +114,14 @@ object DbStudentService {
                 it[combinatoricsPercent] = row.combinatoricsPercentage
                 it[geometryPercent] = row.geometryPercentage
 
-                it[totalPercent] = 0 // TODO
+                it[totalPercent] = row.solvedPercentage.toInt() // TODO
                 it[algebra] = row.algebraSolved
                 it[numbersTheory] = row.numbersTheorySolved
                 it[geometry] = row.geometrySolved
                 it[combinatorics] = row.combinatoricsSolved
+
+                it[grobs] = row.grobs
+                it[position] = pos
                 it[date] =
                     Clock.System
                         .now()

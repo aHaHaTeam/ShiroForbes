@@ -151,7 +151,11 @@ fun Routing.routes(
                 ThymeleafContent(
                     "update_rating",
                     mapOf(
-                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                        "user" to (
+                            DbUserService.getUserByLogin(
+                                call.principal<Session>()!!.login,
+                            ) ?: 0
+                        ),
                         "countrysideStudents" to countrysideDeltas,
                         "urbanStudents" to urbanDeltas,
                     ),

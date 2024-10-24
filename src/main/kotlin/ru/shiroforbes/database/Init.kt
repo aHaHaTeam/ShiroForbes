@@ -102,7 +102,7 @@ fun main() {
             RatingSeason2.insert {
                 it[RatingSeason2.student] = id.value
                 it[total] = 0F
-                it[points] = 0F
+                it[points] = 0
                 it[algebraPercent] = 0
                 it[numbersTheoryPercent] = 0
                 it[combinatoricsPercent] = 0

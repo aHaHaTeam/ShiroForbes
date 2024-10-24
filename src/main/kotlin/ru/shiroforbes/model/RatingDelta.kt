@@ -7,6 +7,6 @@ data class RatingDelta(
     val newRank: Int,
     val solved: Float,
     val solvedDelta: Float,
-    val rating: Float,
-    val ratingDelta: Float,
+    val rating: Int,
+    val ratingDelta: Int,
 )

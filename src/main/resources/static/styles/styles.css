@@ -1,7 +1,9 @@
 body {
-    font-size: large;
+    font-size: xxx-large;
 }
 
 .fit-content {
     width: fit-content;
 }
+
+.horizontal { display: inline-block;}
