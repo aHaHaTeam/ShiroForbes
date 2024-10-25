@@ -15,10 +15,10 @@
 <div th:fragment="header(user)">
     <header class="fixed fill small-round">
         <nav class="grid">
-            <div class="s2 center">
+            <div class="s2 center middle-align">
                 <div th:if="${!user.equals(0)}">
                     <a class="circle transparent horizontal" href="/grobarium">
-                        <i class="extra">
+                        <i class="middle extra">
                             <img src="/static/images/overleaf-o-logo-primary.png"
                                  alt="Гробарий">
                         </i>
@@ -27,11 +27,10 @@
             </div>
             <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
-            <div class="s2 right-align">
+            <div class="s2 right-align middle-align">
                 <div th:if="${!user.equals(0)}">
-                    <a class="circle transparent horizontal" href="/logout">
-                        <span>Выйти</span>
-                        <i>logout</i>
+                    <a class="circle transparent horizontal middle-align" href="/logout">
+                        <i class="middle">logout</i>
                     </a>
                 </div>
 
