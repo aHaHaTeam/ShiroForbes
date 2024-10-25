@@ -107,6 +107,8 @@ fun main() {
                 it[numbersTheoryPercent] = 0
                 it[combinatoricsPercent] = 0
                 it[geometryPercent] = 0
+                it[grobs] = 0
+                it[position] = 0
 
                 it[totalPercent] = 0
                 it[algebra] = 0f

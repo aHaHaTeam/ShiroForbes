@@ -5,6 +5,7 @@ import ru.shiroforbes.database.StudentDAO2
 import ru.shiroforbes.model.RatingDelta
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.service.DbStudentService
+import kotlin.math.round
 
 fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
     val stringRatingsMap =
@@ -29,7 +30,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
                 i + 1,
                 -1,
                 stringRatingsMap[student.name]!!.solvedProblems,
-                (stringRatingsMap[student.name]!!.solvedProblems - student.getTotal()), // TODO round to 0.1
+                ((stringRatingsMap[student.name]!!.solvedProblems - student.getTotal())).round(1),
                 stringRatingsMap[student.name]!!.rating,
                 stringRatingsMap[student.name]!!.rating - student.getScore(),
             )
@@ -40,11 +41,17 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
 }
 
 suspend fun updateRating(rating: List<RatingRow>) {
-    rating.sortedBy { it.rating }.forEachIndexed { pos, it ->
+    rating.sortedByDescending { it.rating }.forEachIndexed { pos, it ->
         DbStudentService
             .updateRatingSeason2(
-                pos,
+                pos + 1,
                 it,
             )
     }
+}
+
+fun Float.round(decimals: Int): Float {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return (round(this * multiplier) / multiplier).toFloat()
 }

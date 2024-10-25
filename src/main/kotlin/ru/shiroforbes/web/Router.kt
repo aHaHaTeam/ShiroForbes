@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import io.ktor.util.*
+import kotlinx.coroutines.async
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -62,7 +63,7 @@ fun Routing.routes(
                 call.respondRedirect("/login")
             }
             user as User
-            if (user.HasAdminRights != true) {
+            if (!user.HasAdminRights) {
                 call.respondRedirect("/profile/${user.login}")
             }
             call.respondRedirect("/update/rating")
@@ -138,14 +139,19 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         get("/update/rating") {
-            val countrysideDeltas =
-                computeRatingDeltas(
-                    ratingDeserializer.getCountrysideRating(),
-                )
-            val urbanDeltas =
-                computeRatingDeltas(
-                    ratingDeserializer.getUrbanRating(),
-                )
+            val countrysideDeltasDeferred =
+                async {
+                    computeRatingDeltas(
+                        ratingDeserializer.getCountrysideRating(),
+                    )
+                }
+
+            val urbanDeltasDeferred =
+                async {
+                    computeRatingDeltas(
+                        ratingDeserializer.getUrbanRating(),
+                    )
+                }
 
             call.respond(
                 ThymeleafContent(
@@ -156,8 +162,8 @@ fun Routing.routes(
                                 call.principal<Session>()!!.login,
                             ) ?: 0
                         ),
-                        "countrysideStudents" to countrysideDeltas,
-                        "urbanStudents" to urbanDeltas,
+                        "countrysideStudents" to countrysideDeltasDeferred.await(),
+                        "urbanStudents" to urbanDeltasDeferred.await(),
                     ),
                 ),
             )
