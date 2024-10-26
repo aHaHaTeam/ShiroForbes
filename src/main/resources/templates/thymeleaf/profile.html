@@ -13,8 +13,7 @@
 
 </head>
 <body>
-<div class="s12 l8"
-     th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
+<div th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
     <div th:insert="~{components/header :: header(${activeUser})}"></div>
 </div>
 <div class="grid">
@@ -35,7 +34,7 @@
                 <div class="grid">
                     <article class="s12 round amber2 middle-align" th:unless="${user.ratings[0].position > 20}">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle amber8 large"><i class="circle large">Trophy</i></button>
+                            <button class="circle amber8 large"><i class="large">Trophy</i></button>
                             <div class="max center center-align row">
                                 <p class="bold" th:text="|Место: |"></p>
                                 <p th:text="|${user.ratings[0].position}|"></p>
@@ -44,7 +43,7 @@
                     </article>
                     <article class="s12 round purple2 middle-align" th:unless="${user.ratings[0].grobs == 0}">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle purple8 large"><i class="circle large">Skull</i></button>
+                            <button class="circle purple8 large"><i class="large">Skull</i></button>
                             <div class="max center center-align row">
                                 <p class="bold" th:text="|Гробы: |"></p>
                                 <p th:text="|${user.ratings[0].grobs}|"></p>
@@ -53,7 +52,7 @@
                     </article>
                     <article class="s12 m6 l4 round pink2 middle-align">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle pink8 large"><i class="circle large">functions</i></button>
+                            <button class="circle pink8 large"><i class="large">functions</i></button>
                             <div class="max center center-align">
                                 <span class="bold" th:text="|Задачи: |"></span>
                                 <span style="white-space: nowrap"
@@ -63,7 +62,7 @@
                     </article>
                     <article class="s12 m6 l4 round blue2 middle-align">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle blue8 large"><i class="circle large">function</i></button>
+                            <button class="circle blue8 large"><i class="large">function</i></button>
                             <div class="max center center-align">
                                 <span class="bold" th:text="|Алгебра: |"></span>
                                 <span style="white-space: nowrap"
@@ -73,7 +72,7 @@
                     </article>
                     <article class="s12 m6 l4 round orange2 middle-align">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle orange8 large"><i class="circle large">calculate</i></button>
+                            <button class="circle orange8 large"><i class="large">calculate</i></button>
                             <div class="max center center-align">
                                 <span class="bold" th:text="|Теория чисел: |"></span>
                                 <span style="white-space: nowrap"
@@ -83,7 +82,7 @@
                     </article>
                     <article class="s12 m6 l4 round deep-orange2 middle-align">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle deep-orange8 large"><i class="circle large">playing_cards</i></button>
+                            <button class="circle deep-orange8 large"><i class="large">playing_cards</i></button>
                             <div class="max center center-align">
                                 <span class="bold" th:text="|Комбинаторика: |" style="word-break: break-all;"></span>
                                 <span style="white-space: nowrap"
@@ -93,7 +92,7 @@
                     </article>
                     <article class="s12 m6 l4 round green2 middle-align">
                         <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle green8 large"><i class="circle large">architecture</i></button>
+                            <button class="circle green8 large"><i class="large">architecture</i></button>
                             <div class="max center center-align">
                                 <span class="bold" th:text="|Геометрия: |" style="word-break: break-all;"></span>
                                 <span style="white-space: nowrap"

@@ -10,12 +10,11 @@
     <link href="/static/styles/styles.css" rel="stylesheet">
 </head>
 <body>
+<!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
+<div th:insert="~{components/header :: header(${user})}"></div>
 <div class="grid">
     <div class="s0 m1 l2"></div>
     <div class="s12 m10 l8">
-        <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
-        <div th:insert="~{components/header :: header(${user})}"></div>
-
         <div class="grid">
             <div class="s2 m3 l3"></div>
             <nav class="no-space center-align middle-align s8 m6 l6">
