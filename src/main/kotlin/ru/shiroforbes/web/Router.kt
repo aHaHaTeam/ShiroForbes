@@ -61,10 +61,12 @@ fun Routing.routes(
             }
             if (user == 0) {
                 call.respondRedirect("/login")
+                return@get
             }
             user as User
             if (!user.HasAdminRights) {
                 call.respondRedirect("/profile/${user.login}")
+                return@get
             }
             call.respondRedirect("/update/rating")
         }
