@@ -2,8 +2,10 @@
 
 package ru.shiroforbes.config
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -90,5 +92,14 @@ fun Application.configureApp(config: Config) {
             ratingDeserializer = RatingDeserializer(config.googleSheetsConfig),
             routerConfig = config.routerConfig,
         )
+    }
+
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.ContentType)
+        anyHost()
     }
 }
