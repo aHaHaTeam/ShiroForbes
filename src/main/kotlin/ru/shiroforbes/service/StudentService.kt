@@ -8,8 +8,11 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
-import ru.shiroforbes.database.*
-import ru.shiroforbes.database.RatingSeason2.total
+import ru.shiroforbes.database.RatingDAO2
+import ru.shiroforbes.database.RatingSeason2
+import ru.shiroforbes.database.StudentDAO2
+import ru.shiroforbes.database.StudentSeason2
+import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.Rating
 import ru.shiroforbes.modules.googlesheets.RatingRow
 
@@ -126,6 +129,23 @@ object DbStudentService {
                     Clock.System
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
+            }
+        }
+    }
+
+    suspend fun updateGroupSeason2(
+        name: String,
+        group: GroupType,
+    ) {
+        transaction {
+            val student = getStudentByNameSeason2(name)
+            if (student == null) {
+                exposedLogger.debug("Updating rating")
+                return@transaction
+            }
+
+            StudentSeason2.update({ StudentSeason2.id eq student.id.value }) {
+                it[StudentSeason2.group] = group == GroupType.Urban
             }
         }
     }

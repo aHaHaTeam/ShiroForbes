@@ -32,7 +32,8 @@
                 <h4 id="name" class="bold center-align" th:text="${user.name}"></h4>
                 <br>
                 <div class="grid">
-                    <article class="s12 round amber2 middle-align" th:unless="${user.ratings[0].position > 20}">
+                    <article class="s12 round amber2 middle-align"
+                             th:unless="${user.ratings[0].position * 2 > numberOfPeople}">
                         <div class="row" style="column-gap: 0; width: 85%;">
                             <button class="circle amber8 large"><i class="large">Trophy</i></button>
                             <div class="max center center-align row">

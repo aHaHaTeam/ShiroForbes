@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.Column
 
 object StudentSeason2 : IntIdTable("student_season2", "studentId") {
     val name: Column<String> = text("name")
+    val group: Column<Boolean> = bool("group")
     val login: Column<String> = text("login")
     val password: Column<String> = text("password")
 }
@@ -18,6 +19,7 @@ class StudentDAO2(
     companion object : IntEntityClass<StudentDAO2>(StudentSeason2)
 
     val name by StudentSeason2.name
+    val group by StudentSeason2.group
     val login by StudentSeason2.login
     val password by StudentSeason2.password
     var ratings: List<RatingDAO2> = listOf()

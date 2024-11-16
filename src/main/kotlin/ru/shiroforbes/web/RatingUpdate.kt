@@ -2,6 +2,7 @@ package ru.shiroforbes.web
 
 import org.jetbrains.exposed.sql.exposedLogger
 import ru.shiroforbes.database.StudentDAO2
+import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.service.DbStudentService
@@ -47,6 +48,15 @@ suspend fun updateRating(rating: List<RatingRow>) {
                 pos + 1,
                 it,
             )
+    }
+}
+
+suspend fun updateGroup(
+    rating: List<RatingRow>,
+    group: GroupType,
+) {
+    rating.sortedByDescending { it.rating }.forEach {
+        DbStudentService.updateGroupSeason2(it.name(), group)
     }
 }
 

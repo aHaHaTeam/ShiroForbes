@@ -21,6 +21,7 @@ import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.login.isAdmin
 import ru.shiroforbes.login.validUser
+import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.User
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
 import ru.shiroforbes.service.DbStudentService
@@ -120,6 +121,10 @@ fun Routing.routes(
                 return@get
                 // TODO()
             }
+
+            val urbanRating = ratingDeserializer.getUrbanRating()
+            val countrysideRating = ratingDeserializer.getCountrysideRating()
+            val numberOfPeople = if (user.group) urbanRating.size else countrysideRating.size
             if (activeUser != user.login) {
                 call.respond(
                     ThymeleafContent(
@@ -127,6 +132,7 @@ fun Routing.routes(
                         mapOf(
                             "user" to user,
                             "activeUser" to activeUser,
+                            "numberOfPeople" to numberOfPeople,
                         ),
                     ),
                 )
@@ -174,14 +180,18 @@ fun Routing.routes(
 
     authenticate("auth-session-admin-only") {
         post("/update/countryside/rating") {
-            updateRating(ratingDeserializer.getCountrysideRating())
+            val rating = ratingDeserializer.getCountrysideRating()
+            updateRating(rating)
+            updateGroup(rating, GroupType.Countryside)
             call.respondRedirect("/update/rating")
         }
     }
 
     authenticate("auth-session-admin-only") {
         post("/update/urban/rating") {
-            updateRating(ratingDeserializer.getUrbanRating())
+            val rating = ratingDeserializer.getUrbanRating()
+            updateRating(rating)
+            updateGroup(rating, GroupType.Urban)
             call.respondRedirect("/update/rating")
         }
     }
