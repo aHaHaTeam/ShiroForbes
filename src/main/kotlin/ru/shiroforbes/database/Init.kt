@@ -97,6 +97,7 @@ fun main() {
                     it[name] = student.name
                     it[login] = student.login
                     it[password] = student.password
+                    it[group] = true
                 }
 
             RatingSeason2.insert {

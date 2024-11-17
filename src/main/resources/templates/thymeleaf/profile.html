@@ -23,6 +23,8 @@
          th:unless="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
         <img alt="Pusheen.png" src="/static/images/pusheen.png" style="width: 80%">
         <h5>Это не Ваш профиль и Вам сюда нельзя((</h5>
+        <br>
+        <h5>Если Вы думаете, что это ошибка - <a href="/login" style="color: #0d47a1; border-bottom: #0d47a1 1px solid">перезайдите на сайт</a></h5>
     </div>
     <div class="s12 l8"
          th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
