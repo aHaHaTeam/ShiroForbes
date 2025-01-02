@@ -4,13 +4,10 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShiroForbes</title>
 
-
     <link href="/static/modules/beer/beer.min.css" rel="stylesheet">
     <script type="module" src="/static/modules/beer/beer.min.js"></script>
     <script type="module" src="/static/modules/beer/material-dynamic-colors.min.js"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
-    <script src="/static/modules/chart/chart.js"></script>
-
 </head>
 <body>
 <div th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
@@ -24,7 +21,8 @@
         <img alt="Pusheen.png" src="/static/images/pusheen.png" style="width: 80%">
         <h5>Это не Ваш профиль и Вам сюда нельзя((</h5>
         <br>
-        <h5>Если Вы думаете, что это ошибка - <a href="/login" style="color: #0d47a1; border-bottom: #0d47a1 1px solid">перезайдите на сайт</a></h5>
+        <h5>Если Вы думаете, что это ошибка - <a href="/login" style="color: #0d47a1; border-bottom: #0d47a1 1px solid">перезайдите
+            на сайт</a></h5>
     </div>
     <div class="s12 l8"
          th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
@@ -105,16 +103,6 @@
                     </article>
                 </div>
                 <br>
-            </div>
-
-            <div class="s12" th:if="${false}">
-                <div class="tabs">
-                    <a class="active" id="ratingChartSelector">
-                        <i>trophy</i>
-                        <span>Рейтинг</span>
-                    </a>
-                </div>
-                <div th:insert="~{components/chart :: chart(${rating}, 'rating')}" id="ratingChart"></div>
             </div>
         </main>
     </div>

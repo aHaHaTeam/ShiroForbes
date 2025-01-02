@@ -9,7 +9,6 @@ import java.security.MessageDigest
 
 fun isAdmin(user: String?): Boolean = user == "admin"
 
-@OptIn(ExperimentalStdlibApi::class)
 fun validUser(
     login: String,
     password: String,
@@ -20,7 +19,6 @@ fun validUser(
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun validAdmin(
     login: String,
     password: String,

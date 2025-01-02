@@ -41,7 +41,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }.toList()
 }
 
-suspend fun updateRating(rating: List<RatingRow>) {
+fun updateRating(rating: List<RatingRow>) {
     rating.sortedByDescending { it.rating }.forEachIndexed { pos, it ->
         DbStudentService
             .updateRatingSeason2(
@@ -51,7 +51,7 @@ suspend fun updateRating(rating: List<RatingRow>) {
     }
 }
 
-suspend fun updateGroup(
+fun updateGroup(
     rating: List<RatingRow>,
     group: GroupType,
 ) {

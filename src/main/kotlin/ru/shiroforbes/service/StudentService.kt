@@ -5,36 +5,18 @@ package ru.shiroforbes.service
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import ru.shiroforbes.config
 import ru.shiroforbes.database.RatingDAO2
 import ru.shiroforbes.database.RatingSeason2
 import ru.shiroforbes.database.StudentDAO2
 import ru.shiroforbes.database.StudentSeason2
 import ru.shiroforbes.model.GroupType
-import ru.shiroforbes.model.Rating
 import ru.shiroforbes.modules.googlesheets.RatingRow
-
-/**
- * Service for accessing the student storage.
- * It is very likely that this interface will be changed/expanded depending on future requirements.
- */
-interface StudentService {
-    suspend fun updateRating(
-        name: String,
-        rating: Int,
-        solved: Int,
-        algebra: Int,
-        combinatorics: Int,
-        geometry: Int,
-    ): Unit = throw NotImplementedError()
-
-    suspend fun addRating(
-        rating: Rating,
-        name: String,
-    ): Unit = throw NotImplementedError()
-}
 
 object DbStudentService {
     init {
@@ -78,26 +60,7 @@ object DbStudentService {
         }
     }
 
-    suspend fun getAllStudentsSeason2(): List<StudentDAO2> {
-        // this func is broken and does not work,
-        // but it is only better! Because every call of it may be a design error
-        return transaction {
-            return@transaction StudentSeason2
-                .join(RatingSeason2, JoinType.LEFT, StudentSeason2.id, RatingSeason2.student)
-                .selectAll()
-                .groupBy({ StudentDAO2.wrapRow(it) }, { it })
-                .map { (student, rows) ->
-                    val ratings =
-                        rows.map { row ->
-                            RatingDAO2.wrapRow(row)
-                        }
-                    student.ratings = ratings
-                    student
-                }
-        }
-    }
-
-    suspend fun updateRatingSeason2(
+    fun updateRatingSeason2(
         pos: Int,
         row: RatingRow,
     ) {
@@ -133,7 +96,7 @@ object DbStudentService {
         }
     }
 
-    suspend fun updateGroupSeason2(
+    fun updateGroupSeason2(
         name: String,
         group: GroupType,
     ) {
