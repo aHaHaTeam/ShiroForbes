@@ -39,16 +39,10 @@ fun main(args: Array<String>) {
             port = arg.substringAfter("--port=").toInt()
         }
     }
-    while (true) {
-        try {
-            runBlocking {
-                launch {
-                    embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
-                        .start(wait = true)
-                }
-            }
-        } catch (e: Exception) {
-            println(e.message)
+    runBlocking {
+        launch {
+            embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
+                .start(wait = true)
         }
     }
 }

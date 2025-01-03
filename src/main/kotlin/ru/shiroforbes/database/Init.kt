@@ -139,7 +139,7 @@ private fun <T : Any> fetchGoogleSheets(
     conversion: KClass<T>,
 ) = GoogleSheetsService(
     GoogleSheetsApiConnectionService(
-        "/googlesheets/credentials.json",
+        "/googlesheets/service-account-key.json",
         listOf(SheetsScopes.SPREADSHEETS_READONLY),
     ),
     "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
