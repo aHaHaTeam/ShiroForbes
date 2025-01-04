@@ -2,21 +2,19 @@
 
 package ru.shiroforbes.service
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.exposedLogger
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import ru.shiroforbes.config
-import ru.shiroforbes.database.RatingDAO2
 import ru.shiroforbes.database.RatingSeason2
-import ru.shiroforbes.database.StudentDAO2
+import ru.shiroforbes.database.RatingSeason2.date
+import ru.shiroforbes.database.RatingSeason2.points
+import ru.shiroforbes.database.RatingSeason2.student
+import ru.shiroforbes.database.RatingSeason2.total
 import ru.shiroforbes.database.StudentSeason2
-import ru.shiroforbes.model.GroupType
-import ru.shiroforbes.modules.googlesheets.RatingRow
+import ru.shiroforbes.database.StudentStat
+import ru.shiroforbes.model.Student
 
 object DbStudentService {
     init {
@@ -28,88 +26,187 @@ object DbStudentService {
         )
     }
 
-    fun getStudentByIdSeason2(id: Int): StudentDAO2? {
-        return transaction {
-            val students = StudentDAO2.find { StudentSeason2.id eq id }
-            val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq id }.toList()
-            return@transaction student
-        }
-    }
-
-    fun getStudentByNameSeason2(name: String): StudentDAO2? {
-        return transaction {
-            val students = StudentDAO2.find { StudentSeason2.name eq name }
-            val student = if (students.empty()) null else students.first()
-            student?.ratings = RatingDAO2.find { RatingSeason2.student eq student!!.id.value }.toList()
-            return@transaction student
-        }
-    }
-
-    fun getStudentByLoginSeason2(login: String): StudentDAO2? {
-        return transaction {
-            val students = StudentDAO2.find { StudentSeason2.login eq login }
-            val student = if (students.empty()) null else students.first()
-            student?.ratings =
-                RatingDAO2
-                    .find {
-                        RatingSeason2.student eq student!!.id.value
-                    }.toList()
-                    .sortedByDescending { it.date }
-            return@transaction student
-        }
-    }
-
-    fun updateRatingSeason2(
-        pos: Int,
-        row: RatingRow,
-    ) {
+    fun getStudentStatById(id: Int): StudentStat? =
         transaction {
-            val student = getStudentByNameSeason2(row.name())
-            if (student == null) {
-                exposedLogger.debug("Updating rating")
-                return@transaction
+            val lastDate =
+                RatingSeason2
+                    .join(
+                        StudentSeason2,
+                        JoinType.INNER,
+                        onColumn = RatingSeason2.student,
+                        otherColumn = StudentSeason2.id,
+                    ).select(RatingSeason2.date.max().alias("maxDate"))
+                    .where(RatingSeason2.student eq StudentSeason2.id and (StudentSeason2.id eq id))
+                    .firstOrNull()
+            if (lastDate == null) {
+                return@transaction null
             }
 
-            RatingSeason2.insert {
-                it[RatingSeason2.student] = student.id.value
-                it[total] = row.solvedProblems
-                it[points] = row.rating
-                it[algebraPercent] = row.algebraPercentage
-                it[numbersTheoryPercent] = row.numbersTheoryPercentage
-                it[combinatoricsPercent] = row.combinatoricsPercentage
-                it[geometryPercent] = row.geometryPercentage
-
-                it[totalPercent] = row.solvedPercentage.toInt() // TODO
-                it[algebra] = row.algebraSolved
-                it[numbersTheory] = row.numbersTheorySolved
-                it[geometry] = row.geometrySolved
-                it[combinatorics] = row.combinatoricsSolved
-
-                it[grobs] = row.grobs
-                it[position] = pos
-                it[date] =
-                    Clock.System
-                        .now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-            }
+            return@transaction StudentSeason2
+                .join(
+                    RatingSeason2,
+                    JoinType.INNER,
+                    onColumn = StudentSeason2.id,
+                    otherColumn = RatingSeason2.student,
+                ).select(
+                    StudentSeason2.login,
+                    StudentSeason2.group,
+                    StudentSeason2.name,
+                    RatingSeason2.points,
+                    RatingSeason2.total,
+                ).where(
+                    RatingSeason2.date eq lastDate.get(RatingSeason2.date.max().alias("maxDate"))!!,
+                ).map {
+                    StudentStat(
+                        it[StudentSeason2.name],
+                        it[StudentSeason2.group],
+                        it[StudentSeason2.login],
+                        it[RatingSeason2.points],
+                        it[RatingSeason2.total],
+                    )
+                }.firstOrNull()
         }
-    }
 
-    fun updateGroupSeason2(
-        name: String,
-        group: GroupType,
-    ) {
+    fun getAllStudentsByName(): Map<String, StudentStat> =
         transaction {
-            val student = getStudentByNameSeason2(name)
-            if (student == null) {
-                exposedLogger.debug("Updating rating")
-                return@transaction
+            val lastDate =
+                RatingSeason2
+                    .join(
+                        StudentSeason2,
+                        JoinType.INNER,
+                        onColumn = RatingSeason2.student,
+                        otherColumn = StudentSeason2.id,
+                    ).select(RatingSeason2.date.max(), StudentSeason2.login)
+                    .where(RatingSeason2.student eq StudentSeason2.id)
+                    .groupBy(StudentSeason2.login)
+                    .map {
+                        return@map (it[RatingSeason2.date.max()] to it[StudentSeason2.login])
+                    }.filter { it.first != null }
+                    .map { it.first!! to it.second!! }
+
+            return@transaction StudentSeason2
+                .join(
+                    RatingSeason2,
+                    JoinType.INNER,
+                    onColumn = StudentSeason2.id,
+                    otherColumn = RatingSeason2.student,
+                ).select(
+                    StudentSeason2.login,
+                    StudentSeason2.group,
+                    StudentSeason2.name,
+                    RatingSeason2.points,
+                    RatingSeason2.total,
+                ).where(
+                    RatingSeason2.date to StudentSeason2.login inList lastDate,
+                ).map {
+                    it[StudentSeason2.name] to
+                        StudentStat(
+                            it[StudentSeason2.name],
+                            it[StudentSeason2.group],
+                            it[StudentSeason2.login],
+                            it[RatingSeason2.points],
+                            it[RatingSeason2.total],
+                        )
+                }.associateBy({ it.first }, { it.second })
+        }
+
+    fun getStudentStatByName(name: String): StudentStat? =
+        transaction {
+            val lastDate =
+                RatingSeason2
+                    .join(
+                        StudentSeason2,
+                        JoinType.INNER,
+                        onColumn = RatingSeason2.student,
+                        otherColumn = StudentSeason2.id,
+                    ).select(RatingSeason2.date.max().alias("maxDate"))
+                    .where(RatingSeason2.student eq StudentSeason2.id and (StudentSeason2.name eq name))
+                    .firstOrNull()
+            if (lastDate == null) {
+                return@transaction null
             }
 
-            StudentSeason2.update({ StudentSeason2.id eq student.id.value }) {
-                it[StudentSeason2.group] = group == GroupType.Urban
-            }
+            return@transaction StudentSeason2
+                .join(
+                    RatingSeason2,
+                    JoinType.INNER,
+                    onColumn = StudentSeason2.id,
+                    otherColumn = RatingSeason2.student,
+                ).select(
+                    StudentSeason2.login,
+                    StudentSeason2.group,
+                    StudentSeason2.name,
+                    RatingSeason2.points,
+                    RatingSeason2.total,
+                ).where(
+                    RatingSeason2.date eq lastDate.get(RatingSeason2.date.max().alias("maxDate"))!!,
+                ).map {
+                    StudentStat(
+                        it[StudentSeason2.name],
+                        it[StudentSeason2.group],
+                        it[StudentSeason2.login],
+                        it[RatingSeason2.points],
+                        it[RatingSeason2.total],
+                    )
+                }.firstOrNull()
         }
+
+    fun getStudentStatByLogin(login: String): StudentStat? =
+        transaction {
+            val lastDate =
+                RatingSeason2
+                    .join(
+                        StudentSeason2,
+                        JoinType.INNER,
+                        onColumn = RatingSeason2.student,
+                        otherColumn = StudentSeason2.id,
+                    ).select(RatingSeason2.date.max().alias("maxDate"), student.alias("student1"))
+                    .where(RatingSeason2.student eq StudentSeason2.id and (StudentSeason2.login eq login))
+                    .groupBy(RatingSeason2.student)
+                    .firstOrNull()
+            if (lastDate?.get(RatingSeason2.date.max().alias("maxDate")) == null) {
+                return@transaction null
+            }
+
+            return@transaction StudentSeason2
+                .join(
+                    RatingSeason2,
+                    JoinType.INNER,
+                    onColumn = StudentSeason2.id,
+                    otherColumn = RatingSeason2.student,
+                ).select(
+                    StudentSeason2.login,
+                    StudentSeason2.group,
+                    StudentSeason2.name,
+                    RatingSeason2.points,
+                    RatingSeason2.total,
+                ).where(
+                    RatingSeason2.date eq lastDate.get(RatingSeason2.date.max().alias("maxDate"))!! and
+                        (RatingSeason2.student eq lastDate.get(RatingSeason2.student!!)),
+                ).map {
+                    StudentStat(
+                        it[StudentSeason2.name],
+                        it[StudentSeason2.group],
+                        it[StudentSeason2.login],
+                        it[RatingSeason2.points],
+                        it[RatingSeason2.total],
+                    )
+                }.firstOrNull()
+        }
+
+    suspend fun getStudentByLogin(login: String): Student {
+        val stats = getStudentStatByLogin(login)
+        val ratings = DbRatingService.getRatings(login)
+
+        return Student(stats!!, ratings)
     }
+
+    fun getPasswordByLogin(login: String): String? =
+        transaction {
+            StudentSeason2
+                .select(StudentSeason2.password)
+                .where(StudentSeason2.login eq login)
+                .firstOrNull()
+                ?.get(StudentSeason2.password)
+        }
 }

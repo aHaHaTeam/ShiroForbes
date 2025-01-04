@@ -1,10 +1,13 @@
 package ru.shiroforbes.web
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.exposedLogger
-import ru.shiroforbes.database.StudentDAO2
+import ru.shiroforbes.database.StudentStat
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
 import ru.shiroforbes.modules.googlesheets.RatingRow
+import ru.shiroforbes.service.DbRatingService
 import ru.shiroforbes.service.DbStudentService
 import kotlin.math.round
 
@@ -13,16 +16,17 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         newRatings.associateBy {
             it.lastName.trim() + " " + it.firstName.trim()
         }
-    val current = mutableListOf<StudentDAO2>()
+    val current = mutableListOf<StudentStat>()
+    val dbstudents = DbStudentService.getAllStudentsByName()
     stringRatingsMap.forEach {
-        DbStudentService.getStudentByNameSeason2(it.key).let { it1 ->
+        dbstudents[it.key].let { it1 ->
             if (it1 != null) current.add(it1) else exposedLogger.debug("${it.key} not found")
         }
     }
     return current
         .asSequence()
         .filter { stringRatingsMap.containsKey(it.name) }
-        .sortedByDescending { it.getScore() }
+        .sortedByDescending { it.score }
         .mapIndexed { i, student ->
             println(student.name)
             RatingDelta(
@@ -31,9 +35,9 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
                 i + 1,
                 -1,
                 stringRatingsMap[student.name]!!.solvedProblems,
-                ((stringRatingsMap[student.name]!!.solvedProblems - student.getTotal())).round(1),
+                ((stringRatingsMap[student.name]!!.solvedProblems - student.total)).round(1),
                 stringRatingsMap[student.name]!!.rating,
-                stringRatingsMap[student.name]!!.rating - student.getScore(),
+                stringRatingsMap[student.name]!!.rating - student.score,
             )
         }.sortedByDescending { it.rating }
         .mapIndexed { i, student ->
@@ -41,13 +45,9 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }.toList()
 }
 
-fun updateRating(rating: List<RatingRow>) {
-    rating.sortedByDescending { it.rating }.forEachIndexed { pos, it ->
-        DbStudentService
-            .updateRatingSeason2(
-                pos + 1,
-                it,
-            )
+suspend fun updateRating(rating: List<RatingRow>) {
+    runBlocking {
+        launch { DbRatingService.updateRatingAll(rating) }
     }
 }
 
@@ -55,9 +55,7 @@ fun updateGroup(
     rating: List<RatingRow>,
     group: GroupType,
 ) {
-    rating.sortedByDescending { it.rating }.forEach {
-        DbStudentService.updateGroupSeason2(it.name(), group)
-    }
+    DbRatingService.updateGroupAll(rating.map { it.name() }, group)
 }
 
 fun Float.round(decimals: Int): Float {

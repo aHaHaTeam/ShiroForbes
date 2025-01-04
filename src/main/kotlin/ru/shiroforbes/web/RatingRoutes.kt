@@ -6,14 +6,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.RatingDeserializer
+import ru.shiroforbes.service.DbRatingService.updateGroupAll
 import ru.shiroforbes.service.DbUserService
 
-fun Routing.ratingRoutes(
-    ratingDeserializer: RatingDeserializer,
-) {
+fun Routing.ratingRoutes(ratingDeserializer: RatingDeserializer) {
     authenticate("auth-session-admin-only") {
         get("/update/rating") {
             val countrysideDeltasDeferred = async { computeRatingDeltas(ratingDeserializer.getCountrysideRating()) }
@@ -33,17 +34,19 @@ fun Routing.ratingRoutes(
         }
 
         post("/update/countryside/rating") {
-            val rating = ratingDeserializer.getCountrysideRating()
-            updateRating(rating)
-            updateGroup(rating, GroupType.Countryside)
-            call.respondRedirect("/update/rating")
+            runBlocking {
+                val rating = ratingDeserializer.getCountrysideRating()
+                launch { updateRating(rating) }
+                launch { updateGroupAll(rating.map { it.name() }, GroupType.Countryside) }
+                launch { call.respondRedirect("/update/rating") } // TODO make it fast
+            }
         }
 
         post("/update/urban/rating") {
             val rating = ratingDeserializer.getUrbanRating()
-            updateRating(rating)
-            updateGroup(rating, GroupType.Urban)
-            call.respondRedirect("/update/rating")
+            launch { updateRating(rating) }
+            launch { updateGroupAll(rating.map { it.name() }, GroupType.Urban) }
+            launch { call.respondRedirect("/update/rating") }
         }
     }
 }

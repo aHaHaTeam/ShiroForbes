@@ -123,7 +123,7 @@ fun main() {
             }
         }
 
-        DbStudentService.getStudentByIdSeason2(1)
+        DbStudentService.getStudentStatById(1)
         fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:E", ConversionClassAdmin::class).forEach { admin ->
             Admins.insert {
                 it[name] = admin.name

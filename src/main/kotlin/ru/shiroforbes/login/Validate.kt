@@ -14,7 +14,7 @@ fun validUser(
     password: String,
 ): Boolean {
     return runBlocking {
-        val hashedPassword = DbUserService.getUserByLogin(login)?.password ?: return@runBlocking false
+        val hashedPassword = DbUserService.getPasswordByLogin(login) ?: return@runBlocking false
         return@runBlocking password == hashedPassword
     }
 }
@@ -24,7 +24,7 @@ fun validAdmin(
     password: String,
 ): Boolean {
     return runBlocking {
-        val hashedPassword = DbAdminService.getAdminByLogin(login)?.password ?: return@runBlocking false
+        val hashedPassword = DbAdminService.getPasswordByLogin(login) ?: return@runBlocking false
         return@runBlocking password == hashedPassword
     }
 }
