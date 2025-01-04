@@ -103,6 +103,11 @@
                     </article>
                 </div>
                 <br>
+                <div class="grid">
+                    <div th:each="achievement : ${achievements}" class="s4 m3 l2">
+                        <div th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
