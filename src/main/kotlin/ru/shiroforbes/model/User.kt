@@ -7,13 +7,13 @@ open class User(
     val name: String,
     val login: String,
     val password: String,
-    val HasAdminRights: Boolean,
+    val hasAdminRights: Boolean,
 ) {
     constructor(studentDAO2: StudentDAO2) : this(
         studentDAO2.name,
         studentDAO2.login,
         studentDAO2.password,
-        HasAdminRights = false,
+        hasAdminRights = false,
     ) {
     }
 
@@ -23,4 +23,8 @@ open class User(
             is Int -> other != 0
             else -> false
         }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
 }

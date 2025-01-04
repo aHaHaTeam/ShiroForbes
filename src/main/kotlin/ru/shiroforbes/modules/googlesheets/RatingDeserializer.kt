@@ -32,6 +32,4 @@ class RatingDeserializer(
     fun getCountrysideRating(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty()
 
     fun getUrbanRating(): List<RatingRow> = urbanDeserializer.getWhileNotEmpty()
-
-    fun getAllRatings(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty() + urbanDeserializer.getWhileNotEmpty()
 }
