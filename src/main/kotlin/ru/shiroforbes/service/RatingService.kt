@@ -125,75 +125,12 @@ object DbRatingService {
         }
     }
 
-    fun updateRating(
-        pos: Int,
-        row: RatingRow,
-    ) {
-        transaction {
-            val studentId =
-                StudentSeason2
-                    .select(StudentSeason2.id)
-                    .where(StudentSeason2.name eq row.name())
-                    .firstOrNull()
-                    ?.get(StudentSeason2.id)
-            if (studentId == null) {
-                exposedLogger.debug("Updating rating")
-                return@transaction
-            }
-
-            RatingSeason2.insert {
-                it[RatingSeason2.student] = studentId.value
-                it[total] = row.solvedProblems
-                it[points] = row.rating
-                it[algebraPercent] = row.algebraPercentage
-                it[numbersTheoryPercent] = row.numbersTheoryPercentage
-                it[combinatoricsPercent] = row.combinatoricsPercentage
-                it[geometryPercent] = row.geometryPercentage
-
-                it[totalPercent] = row.solvedPercentage.toInt() // TODO
-                it[algebra] = row.algebraSolved
-                it[numbersTheory] = row.numbersTheorySolved
-                it[geometry] = row.geometrySolved
-                it[combinatorics] = row.combinatoricsSolved
-
-                it[grobs] = row.grobs
-                it[position] = pos
-                it[date] =
-                    Clock.System
-                        .now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
-            }
-        }
-    }
-
     fun updateGroupAll(
         names: List<String>,
         group: GroupType,
     ) {
         transaction {
             StudentSeason2.update({ StudentSeason2.name inList names }) {
-                it[StudentSeason2.group] = group == GroupType.Urban
-            }
-        }
-    }
-
-    fun updateGroup(
-        name: String,
-        group: GroupType,
-    ) {
-        transaction {
-            val studentId =
-                StudentSeason2
-                    .select(StudentSeason2.id)
-                    .where(StudentSeason2.name eq name)
-                    .firstOrNull()
-                    ?.get(StudentSeason2.id)
-            if (studentId == null) {
-                exposedLogger.debug("Updating rating")
-                return@transaction
-            }
-
-            StudentSeason2.update({ StudentSeason2.id eq studentId.value }) {
                 it[StudentSeason2.group] = group == GroupType.Urban
             }
         }
