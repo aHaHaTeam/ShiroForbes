@@ -2,23 +2,15 @@
 
 package ru.shiroforbes.modules.googlesheets
 
-import com.google.api.client.auth.oauth2.Credential
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
-import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
-import io.ktor.client.plugins.*
-import io.ktor.util.logging.*
-import io.ktor.util.reflect.*
+import com.google.auth.http.HttpCredentialsAdapter
+import com.google.auth.oauth2.GoogleCredentials
 import org.jetbrains.exposed.sql.exposedLogger
-import java.io.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
@@ -27,57 +19,28 @@ import kotlin.reflect.jvm.jvmErasure
 /**
  * Service providing connection to Google APIs.
  *
- * @property [credentialsFilePath] path to file with credentials (/credentials.json by default)
+ * @property [serviceAccountKeyFile] path to file with service credentials (/service-account-key.json.json by default)
  * @property [scopes] the list of OAuth 2.0 scopes for use with API.
  */
 class GoogleSheetsApiConnectionService(
-    val credentialsFilePath: String = "/credentials.json",
-    val scopes: List<String>,
+    private val serviceAccountKeyFile: String = "/service-account-key.json",
+    private val scopes: List<String>,
     applicationName: String = "Google API Service",
-    tokensDirectoryPath: String = "tokens",
 ) {
     val service: Sheets
 
     init {
+        val credentials =
+            GoogleCredentials.fromStream(object {}.javaClass.classLoader.getResourceAsStream(serviceAccountKeyFile))
+                .createScoped(listOf("https://www.googleapis.com/auth/spreadsheets"))
+
         val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
         val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
-        service =
-            Sheets
-                .Builder(httpTransport, jsonFactory, getCredentials(jsonFactory, httpTransport, tokensDirectoryPath))
-                .setApplicationName(applicationName)
-                .build()
+        service = Sheets.Builder(httpTransport, jsonFactory, HttpCredentialsAdapter(credentials))
+            .setApplicationName(applicationName)
+            .build()
     }
 
-    /**
-     * Builds a new authorized API client service.
-     */
-    @Throws(IOException::class)
-    private fun getCredentials(
-        jsonFactory: JsonFactory,
-        httpTransport: NetHttpTransport,
-        tokensDirectoryPath: String,
-    ): Credential {
-        // Load client secrets.
-        val inputStream =
-            GoogleSheetsService::class.java.getResourceAsStream(credentialsFilePath)
-                ?: throw FileNotFoundException("Resource not found: " + credentialsFilePath)
-        val clientSecrets: GoogleClientSecrets =
-            GoogleClientSecrets.load(jsonFactory, InputStreamReader(inputStream))
-
-        // Build flow and trigger user authorization request.
-        val flow: GoogleAuthorizationCodeFlow =
-            GoogleAuthorizationCodeFlow
-                .Builder(
-                    httpTransport,
-                    jsonFactory,
-                    clientSecrets,
-                    scopes,
-                ).setDataStoreFactory(FileDataStoreFactory(File(tokensDirectoryPath)))
-                .setAccessType("offline")
-                .build()
-        val receiver: LocalServerReceiver = LocalServerReceiver.Builder().setPort(8888).build()
-        return AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
-    }
 }
 
 /**
@@ -227,7 +190,7 @@ object Obj {
             )
         GoogleSheetsService(
             GoogleSheetsApiConnectionService(
-                "/googlesheets/credentials.json",
+                "/googlesheets/service-account-key.json",
                 listOf(SheetsScopes.SPREADSHEETS_READONLY),
             ),
             "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
