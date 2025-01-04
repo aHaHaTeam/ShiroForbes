@@ -123,7 +123,7 @@ fun main() {
             }
         }
 
-        DbStudentService.getStudentByIdSeason2(1)
+        DbStudentService.getStudentStatById(1)
         fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:E", ConversionClassAdmin::class).forEach { admin ->
             Admins.insert {
                 it[name] = admin.name
@@ -139,10 +139,10 @@ private fun <T : Any> fetchGoogleSheets(
     conversion: KClass<T>,
 ) = GoogleSheetsService(
     GoogleSheetsApiConnectionService(
-        "/googlesheets/service-account-key.json",
+        config.googleSheetsConfig.credentialsPath,
         listOf(SheetsScopes.SPREADSHEETS_READONLY),
     ),
-    "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
+    config.googleSheetsConfig.initSpreadsheetId,
     conversion,
     listOf(
         table,

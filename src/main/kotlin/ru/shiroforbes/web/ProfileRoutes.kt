@@ -10,9 +10,7 @@ import ru.shiroforbes.modules.googlesheets.RatingDeserializer
 import ru.shiroforbes.service.DbStudentService
 import ru.shiroforbes.service.DbUserService
 
-fun Routing.profileRoutes(
-    ratingDeserializer: RatingDeserializer,
-) {
+fun Routing.profileRoutes(ratingDeserializer: RatingDeserializer) {
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
             var activeUser: Any = 0
@@ -25,11 +23,7 @@ fun Routing.profileRoutes(
             if (tmp.hasAdminRights) {
                 call.respondRedirect("/menu")
             }
-            val user = DbStudentService.getStudentByLoginSeason2(call.parameters["login"]!!)
-            if (user == null) {
-                return@get
-                // TODO()
-            }
+            val user = DbStudentService.getStudentByLogin(call.parameters["login"]!!)
 
             val urbanRating = ratingDeserializer.getUrbanRating()
             val countrysideRating = ratingDeserializer.getCountrysideRating()

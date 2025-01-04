@@ -15,7 +15,7 @@
 </div>
 <div class="grid">
     <div class="s0 l2"></div>
-    <!--/*@thymesVar id="user" type="ru.shiroforbes.database.StudentDAO2"*/-->
+    <!--/*@thymesVar id="user" type="ru.shiroforbes.database.StudentStat"*/-->
     <div class="s12 l8 center-align"
          th:unless="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
         <img alt="Pusheen.png" src="/static/images/pusheen.png" style="width: 80%">

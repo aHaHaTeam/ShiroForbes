@@ -1,8 +1,6 @@
 package ru.shiroforbes.model
 
 class Admin(
-    val id: Int,
-    name: String = "",
+    val name: String = "",
     login: String = "",
-    password: String = "",
-) : User(name, login, password, true)
+) : User(login, true)
