@@ -1,7 +1,5 @@
 package ru.shiroforbes.web
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.exposedLogger
 import ru.shiroforbes.database.StudentStat
 import ru.shiroforbes.model.GroupType
@@ -46,9 +44,7 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
 }
 
 suspend fun updateRating(rating: List<RatingRow>) {
-    runBlocking {
-        launch { DbRatingService.updateRatingAll(rating) }
-    }
+    DbRatingService.updateRatingAll(rating)
 }
 
 fun updateGroup(
