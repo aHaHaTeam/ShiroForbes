@@ -1,0 +1,105 @@
+package ru.shiroforbes.service
+
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import ru.shiroforbes.database.RatingDAO2
+import ru.shiroforbes.database.RatingTable
+import ru.shiroforbes.database.StudentTable
+import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.modules.googlesheets.RatingRow
+
+class DbRatingService(private val database: Database) : RatingService {
+    override suspend fun getRatings(login: String): List<RatingDAO2> =
+        transaction(database) {
+            RatingTable
+                .join(StudentTable, JoinType.INNER, RatingTable.student, StudentTable.id)
+                .select(
+                    RatingTable.date,
+                    RatingTable.student,
+                    RatingTable.points,
+                    RatingTable.total,
+                    RatingTable.algebra,
+                    RatingTable.numbersTheory,
+                    RatingTable.geometry,
+                    RatingTable.combinatorics,
+                    RatingTable.totalPercent,
+                    RatingTable.algebraPercent,
+                    RatingTable.numbersTheoryPercent,
+                    RatingTable.geometryPercent,
+                    RatingTable.combinatoricsPercent,
+                    RatingTable.grobs,
+                    RatingTable.position,
+                ).where(StudentTable.login eq login)
+                .map { resultRow ->
+                    RatingDAO2(
+                        resultRow[RatingTable.date],
+                        resultRow[RatingTable.student],
+                        resultRow[RatingTable.points],
+                        resultRow[RatingTable.total],
+                        resultRow[RatingTable.algebra],
+                        resultRow[RatingTable.numbersTheory],
+                        resultRow[RatingTable.geometry],
+                        resultRow[RatingTable.combinatorics],
+                        resultRow[RatingTable.totalPercent],
+                        resultRow[RatingTable.algebraPercent],
+                        resultRow[RatingTable.numbersTheoryPercent],
+                        resultRow[RatingTable.geometryPercent],
+                        resultRow[RatingTable.combinatoricsPercent],
+                        resultRow[RatingTable.grobs],
+                        resultRow[RatingTable.position],
+                    )
+                }
+        }.sortedByDescending { it.date }
+
+    override suspend fun updateRatingAll(list: List<RatingRow>) {
+        transaction(database) {
+            val ids =
+                StudentTable
+                    .select(StudentTable.id, StudentTable.name)
+                    .associateBy({ it[StudentTable.name] }, { it[StudentTable.id] })
+            val ranks =
+                list
+                    .sortedByDescending { it.rating }
+                    .mapIndexed { i, row -> row.name() to i + 1 }
+                    .associateBy({ it.first }, { it.second })
+            RatingTable
+                .batchInsert(list) { row ->
+                    this[RatingTable.student] = ids[row.name()]!!.value
+                    this[RatingTable.total] = row.solvedProblems
+                    this[RatingTable.points] = row.rating
+                    this[RatingTable.algebraPercent] = row.algebraPercentage
+                    this[RatingTable.numbersTheoryPercent] = row.numbersTheoryPercentage
+                    this[RatingTable.combinatoricsPercent] = row.combinatoricsPercentage
+                    this[RatingTable.geometryPercent] = row.geometryPercentage
+
+                    this[RatingTable.totalPercent] = row.solvedPercentage.toInt() // TODO
+                    this[RatingTable.algebra] = row.algebraSolved
+                    this[RatingTable.numbersTheory] = row.numbersTheorySolved
+                    this[RatingTable.geometry] = row.geometrySolved
+                    this[RatingTable.combinatorics] = row.combinatoricsSolved
+
+                    this[RatingTable.grobs] = row.grobs
+                    this[RatingTable.position] = ranks[row.name()]!!
+                    this[RatingTable.date] = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                }
+        }
+    }
+
+    override fun updateGroupAll(
+        names: List<String>,
+        group: GroupType,
+    ) {
+        transaction(database) {
+            StudentTable.update({ StudentTable.name inList names }) {
+                it[StudentTable.group] = group == GroupType.Urban
+            }
+        }
+    }
+}

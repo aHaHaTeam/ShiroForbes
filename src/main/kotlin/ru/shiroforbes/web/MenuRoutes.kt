@@ -6,9 +6,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.model.User
-import ru.shiroforbes.service.DbUserService
+import ru.shiroforbes.service.UserService
 
-fun Routing.menuRoutes() {
+fun Routing.menuRoutes(userService: UserService) {
     get("/") {
         call.respondRedirect("/menu")
     }
@@ -18,7 +18,7 @@ fun Routing.menuRoutes() {
             var user: Any = 0
             if (call.principal<Session>() != null) {
                 if (call.principal<Session>()!!.login != "") {
-                    user = DbUserService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
+                    user = userService.getUserByLogin(call.principal<Session>()?.login!!) ?: 0
                 }
             }
             if (user == 0) {

@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object RatingSeason2 : IntIdTable("ratings_season2", "ratingId") {
+object RatingTable : IntIdTable("ratings_season2", "ratingId") {
     val date = datetime("date")
     val student = integer("studentId")
     val points = integer("points")

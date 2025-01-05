@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import ru.shiroforbes.model.User
 
-object StudentSeason2 : IntIdTable("student_season2", "studentId") {
+object StudentTable : IntIdTable("student_season2", "studentId") {
     val name: Column<String> = text("name")
     val group: Column<Boolean> = bool("group")
     val login: Column<String> = text("login")
