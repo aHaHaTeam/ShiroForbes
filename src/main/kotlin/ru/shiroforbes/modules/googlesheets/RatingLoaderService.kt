@@ -3,7 +3,7 @@ package ru.shiroforbes.modules.googlesheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import ru.shiroforbes.config.GoogleSheetsConfig
 
-class RatingDeserializer(
+class RatingLoaderService(
     config: GoogleSheetsConfig,
 ) {
     private val urbanDeserializer =

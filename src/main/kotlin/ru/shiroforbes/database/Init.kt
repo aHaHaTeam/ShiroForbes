@@ -14,6 +14,7 @@ import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
+import ru.shiroforbes.service.DbRatingService
 import ru.shiroforbes.service.DbStudentService
 import kotlin.reflect.KClass
 
@@ -69,39 +70,41 @@ internal fun kotlin.String.toBooleanOrNull(): Boolean? =
     }
 
 fun main() {
-    Database.connect(
+    val database = Database.connect(
         config.dbConfig.connectionUrl,
         config.dbConfig.driver,
         config.dbConfig.user,
         config.dbConfig.password,
     )
+    val ratingService = DbRatingService(database)
+    val studentService = DbStudentService(database, ratingService)
 
     transaction {
         drop(
             // Students,
             // Ratings,
-            Admins,
-            StudentSeason2,
-            RatingSeason2,
+            AdminTable,
+            StudentTable,
+            RatingTable,
         )
         create(
             // Students,
             // Ratings,
-            Admins,
-            StudentSeason2,
-            RatingSeason2,
+            AdminTable,
+            StudentTable,
+            RatingTable,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N", ConversionClassStudent::class).forEach { student ->
             val id =
-                StudentSeason2.insertAndGetId {
+                StudentTable.insertAndGetId {
                     it[name] = student.name
                     it[login] = student.login
                     it[password] = student.password
                     it[group] = true
                 }
 
-            RatingSeason2.insert {
-                it[RatingSeason2.student] = id.value
+            RatingTable.insert {
+                it[RatingTable.student] = id.value
                 it[total] = 0F
                 it[points] = 0
                 it[algebraPercent] = 0
@@ -123,9 +126,9 @@ fun main() {
             }
         }
 
-        DbStudentService.getStudentStatById(1)
+        studentService.getStudentStatById(1)
         fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:E", ConversionClassAdmin::class).forEach { admin ->
-            Admins.insert {
+            AdminTable.insert {
                 it[name] = admin.name
                 it[login] = admin.login
                 it[password] = admin.password

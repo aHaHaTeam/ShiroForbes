@@ -11,21 +11,30 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.shiroforbes.login.Session
 import ru.shiroforbes.model.GroupType
-import ru.shiroforbes.modules.googlesheets.RatingDeserializer
-import ru.shiroforbes.service.DbUserService
+import ru.shiroforbes.modules.googlesheets.RatingLoaderService
+import ru.shiroforbes.service.RatingService
+import ru.shiroforbes.service.StudentService
+import ru.shiroforbes.service.UserService
 
-fun Routing.ratingRoutes(ratingDeserializer: RatingDeserializer) {
+fun Routing.ratingRoutes(
+    ratingService: RatingService,
+    studentService: StudentService,
+    userService: UserService,
+    ratingLoaderService: RatingLoaderService
+) {
     authenticate("auth-session-admin-only") {
         get("/update/rating") {
-            val countrysideDeltasDeferred = async { computeRatingDeltas(ratingDeserializer.getCountrysideRating()) }
+            val countrysideDeltasDeferred =
+                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRating()) }
 
-            val urbanDeltasDeferred = async { computeRatingDeltas(ratingDeserializer.getUrbanRating()) }
+            val urbanDeltasDeferred =
+                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRating()) }
 
             call.respond(
                 ThymeleafContent(
                     "update_rating",
                     mapOf(
-                        "user" to (DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
+                        "user" to (userService.getUserByLogin(call.principal<Session>()!!.login) ?: 0),
                         "countrysideStudents" to countrysideDeltasDeferred.await(),
                         "urbanStudents" to urbanDeltasDeferred.await(),
                     ),
@@ -36,18 +45,18 @@ fun Routing.ratingRoutes(ratingDeserializer: RatingDeserializer) {
         val updateRatingScope = CoroutineScope(Dispatchers.Default)
         post("/update/countryside/rating") {
             updateRatingScope.launch {
-                val rating = ratingDeserializer.getCountrysideRating()
-                updateRating(rating)
-                updateGroup(rating, GroupType.Countryside)
+                val rating = ratingLoaderService.getCountrysideRating()
+                updateRating(ratingService, rating)
+                updateGroup(ratingService, rating, GroupType.Countryside)
             }
             call.respondRedirect("/update/rating")
         }
 
         post("/update/urban/rating") {
             updateRatingScope.launch {
-                val rating = ratingDeserializer.getUrbanRating()
-                updateRating(rating)
-                updateGroup(rating, GroupType.Urban)
+                val rating = ratingLoaderService.getUrbanRating()
+                updateRating(ratingService, rating)
+                updateGroup(ratingService, rating, GroupType.Urban)
             }
             call.respondRedirect("/update/rating")
         }

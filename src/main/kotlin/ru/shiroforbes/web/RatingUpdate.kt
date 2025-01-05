@@ -5,19 +5,19 @@ import ru.shiroforbes.database.StudentStat
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
 import ru.shiroforbes.modules.googlesheets.RatingRow
-import ru.shiroforbes.service.DbRatingService
-import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.service.RatingService
+import ru.shiroforbes.service.StudentService
 import kotlin.math.round
 
-fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
+fun computeRatingDeltas(studentService: StudentService, newRatings: List<RatingRow>): List<RatingDelta> {
     val stringRatingsMap =
         newRatings.associateBy {
             it.lastName.trim() + " " + it.firstName.trim()
         }
     val current = mutableListOf<StudentStat>()
-    val dbstudents = DbStudentService.getAllStudentsByName()
+    val students = studentService.getAllStudentsByName()
     stringRatingsMap.forEach {
-        dbstudents[it.key].let { it1 ->
+        students[it.key].let { it1 ->
             if (it1 != null) current.add(it1) else exposedLogger.debug("${it.key} not found")
         }
     }
@@ -43,15 +43,19 @@ fun computeRatingDeltas(newRatings: List<RatingRow>): List<RatingDelta> {
         }.toList()
 }
 
-suspend fun updateRating(rating: List<RatingRow>) {
-    DbRatingService.updateRatingAll(rating)
+suspend fun updateRating(
+    ratingService: RatingService,
+    rating: List<RatingRow>
+) {
+    ratingService.updateRatingAll(rating)
 }
 
 fun updateGroup(
+    ratingService: RatingService,
     rating: List<RatingRow>,
     group: GroupType,
 ) {
-    DbRatingService.updateGroupAll(rating.map { it.name() }, group)
+    ratingService.updateGroupAll(rating.map { it.name() }, group)
 }
 
 fun Float.round(decimals: Int): Float {
