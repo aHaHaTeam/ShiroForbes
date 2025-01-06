@@ -6,7 +6,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import ru.shiroforbes.config.RouterConfig
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
-import ru.shiroforbes.service.AdminService
 import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.StudentService
 import ru.shiroforbes.service.UserService
@@ -15,17 +14,16 @@ import java.io.File
 fun Routing.routes(
     ratingService: RatingService,
     studentService: StudentService,
-    adminService: AdminService,
     userService: UserService,
     ratingLoaderService: RatingLoaderService,
     routerConfig: RouterConfig,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
 
-    authenticationRoutes(adminService, userService)
+    authenticationRoutes(studentService, userService)
     externalUrlRoutes(routerConfig)
     menuRoutes(userService)
-    profileRoutes(userService, studentService, ratingLoaderService)
+    profileRoutes(userService, ratingLoaderService)
     ratingRoutes(ratingService, studentService, userService, ratingLoaderService)
 }
 

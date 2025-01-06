@@ -22,7 +22,7 @@ fun Routing.ratingRoutes(
     userService: UserService,
     ratingLoaderService: RatingLoaderService
 ) {
-    authenticate("auth-session-admin-only") {
+    authenticate("auth-session-at-least-teacher") {
         get("/update/rating") {
             val countrysideDeltasDeferred =
                 async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRating()) }

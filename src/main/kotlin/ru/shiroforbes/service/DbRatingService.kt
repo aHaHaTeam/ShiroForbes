@@ -9,14 +9,14 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import ru.shiroforbes.database.RatingDAO2
 import ru.shiroforbes.database.RatingTable
 import ru.shiroforbes.database.StudentTable
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Rating
 import ru.shiroforbes.modules.googlesheets.RatingRow
 
 class DbRatingService(private val database: Database) : RatingService {
-    override suspend fun getRatings(login: String): List<RatingDAO2> =
+    override fun getRatings(login: String): List<Rating> =
         transaction(database) {
             RatingTable
                 .join(StudentTable, JoinType.INNER, RatingTable.student, StudentTable.id)
@@ -38,7 +38,7 @@ class DbRatingService(private val database: Database) : RatingService {
                     RatingTable.position,
                 ).where(StudentTable.login eq login)
                 .map { resultRow ->
-                    RatingDAO2(
+                    Rating(
                         resultRow[RatingTable.date],
                         resultRow[RatingTable.student],
                         resultRow[RatingTable.points],

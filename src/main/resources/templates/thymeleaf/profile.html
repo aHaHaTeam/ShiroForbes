@@ -1,35 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" content="width=device-width, initial-scale=1.0" name="viewport">
     <title>ShiroForbes</title>
     <link href="/static/styles/styles.css" rel="stylesheet">
     <link href="/static/modules/beer/beer.min.css" rel="stylesheet">
-    <script type="module" src="/static/modules/beer/beer.min.js"></script>
-    <script type="module" src="/static/modules/beer/material-dynamic-colors.min.js"></script>
+    <script src="/static/modules/beer/beer.min.js" type="module"></script>
+    <script src="/static/modules/beer/material-dynamic-colors.min.js" type="module"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
 </head>
 <body>
-<div th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
+<div>
     <div th:insert="~{components/header :: header(${activeUser})}"></div>
 </div>
 <div class="grid">
     <div class="s0 l2"></div>
-    <!--/*@thymesVar id="user" type="ru.shiroforbes.database.StudentStat"*/-->
-    <div class="s12 l8 center-align"
-         th:unless="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
-        <img alt="Pusheen.png" src="/static/images/pusheen.png" style="width: 80%">
-        <h5>Это не Ваш профиль и Вам сюда нельзя((</h5>
-        <br>
-        <h5>Если Вы думаете, что это ошибка - <a href="/login" style="color: #0d47a1; border-bottom: #0d47a1 1px solid">перезайдите
-            на сайт</a></h5>
-    </div>
-    <div class="s12 l8"
-         th:if="${!activeUser.equals(0) && (user.login == activeUser.login || activeUser.HasAdminRights)}">
+    <div class="s12 l8">
         <main class="responsive grid">
             <div class="s12">
                 <br>
-                <h4 id="name" class="bold center-align" th:text="${user.name}"></h4>
+                <h4 class="bold center-align" id="name" th:text="${user.name}"></h4>
                 <br>
                 <div class="grid">
                     <article class="s12 round amber239 middle-align"
@@ -85,7 +75,7 @@
                         <div class="row" style="column-gap: 0; width: 85%;">
                             <button class="circle deep-orange239 large"><i class="large">playing_cards</i></button>
                             <div class="max center center-align">
-                                <span class="bold" th:text="|Комбинаторика: |" style="word-break: break-all;"></span>
+                                <span class="bold" style="word-break: break-all;" th:text="|Комбинаторика: |"></span>
                                 <span style="white-space: nowrap"
                                       th:text="|${user.ratings[0].combinatorics} (${user.ratings[0].combinatoricsPercent}%)|"></span>
                             </div>
@@ -95,7 +85,7 @@
                         <div class="row" style="column-gap: 0; width: 85%;">
                             <button class="circle green239 large"><i class="large">architecture</i></button>
                             <div class="max center center-align">
-                                <span class="bold" th:text="|Геометрия: |" style="word-break: break-all;"></span>
+                                <span class="bold" style="word-break: break-all;" th:text="|Геометрия: |"></span>
                                 <span style="white-space: nowrap"
                                       th:text="|${user.ratings[0].geometry} (${user.ratings[0].geometryPercent}%)|"></span>
                             </div>
@@ -104,14 +94,14 @@
                 </div>
                 <br>
                 <div class="grid">
-                    <div th:each="achievement : ${achievements}" class="s4 m3 l2">
+                    <div class="s4 m3 l2" th:each="achievement : ${achievements}">
                         <div th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-    <div class="s0 m1 l2"></div>
+    <div class="s0 l2"></div>
 </div>
 
 </body>

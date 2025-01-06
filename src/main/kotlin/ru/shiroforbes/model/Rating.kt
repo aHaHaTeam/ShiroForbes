@@ -1,15 +1,21 @@
 package ru.shiroforbes.model
 
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
-data class Rating(
-    val id: Int,
-    val studentId: Int,
-    val date: LocalDate,
-    val solved: Int,
-    val rating: Int,
-    val solvedPercentage: Float,
-    val algebraPercentage: Float,
-    val geometryPercentage: Float,
-    val combinatoricsPercentage: Float,
+class Rating(
+    var date: LocalDateTime,
+    var student: Int,
+    var points: Int,
+    var total: Float,
+    val algebra: Float,
+    val numbersTheory: Float,
+    val geometry: Float,
+    val combinatorics: Float,
+    var totalPercent: Int,
+    var algebraPercent: Int,
+    var numbersTheoryPercent: Int,
+    var geometryPercent: Int,
+    var combinatoricsPercent: Int,
+    var grobs: Int,
+    val position: Int,
 )

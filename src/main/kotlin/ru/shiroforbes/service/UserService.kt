@@ -1,8 +1,9 @@
 package ru.shiroforbes.service
 
+import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.User
 
 interface UserService {
-    suspend fun getPasswordByLogin(login: String): String?
+    fun getPasswordByLogin(login: String): Pair<String, Rights>?
     suspend fun getUserByLogin(login: String): User?
 }
