@@ -1,6 +1,6 @@
 package ru.shiroforbes.model
 
-class Admin(
+class Teacher(
     val name: String = "",
     login: String = "",
-) : User(login, Rights.Admin)
+) : User(login, Rights.Teacher)

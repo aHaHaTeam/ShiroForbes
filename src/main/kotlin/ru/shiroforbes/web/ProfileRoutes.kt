@@ -6,44 +6,52 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import ru.shiroforbes.login.Session
+import ru.shiroforbes.model.Rights
+import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.User
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
-import ru.shiroforbes.service.StudentService
 import ru.shiroforbes.service.UserService
 
 fun Routing.profileRoutes(
     userService: UserService,
-    studentService: StudentService,
     ratingLoaderService: RatingLoaderService
 ) {
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
-            var activeUser: Any = 0
+            var activeUser: User? = null
             if (call.principal<Session>() != null) {
                 if (call.principal<Session>()!!.login != "") {
-                    activeUser = userService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
+                    activeUser = userService.getUserByLogin(call.principal<Session>()!!.login)
                 }
             }
-            val tmp = userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
-            if (tmp.hasAdminRights) {
+
+            if (activeUser == null || (activeUser.rights == Rights.Student && activeUser.login != call.parameters["login"])) {
+                return@get call.respond(ThymeleafContent("forbidden", mapOf()))
+            }
+
+            val profile = if (activeUser.login != call.parameters["login"]!!) {
+                userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
+            } else activeUser
+
+            if (profile.rights != Rights.Student) {
                 call.respondRedirect("/menu")
             }
-            val user = studentService.getStudentByLogin(call.parameters["login"]!!)
+            profile as Student
 
             val urbanRating = ratingLoaderService.getUrbanRating()
             val countrysideRating = ratingLoaderService.getCountrysideRating()
-            val numberOfPeople = if (user.group) urbanRating.size else countrysideRating.size
-            if (activeUser != user.login) {
-                call.respond(
-                    ThymeleafContent(
-                        "profile",
-                        mapOf(
-                            "user" to user,
-                            "activeUser" to activeUser,
-                            "numberOfPeople" to numberOfPeople,
-                        ),
+            val numberOfPeople = if (profile.group) urbanRating.size else countrysideRating.size
+
+            call.respond(
+                ThymeleafContent(
+                    "profile",
+                    mapOf(
+                        "user" to profile,
+                        "activeUser" to activeUser,
+                        "numberOfPeople" to numberOfPeople,
                     ),
-                )
-            }
+                ),
+            )
         }
     }
 }

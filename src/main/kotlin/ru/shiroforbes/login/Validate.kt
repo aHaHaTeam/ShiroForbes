@@ -3,6 +3,7 @@
 package ru.shiroforbes.login
 
 import kotlinx.coroutines.runBlocking
+import ru.shiroforbes.model.Rights
 import ru.shiroforbes.service.AdminService
 import ru.shiroforbes.service.UserService
 import java.security.MessageDigest
@@ -14,8 +15,18 @@ fun validUser(
 ): Boolean {
     return runBlocking {
         val hashedPassword = userService.getPasswordByLogin(login) ?: return@runBlocking false
-        return@runBlocking password == hashedPassword
+        return@runBlocking password == hashedPassword.first
     }
+}
+
+fun userRights(
+    userService: UserService,
+    login: String,
+    password: String,
+): Rights? {
+    val (hashedPassword, rights) = userService.getPasswordByLogin(login) ?: return null
+    if (hashedPassword == password) return rights
+    return null
 }
 
 fun validAdmin(

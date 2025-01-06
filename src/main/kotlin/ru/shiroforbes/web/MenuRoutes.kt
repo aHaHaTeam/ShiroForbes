@@ -5,6 +5,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.shiroforbes.login.Session
+import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.User
 import ru.shiroforbes.service.UserService
 
@@ -26,7 +27,7 @@ fun Routing.menuRoutes(userService: UserService) {
                 return@get
             }
             user as User
-            if (!user.hasAdminRights) {
+            if (user.rights == Rights.Student) {
                 call.respondRedirect("/profile/${user.login}")
                 return@get
             }

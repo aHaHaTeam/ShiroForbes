@@ -1,9 +1,9 @@
 package ru.shiroforbes.web
 
 import org.jetbrains.exposed.sql.exposedLogger
-import ru.shiroforbes.database.StudentStat
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
+import ru.shiroforbes.model.StudentStat
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.StudentService

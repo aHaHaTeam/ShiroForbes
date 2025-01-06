@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Rights
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
 import ru.shiroforbes.service.DbRatingService
@@ -35,12 +36,18 @@ data class ConversionClassStudent(
     val isInvesting: Boolean?,
 )
 
+data class ConversionClassTeacher(
+    val id: Int,
+    val name: String = "",
+    val login: String = "",
+    val password: String = "",
+)
+
 data class ConversionClassAdmin(
     val id: Int,
     val name: String = "",
     val login: String = "",
     val password: String = "",
-    val group: GroupType,
 )
 
 internal fun kotlin.String.toFloatOrNull(): Float? =
@@ -80,17 +87,24 @@ fun main() {
     val studentService = DbStudentService(database, ratingService)
 
     transaction {
+        exec("DROP TYPE IF EXISTS rights CASCADE;\n")
+        exec("CREATE TYPE rights AS ENUM ('Admin', 'Teacher', 'Student');\n")
+
         drop(
             // Students,
             // Ratings,
+            UserTable,
             AdminTable,
+            TeacherTable,
             StudentTable,
             RatingTable,
         )
         create(
             // Students,
             // Ratings,
+            UserTable,
             AdminTable,
+            TeacherTable,
             StudentTable,
             RatingTable,
         )
@@ -124,14 +138,39 @@ fun main() {
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
             }
+
+            UserTable.insert {
+                it[login] = student.login
+                it[password] = student.password
+                it[rights] = Rights.Student
+            }
         }
 
-        studentService.getStudentStatById(1)
-        fetchGoogleSheets<ConversionClassAdmin>("Admins!A2:E", ConversionClassAdmin::class).forEach { admin ->
+        fetchGoogleSheets("Teachers!A2:D", ConversionClassTeacher::class).forEach { teacher ->
+            TeacherTable.insert {
+                it[name] = teacher.name
+                it[login] = teacher.login
+                it[password] = teacher.password
+            }
+
+            UserTable.insert {
+                it[login] = teacher.login
+                it[password] = teacher.password
+                it[rights] = Rights.Teacher
+            }
+        }
+
+        fetchGoogleSheets("Admins!A2:D", ConversionClassAdmin::class).forEach { admin ->
             AdminTable.insert {
                 it[name] = admin.name
                 it[login] = admin.login
                 it[password] = admin.password
+            }
+
+            UserTable.insert {
+                it[login] = admin.login
+                it[password] = admin.password
+                it[rights] = Rights.Admin
             }
         }
     }

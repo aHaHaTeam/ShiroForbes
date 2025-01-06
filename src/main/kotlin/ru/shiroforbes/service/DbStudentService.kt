@@ -7,9 +7,9 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.RatingTable
-import ru.shiroforbes.database.StudentStat
 import ru.shiroforbes.database.StudentTable
 import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.StudentStat
 
 class DbStudentService(
     private val database: Database,
@@ -174,10 +174,10 @@ class DbStudentService(
                 }.firstOrNull()
         }
 
-    override suspend fun getStudentByLogin(login: String): Student {
-        val stats = getStudentStatByLogin(login)
+    override fun getStudentByLogin(login: String): Student? {
+        val stats = getStudentStatByLogin(login) ?: return null
         val ratings = ratingService.getRatings(login)
-        return Student(stats!!, ratings)
+        return Student(stats, ratings)
     }
 
     override fun getPasswordByLogin(login: String): String? =

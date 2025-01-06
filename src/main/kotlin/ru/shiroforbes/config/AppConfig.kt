@@ -13,10 +13,8 @@ import io.ktor.server.thymeleaf.*
 import org.jetbrains.exposed.sql.Database
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import ru.shiroforbes.Config
-import ru.shiroforbes.login.Session
-import ru.shiroforbes.login.knownPasswords
-import ru.shiroforbes.login.validAdmin
-import ru.shiroforbes.login.validUser
+import ru.shiroforbes.login.*
+import ru.shiroforbes.model.Rights
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
 import ru.shiroforbes.service.*
 import ru.shiroforbes.web.routes
@@ -31,8 +29,9 @@ fun Application.configureApp(config: Config) {
 
     val ratingService: RatingService = DbRatingService(database)
     val studentService: StudentService = DbStudentService(database, ratingService)
+    val teacherService: TeacherService = DbTeacherService(database)
     val adminService: AdminService = DbAdminService(database)
-    val userService: UserService = DbUserService(studentService, adminService)
+    val userService: UserService = DbUserService(database, studentService)
 
     install(Thymeleaf) {
         setTemplateResolver(
@@ -64,7 +63,7 @@ fun Application.configureApp(config: Config) {
         }
         session<Session>("auth-session") {
             validate { session ->
-                if (validUser(userService, session.login, session.password)) {
+                if (userRights(userService, session.login, session.password) != null) {
                     session
                 } else {
                     null
@@ -98,13 +97,26 @@ fun Application.configureApp(config: Config) {
                 call.respondRedirect("/login")
             }
         }
+
+        session<Session>("auth-session-at-least-teacher") {
+            validate { session ->
+                val rights = userRights(userService, session.login, session.password) ?: return@validate null
+                if (rights.power >= Rights.Teacher.power) {
+                    session
+                } else {
+                    null
+                }
+            }
+            challenge {
+                call.respondRedirect("/login")
+            }
+        }
     }
 
     install(Routing) {
         routes(
             ratingService = ratingService,
             studentService = studentService,
-            adminService = adminService,
             userService = userService,
             ratingLoaderService = RatingLoaderService(config.googleSheetsConfig),
             routerConfig = config.routerConfig,

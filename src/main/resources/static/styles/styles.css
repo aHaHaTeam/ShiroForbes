@@ -6,4 +6,6 @@ body {
     width: fit-content;
 }
 
-.horizontal { display: inline-block;}
+.horizontal {
+    display: inline-block;
+}
