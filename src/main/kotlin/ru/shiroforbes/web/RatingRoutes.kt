@@ -20,7 +20,7 @@ fun Routing.ratingRoutes(
     ratingService: RatingService,
     studentService: StudentService,
     userService: UserService,
-    ratingLoaderService: RatingLoaderService
+    ratingLoaderService: RatingLoaderService,
 ) {
     authenticate("auth-session-at-least-teacher") {
         get("/update/rating") {
@@ -41,7 +41,8 @@ fun Routing.ratingRoutes(
                 ),
             )
         }
-
+    }
+    authenticate("auth-session-admin-only") {
         val updateRatingScope = CoroutineScope(Dispatchers.Default)
         post("/update/countryside/rating") {
             updateRatingScope.launch {

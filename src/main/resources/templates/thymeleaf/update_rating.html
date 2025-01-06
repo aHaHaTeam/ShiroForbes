@@ -38,7 +38,7 @@
                 <div th:insert="~{components/rating_diff :: rating(${countrysideStudents})}"></div>
                 <form id="countrysideForm">
                     <button class="extra round center" id="countrysidePublishButton"
-                            th::if="${user.rights.name() == 'Admin'}" type="submit">
+                            th:if="${user.rights.name() == 'Admin'}" type="submit">
                         <span id="countrysideSpan">Опубликовать</span>
                         <progress class="circle" id="countrysideProgress" style="display: none"></progress>
                     </button>
@@ -49,7 +49,7 @@
                  th:hidden="${!user.equals(0)}">
                 <div th:insert="~{components/rating_diff :: rating(${urbanStudents})}"></div>
                 <form id="urbanForm">
-                    <button class="extra round center" id="urbanPublishButton" th::if="${user.rights.name() == 'Admin'}"
+                    <button class="extra round center" id="urbanPublishButton" th:if="${user.rights.name() == 'Admin'}"
                             type="submit">
                         <span id="urbanSpan">Опубликовать</span>
                         <progress class="circle" id="urbanProgress" style="display: none"></progress>
