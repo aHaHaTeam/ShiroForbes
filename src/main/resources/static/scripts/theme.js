@@ -7,13 +7,13 @@ const setTheme = (theme) => {
     if (theme === 'dark') {
         body.classList.add('dark-theme');
         body.classList.remove('light-theme');
-        sun.style.display = "block";
+        sun.style.display = "inline";
         moon.style.display = "none";
     } else {
         body.classList.add('light-theme');
         body.classList.remove('dark-theme');
         sun.style.display = "none";
-        moon.style.display = "block";
+        moon.style.display = "inline";
     }
 };
 
