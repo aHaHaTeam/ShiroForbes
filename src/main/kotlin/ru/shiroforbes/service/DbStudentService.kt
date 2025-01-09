@@ -9,13 +9,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.RatingTable
 import ru.shiroforbes.database.StudentTable
 import ru.shiroforbes.model.Student
-import ru.shiroforbes.model.StudentStat
 
 class DbStudentService(
     private val database: Database,
     private val ratingService: RatingService,
 ) : StudentService {
-    override fun getStudentStatById(id: Int): StudentStat? =
+    override fun getStudentStatById(id: Int): Student? =
         transaction(database) {
             val lastDate =
                 RatingTable
@@ -43,7 +42,7 @@ class DbStudentService(
                 ).where(
                     RatingTable.date eq lastDate[RatingTable.date.max().alias("maxDate")]!!,
                 ).map {
-                    StudentStat(
+                    Student(
                         it[StudentTable.name],
                         it[StudentTable.group],
                         it[StudentTable.login],
@@ -53,7 +52,7 @@ class DbStudentService(
                 }.firstOrNull()
         }
 
-    override fun getAllStudentsByName(): Map<String, StudentStat> =
+    override fun getAllStudentsByName(): Map<String, Student> =
         transaction(database) {
             val lastDate =
                 RatingTable
@@ -84,17 +83,17 @@ class DbStudentService(
                 ).where(RatingTable.date to StudentTable.login inList lastDate)
                 .map {
                     it[StudentTable.name] to
-                            StudentStat(
-                                it[StudentTable.name],
-                                it[StudentTable.group],
-                                it[StudentTable.login],
-                                it[RatingTable.points],
-                                it[RatingTable.total],
-                            )
+                        Student(
+                            it[StudentTable.name],
+                            it[StudentTable.group],
+                            it[StudentTable.login],
+                            it[RatingTable.points],
+                            it[RatingTable.total],
+                        )
                 }.associateBy({ it.first }, { it.second })
         }
 
-    override fun getStudentStatByName(name: String): StudentStat? =
+    override fun getStudentStatByName(name: String): Student? =
         transaction(database) {
             val lastDate =
                 RatingTable
@@ -106,7 +105,6 @@ class DbStudentService(
                     ).select(RatingTable.date.max().alias("maxDate"))
                     .where(RatingTable.student eq StudentTable.id and (StudentTable.name eq name))
                     .firstOrNull() ?: return@transaction null
-
 
             return@transaction StudentTable
                 .join(
@@ -120,8 +118,9 @@ class DbStudentService(
                     StudentTable.name,
                     RatingTable.points,
                     RatingTable.total,
-                ).where(RatingTable.date eq lastDate.get(RatingTable.date.max().alias("maxDate"))!!).map {
-                    StudentStat(
+                ).where(RatingTable.date eq lastDate.get(RatingTable.date.max().alias("maxDate"))!!)
+                .map {
+                    Student(
                         it[StudentTable.name],
                         it[StudentTable.group],
                         it[StudentTable.login],
@@ -131,7 +130,7 @@ class DbStudentService(
                 }.firstOrNull()
         }
 
-    override fun getStudentStatByLogin(login: String): StudentStat? =
+    override fun getStudentStatByLogin(login: String): Student? =
         transaction(database) {
             val lastDate =
                 RatingTable
@@ -162,9 +161,9 @@ class DbStudentService(
                     RatingTable.total,
                 ).where(
                     RatingTable.date eq lastDate[RatingTable.date.max().alias("maxDate")]!! and
-                            (RatingTable.student eq lastDate[RatingTable.student]),
+                        (RatingTable.student eq lastDate[RatingTable.student]),
                 ).map {
-                    StudentStat(
+                    Student(
                         it[StudentTable.name],
                         it[StudentTable.group],
                         it[StudentTable.login],
@@ -175,9 +174,7 @@ class DbStudentService(
         }
 
     override fun getStudentByLogin(login: String): Student? {
-        val stats = getStudentStatByLogin(login) ?: return null
-        val ratings = ratingService.getRatings(login)
-        return Student(stats, ratings)
+        return getStudentStatByLogin(login) ?: return null
     }
 
     override fun getPasswordByLogin(login: String): String? =

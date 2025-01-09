@@ -1,13 +1,17 @@
 package ru.shiroforbes.service
 
 import ru.shiroforbes.model.Student
-import ru.shiroforbes.model.StudentStat
 
 interface StudentService {
-    fun getStudentStatById(id: Int): StudentStat?
-    fun getAllStudentsByName(): Map<String, StudentStat>
-    fun getStudentStatByName(name: String): StudentStat?
-    fun getStudentStatByLogin(login: String): StudentStat?
+    fun getStudentStatById(id: Int): Student?
+
+    fun getAllStudentsByName(): Map<String, Student>
+
+    fun getStudentStatByName(name: String): Student?
+
+    fun getStudentStatByLogin(login: String): Student?
+
     fun getStudentByLogin(login: String): Student?
+
     fun getPasswordByLogin(login: String): String?
 }

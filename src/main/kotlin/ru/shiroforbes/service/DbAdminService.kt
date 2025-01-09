@@ -4,17 +4,17 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.AdminTable
-import ru.shiroforbes.model.AdminStat
+import ru.shiroforbes.model.Admin
 
 class DbAdminService(
     private val database: Database,
 ) : AdminService {
-    override suspend fun getAdminByLogin(login: String): AdminStat? =
+    override suspend fun getAdminByLogin(login: String): Admin? =
         transaction(database) {
             AdminTable
                 .select(AdminTable.name, AdminTable.login)
                 .where(AdminTable.login.eq(login))
-                .map { row -> AdminStat(row[AdminTable.name], row[AdminTable.login]) }
+                .map { row -> Admin(row[AdminTable.name], row[AdminTable.login]) }
                 .singleOrNull()
         }
 
