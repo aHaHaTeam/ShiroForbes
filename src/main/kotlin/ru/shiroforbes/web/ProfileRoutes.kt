@@ -10,11 +10,13 @@ import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.Student
 import ru.shiroforbes.model.User
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
+import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.UserService
 
 fun Routing.profileRoutes(
     userService: UserService,
-    ratingLoaderService: RatingLoaderService
+    ratingService: RatingService,
+    ratingLoaderService: RatingLoaderService,
 ) {
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
@@ -29,14 +31,18 @@ fun Routing.profileRoutes(
                 return@get call.respond(ThymeleafContent("forbidden", mapOf()))
             }
 
-            val profile = if (activeUser.login != call.parameters["login"]!!) {
-                userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
-            } else activeUser
+            val profile =
+                if (activeUser.login != call.parameters["login"]!!) {
+                    userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
+                } else {
+                    activeUser
+                }
 
             if (profile.rights != Rights.Student) {
                 call.respondRedirect("/menu")
             }
             profile as Student
+            val ratings = ratingService.getRatings(profile.login)
 
             val urbanRating = ratingLoaderService.getUrbanRating()
             val countrysideRating = ratingLoaderService.getCountrysideRating()
@@ -47,6 +53,7 @@ fun Routing.profileRoutes(
                     "profile",
                     mapOf(
                         "user" to profile,
+                        "ratings" to ratings,
                         "activeUser" to activeUser,
                         "numberOfPeople" to numberOfPeople,
                     ),

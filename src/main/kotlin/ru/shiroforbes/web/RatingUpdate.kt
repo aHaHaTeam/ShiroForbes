@@ -3,18 +3,21 @@ package ru.shiroforbes.web
 import org.jetbrains.exposed.sql.exposedLogger
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
-import ru.shiroforbes.model.StudentStat
+import ru.shiroforbes.model.Student
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.StudentService
 import kotlin.math.round
 
-fun computeRatingDeltas(studentService: StudentService, newRatings: List<RatingRow>): List<RatingDelta> {
+fun computeRatingDeltas(
+    studentService: StudentService,
+    newRatings: List<RatingRow>,
+): List<RatingDelta> {
     val stringRatingsMap =
         newRatings.associateBy {
             it.lastName.trim() + " " + it.firstName.trim()
         }
-    val current = mutableListOf<StudentStat>()
+    val current = mutableListOf<Student>()
     val students = studentService.getAllStudentsByName()
     stringRatingsMap.forEach {
         students[it.key].let { it1 ->
@@ -45,7 +48,7 @@ fun computeRatingDeltas(studentService: StudentService, newRatings: List<RatingR
 
 suspend fun updateRating(
     ratingService: RatingService,
-    rating: List<RatingRow>
+    rating: List<RatingRow>,
 ) {
     ratingService.updateRatingAll(rating)
 }
