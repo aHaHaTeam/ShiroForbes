@@ -77,12 +77,13 @@ internal fun kotlin.String.toBooleanOrNull(): Boolean? =
     }
 
 fun main() {
-    val database = Database.connect(
-        config.dbConfig.connectionUrl,
-        config.dbConfig.driver,
-        config.dbConfig.user,
-        config.dbConfig.password,
-    )
+    val database =
+        Database.connect(
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
+        )
     val ratingService = DbRatingService(database)
     val studentService = DbStudentService(database, ratingService)
 
@@ -91,22 +92,20 @@ fun main() {
         exec("CREATE TYPE rights AS ENUM ('Admin', 'Teacher', 'Student');\n")
 
         drop(
-            // Students,
-            // Ratings,
             UserTable,
             AdminTable,
             TeacherTable,
             StudentTable,
             RatingTable,
+            AchievementTable,
         )
         create(
-            // Students,
-            // Ratings,
             UserTable,
             AdminTable,
             TeacherTable,
             StudentTable,
             RatingTable,
+            AchievementTable,
         )
         fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N", ConversionClassStudent::class).forEach { student ->
             val id =
