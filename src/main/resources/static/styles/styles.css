@@ -6,4 +6,174 @@ body {
     width: fit-content;
 }
 
+body.light-theme {
+    --primary:#0061a4;
+    --on-primary:#ffffff;
+    --primary-container:#d1e4ff;
+    --on-primary-container:#001d36;
+    --secondary:#535f70;
+    --on-secondary:#ffffff;
+    --secondary-container:#d7e3f7;
+    --on-secondary-container:#101c2b;
+    --tertiary:#6b5778;
+    --on-tertiary:#ffffff;
+    --tertiary-container:#f2daff;
+    --on-tertiary-container:#251431;
+    --error:#ba1a1a;
+    --on-error:#ffffff;
+    --error-container:#ffdad6;
+    --on-error-container:#410002;
+    --background:#fdfcff;
+    --on-background:#1a1c1e;
+    --surface:#faf9fc;
+    --on-surface:#1a1c1e;
+    --surface-variant:#dfe2eb;
+    --on-surface-variant:#43474e;
+    --outline:#73777f;
+    --outline-variant:#c3c7cf;
+    --stroke: #363838;
+    --shadow:#000000;
+    --scrim:#000000;
+    --inverse-surface:#2f3033;
+    --inverse-on-surface:#f1f0f4;
+    --inverse-primary:#9ecaff;
+    --surface-dim:#dadadd;
+    --surface-bright:#faf9fc;
+    --surface-container-lowest:#ffffff;
+    --surface-container-low:#f4f3f7;
+    --surface-container:#eeedf1;
+    --surface-container-high:#e8e8eb;
+    --surface-container-highest:#e2e2e6;
+    --font-color:#000000;
+    --amber-bright:#FFA000;
+    --amber-dim: #FFECB3 ;
+    --purple-bright:#7B1FA2;
+    --purple-dim: #E1BEE7;
+    --pink-bright:#C2185B;
+    --pink-dim: #F8BBD0;
+    --blue-bright: #1976D2;
+    --blue-dim: #BBDEFB;
+    --orange-bright: #F57C00;
+    --orange-dim: #FFCCBC;
+    --deep-orange-bright: #E64A19;
+    --deep-orange-dim: #FFCCBC;
+    --green-bright: #388E3C;
+    --green-dim: #DCEDC8;
+}
+
+body.dark-theme {
+    --primary:#9ecaff;
+    --on-primary:#003258;
+    --primary-container:#00497d;
+    --on-primary-container:#d1e4ff;
+    --secondary:#bbc7db;
+    --on-secondary:#253140;
+    --secondary-container:#3b4858;
+    --on-secondary-container:#d7e3f7;
+    --tertiary:#d6bee4;
+    --on-tertiary:#3b2948;
+    --tertiary-container:#523f5f;
+    --on-tertiary-container:#f2daff;
+    --error:#ffb4ab;
+    --on-error:#690005;
+    --error-container:#93000a;
+    --on-error-container:#ffb4ab;
+    --background:#1a1c1e;
+    --on-background:#e2e2e6;
+    --surface:#121316;
+    --on-surface:#e2e2e6;
+    --surface-variant:#43474e;
+    --on-surface-variant:#c3c7cf;
+    --outline:#8d9199;
+    --outline-variant:#43474e;
+    --stroke: #363838;
+    --shadow:#000000;
+    --scrim:#000000;
+    --inverse-surface:#e2e2e6;
+    --inverse-on-surface:#2f3033;
+    --inverse-primary:#0061a4;
+    --surface-dim:#121316;
+    --surface-bright:#38393c;
+    --surface-container-lowest:#0d0e11;
+    --surface-container-low:#1a1c1e;
+    --surface-container:#1e2022;
+    --surface-container-high:#282a2d;
+    --surface-container-highest:#333538;
+    --font-color:#ffffff;
+    --amber-bright:#FFECB3;
+    --amber-dim: #FFA000;
+    --purple-bright:#E1BEE7;
+    --purple-dim: #7B1FA2;
+    --pink-bright:#F8BBD0;
+    --pink-dim: #C2185B;
+    --blue-bright:#BBDEFB;
+    --blue-dim:#1976D2;
+    --orange-bright:#FFCCBC;
+    --orange-dim: #F57C00;
+    --deep-orange-bright:#FFCCBC;
+    --deep-orange-dim: #E64A19;
+    --green-bright:#DCEDC8;
+    --green-dim: #388E3C;
+}
+
+p{
+    color: var(--font-color);
+}
+
+article.amber239{
+    background-color: var(--amber-dim);
+}
+
+button.amber239{
+    background-color: var(--amber-bright);
+}
+
+article.purple239 {
+    background-color: var(--purple-dim);
+}
+
+button.purple239 {
+    background-color: var(--purple-bright);
+}
+
+article.pink239 {
+    background-color: var(--pink-dim);
+}
+
+button.pink239 {
+    background-color: var(--pink-bright);
+}
+
+article.blue239 {
+    background-color: var(--blue-dim);
+}
+
+button.blue239 {
+    background-color: var(--blue-bright);
+}
+
+article.orange239 {
+    background-color: var(--orange-dim);
+}
+
+button.orange239 {
+    background-color: var(--orange-bright);
+}
+
+article.deep-orange239 {
+    background-color: var(--deep-orange-dim);
+}
+
+button.deep-orange239 {
+    background-color: var(--deep-orange-bright);
+}
+
+article.green239 {
+    background-color: var(--green-dim);
+}
+
+button.green239 {
+    background-color: var(--green-bright);
+}
+
 .horizontal { display: inline-block;}

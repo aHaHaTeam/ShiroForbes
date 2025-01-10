@@ -8,14 +8,14 @@ countrysideButton.addEventListener("click", () => {
         urbanButton.classList.remove("fill");
 
         countrysideContent.hidden = false;
-    urbanContent.hidden = true;
+        urbanContent.hidden = true;
     }
 )
 
 urbanButton.addEventListener("click", () => {
         urbanButton.classList.add("fill");
         countrysideButton.classList.remove("fill");
-    countrysideContent.hidden = true;
-    urbanContent.hidden = false;
+        countrysideContent.hidden = true;
+        urbanContent.hidden = false;
     }
 )

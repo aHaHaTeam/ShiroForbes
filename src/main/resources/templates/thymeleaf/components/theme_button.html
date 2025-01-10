@@ -12,15 +12,12 @@
 </head>
 
 <body>
-<div th:fragment="logo()">
-    <link href="/static/styles/shiro-forbes-logo.css" rel="stylesheet">
-    <a class="center shiro-forbes-logo" href="/">
-        <h3 class="center" style="font-family: 'Publico Headline Web',serif; width: fit-content; margin-top: 0;
-    -webkit-text-stroke: 1px var(--stroke);">
-            <span style="color: var(--shiro)">Shiro</span>
-            <span style="color: var(--vlasik)">Stats</span>
-        </h3>
-    </a>
+<div th:fragment="theme_button()">
+    <button class="circle small transparent horizontal no-margin" id="themeButton">
+        <i id="moon">dark_mode</i>
+        <i id="sun" hidden="hidden">light_mode</i>
+    </button>
+    <script src="/static/scripts/theme.js"></script>
 </div>
 </body>
 
