@@ -6,40 +6,59 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import ru.shiroforbes.login.Session
-import ru.shiroforbes.modules.googlesheets.RatingDeserializer
-import ru.shiroforbes.service.DbStudentService
-import ru.shiroforbes.service.DbUserService
+import ru.shiroforbes.model.Rights
+import ru.shiroforbes.model.Student
+import ru.shiroforbes.model.User
+import ru.shiroforbes.modules.googlesheets.RatingLoaderService
+import ru.shiroforbes.service.RatingService
+import ru.shiroforbes.service.UserService
 
-fun Routing.profileRoutes(ratingDeserializer: RatingDeserializer) {
+fun Routing.profileRoutes(
+    userService: UserService,
+    ratingService: RatingService,
+    ratingLoaderService: RatingLoaderService,
+) {
     authenticate("auth-session-no-redirect") {
         get("/profile/{login}") {
-            var activeUser: Any = 0
+            var activeUser: User? = null
             if (call.principal<Session>() != null) {
                 if (call.principal<Session>()!!.login != "") {
-                    activeUser = DbUserService.getUserByLogin(call.principal<Session>()!!.login) ?: 0
+                    activeUser = userService.getUserByLogin(call.principal<Session>()!!.login)
                 }
             }
-            val tmp = DbUserService.getUserByLogin(call.parameters["login"]!!) ?: return@get
-            if (tmp.hasAdminRights) {
+
+            if (activeUser == null || (activeUser.rights == Rights.Student && activeUser.login != call.parameters["login"])) {
+                return@get call.respond(ThymeleafContent("forbidden", mapOf()))
+            }
+
+            val profile =
+                if (activeUser.login != call.parameters["login"]!!) {
+                    userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
+                } else {
+                    activeUser
+                }
+
+            if (profile.rights != Rights.Student) {
                 call.respondRedirect("/menu")
             }
-            val user = DbStudentService.getStudentByLogin(call.parameters["login"]!!)
+            profile as Student
+            val ratings = ratingService.getRatings(profile.login)
 
-            val urbanRating = ratingDeserializer.getUrbanRating()
-            val countrysideRating = ratingDeserializer.getCountrysideRating()
-            val numberOfPeople = if (user.group) urbanRating.size else countrysideRating.size
-            if (activeUser != user.login) {
-                call.respond(
-                    ThymeleafContent(
-                        "profile",
-                        mapOf(
-                            "user" to user,
-                            "activeUser" to activeUser,
-                            "numberOfPeople" to numberOfPeople,
-                        ),
+            val urbanRating = ratingLoaderService.getUrbanRating()
+            val countrysideRating = ratingLoaderService.getCountrysideRating()
+            val numberOfPeople = if (profile.group) urbanRating.size else countrysideRating.size
+
+            call.respond(
+                ThymeleafContent(
+                    "profile",
+                    mapOf(
+                        "user" to profile,
+                        "ratings" to ratings,
+                        "activeUser" to activeUser,
+                        "numberOfPeople" to numberOfPeople,
                     ),
-                )
-            }
+                ),
+            )
         }
     }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>ShiroForbes</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+</head>
+
+<body>
+<span th:fragment="achievement(icon, title, description)">
+<button class="chip circle">
+    <i th:text="${icon}"></i>
+    <div class="tooltip max">
+        <b th:text="${title}"></b>
+        <p th:text="${description}"></p>
+    </div>
+</button>
+</span>
+</body>
+
+</html>

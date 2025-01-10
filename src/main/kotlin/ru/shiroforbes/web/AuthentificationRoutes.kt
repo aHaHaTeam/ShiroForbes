@@ -11,11 +11,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import ru.shiroforbes.login.Session
-import ru.shiroforbes.login.isAdmin
-import ru.shiroforbes.login.validUser
-import ru.shiroforbes.service.DbUserService
+import ru.shiroforbes.login.userRights
+import ru.shiroforbes.model.Rights
+import ru.shiroforbes.service.StudentService
+import ru.shiroforbes.service.UserService
 
-fun Routing.authenticationRoutes() {
+fun Routing.authenticationRoutes(studentService: StudentService, userService: UserService) {
     get("/login") {
         call.respond(
             ThymeleafContent(
@@ -28,20 +29,24 @@ fun Routing.authenticationRoutes() {
     post("/login") {
         val formContent = call.receiveText()
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
-        val name = params.jsonValue("login")
+        val login = params.jsonValue("login")
         val password = params.jsonValue("password")
-        if (!validUser(name, password)) {
+
+        val rights = userRights(userService, login, password)
+
+        if (rights == null) {
             call.response.status(HttpStatusCode.Unauthorized)
             call.respondText("Invalid username or password")
             return@post
         }
-        call.sessions.set(Session(name, password))
-        if (isAdmin(name)) {
+
+        call.sessions.set(Session(login, password))
+        if (rights == Rights.Student) {
+            val student = studentService.getStudentByLogin(login)
+            call.respondRedirect("/profile/${student!!.login}")
+        } else {
             call.respondRedirect("/menu")
-            return@post
         }
-        val user = DbUserService.getUserByLogin(name)
-        call.respondRedirect("/profile/${user!!.login}")
     }
 
     get("/logout") {

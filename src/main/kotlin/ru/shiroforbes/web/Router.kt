@@ -5,19 +5,24 @@ package ru.shiroforbes.web
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import ru.shiroforbes.config.RouterConfig
-import ru.shiroforbes.modules.googlesheets.RatingDeserializer
+import ru.shiroforbes.modules.googlesheets.RatingLoaderService
+import ru.shiroforbes.service.RatingService
+import ru.shiroforbes.service.StudentService
+import ru.shiroforbes.service.UserService
 import java.io.File
 
 fun Routing.routes(
-    ratingDeserializer: RatingDeserializer,
+    ratingService: RatingService,
+    studentService: StudentService,
+    userService: UserService,
+    ratingLoaderService: RatingLoaderService,
     routerConfig: RouterConfig,
 ) {
     staticFiles("/static", File("src/main/resources/static/"))
 
-    authenticationRoutes()
+    authenticationRoutes(studentService, userService)
     externalUrlRoutes(routerConfig)
-    menuRoutes()
-    profileRoutes(ratingDeserializer)
-    ratingRoutes(ratingDeserializer)
+    menuRoutes(userService)
+    profileRoutes(userService, ratingService, ratingLoaderService)
+    ratingRoutes(ratingService, studentService, userService, ratingLoaderService)
 }
-
