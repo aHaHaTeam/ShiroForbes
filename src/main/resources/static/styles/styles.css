@@ -31,6 +31,7 @@ body.light-theme {
     --on-surface-variant:#43474e;
     --outline:#73777f;
     --outline-variant:#c3c7cf;
+    --stroke: #363838;
     --shadow:#000000;
     --scrim:#000000;
     --inverse-surface:#2f3033;
@@ -85,6 +86,7 @@ body.dark-theme {
     --on-surface-variant:#c3c7cf;
     --outline:#8d9199;
     --outline-variant:#43474e;
+    --stroke: #363838;
     --shadow:#000000;
     --scrim:#000000;
     --inverse-surface:#e2e2e6;
