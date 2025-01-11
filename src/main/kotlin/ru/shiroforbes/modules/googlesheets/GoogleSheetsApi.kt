@@ -2,46 +2,11 @@
 
 package ru.shiroforbes.modules.googlesheets
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.JsonFactory
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.SheetsScopes
-import com.google.auth.http.HttpCredentialsAdapter
-import com.google.auth.oauth2.GoogleCredentials
 import org.jetbrains.exposed.sql.exposedLogger
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
-
-/**
- * Service providing connection to Google APIs.
- *
- * @property [serviceAccountKeyFile] path to file with service credentials (/service-account-key.json.json by default)
- * @property [scopes] the list of OAuth 2.0 scopes for use with API.
- */
-class GoogleSheetsApiConnectionService(
-    private val serviceAccountKeyFile: String = "/service-account-key.json",
-    private val scopes: List<String>,
-    applicationName: String = "Google API Service",
-) {
-    val service: Sheets
-
-    init {
-        val credentials =
-            GoogleCredentials.fromStream(object {}.javaClass.classLoader.getResourceAsStream(serviceAccountKeyFile))
-                .createScoped(listOf("https://www.googleapis.com/auth/spreadsheets"))
-
-        val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
-        val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
-        service = Sheets.Builder(httpTransport, jsonFactory, HttpCredentialsAdapter(credentials))
-            .setApplicationName(applicationName)
-            .build()
-    }
-
-}
 
 /**
  * Service for extracting data from Google spreadsheets
@@ -60,14 +25,6 @@ class GoogleSheetsService<T : Any>(
     private val dataRanges: List<String>,
     private val defaultConversionClass: Class<*> = Class.forName("kotlin.text.StringsKt"),
 ) {
-    constructor(
-        connectionService: GoogleSheetsApiConnectionService,
-        spreadsheetId: String,
-        clazz: KClass<T>,
-        vararg dataRanges: String,
-        defaultConversionClass: Class<*> = Class.forName("kotlin.text.StringsKt"),
-    ) : this(connectionService, spreadsheetId, clazz, dataRanges.toList(), defaultConversionClass)
-
     fun getWhileNotEmpty(): List<T> {
         val response =
             connectionService
@@ -171,33 +128,5 @@ class GoogleSheetsService<T : Any>(
             }
         }
         return null
-    }
-}
-
-object Obj {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val dataRanges =
-            listOf(
-                "Конд!C5:C33",
-                "Конд!B5:B33",
-                "Конд!D5:D33",
-                "Конд!E5:E33",
-                "Конд!L5:L33",
-                "Конд!G5:G33",
-                "Конд!I5:I33",
-                "Конд!K5:K33",
-            )
-        GoogleSheetsService(
-            GoogleSheetsApiConnectionService(
-                "/googlesheets/service-account-key.json",
-                listOf(SheetsScopes.SPREADSHEETS_READONLY),
-            ),
-            "19fm18aFwdENQHXRu3ekG1GRJtiIe-k1-XCMgtMQXFSQ",
-            RatingRow::class,
-            dataRanges,
-        ).getWhileNotEmpty().map {
-            println(it)
-        }
     }
 }
