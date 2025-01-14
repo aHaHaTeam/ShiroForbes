@@ -6,9 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import ru.shiroforbes.login.Session
-import ru.shiroforbes.model.Rights
-import ru.shiroforbes.model.Student
-import ru.shiroforbes.model.User
+import ru.shiroforbes.model.*
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
 import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.UserService
@@ -43,17 +41,17 @@ fun Routing.profileRoutes(
             }
             profile as Student
             val ratings = ratingService.getRatings(profile.login)
-
             val urbanRating = ratingLoaderService.getUrbanRating()
             val countrysideRating = ratingLoaderService.getCountrysideRating()
-            val numberOfPeople = if (profile.group) urbanRating.size else countrysideRating.size
+
+            val numberOfPeople = if (profile.group == GroupType.Urban) urbanRating.size else countrysideRating.size
 
             call.respond(
                 ThymeleafContent(
                     "profile",
                     mapOf(
                         "user" to profile,
-                        "ratings" to ratings,
+                        "ratings" to (ratings[Semester.Semesters12] ?: listOf()),
                         "activeUser" to activeUser,
                         "numberOfPeople" to numberOfPeople,
                     ),
