@@ -1,21 +1,43 @@
 routerConfig:
-  grobariumUrl: https://www.overleaf.com/read/example#0000
-  seriesUrl: https://www.overleaf.com/read/example#0000
-  lzUrl: https://www.overleaf.com/read/example#0000
+  grobariumUrl: <url to the grobarium>
 
 googleSheetsConfig:
-  ratingSpreadsheetId: AAAA-AAAA_AAAAAexAmpleAAAAAAA
-  ratingRanges:
-    - Лист1!A3:A30
-    - Лист1!B3:B30
-    - Лист1!C3:C30
-    - Лист1!D3:D30
-    - Лист1!E3:E30
-    - Лист1!F3:F30
-    - Лист1!G3:G30
+  initSpreadsheetId: <id of the google spreadsheet for database initialisation>
+  ratingSpreadsheetId: <id of the google spreadsheet for rating data>
+  credentialsPath: googlesheets/service-account-key.json
+  countrysideRatingRanges:
+    - Конд!C5:C
+    - Конд!B5:B
+    - Конд!D5:D
+    - Конд!E5:E
+    - Конд!F5:F
+    - Конд!I5:I
+    - Конд!J5:J
+    - Конд!K5:K
+    - Конд!L5:L
+    - Конд!M5:M
+    - Конд!N5:N
+    - Конд!O5:O
+    - Конд!P5:P
+    - ШГ!D13:D
+  urbanRatingRanges:
+    - Конд18!C5:C
+    - Конд18!B5:B
+    - Конд18!D5:D
+    - Конд18!E5:E
+    - Конд18!F5:F
+    - Конд18!I5:I
+    - Конд18!J5:J
+    - Конд18!K5:K
+    - Конд18!L5:L
+    - Конд18!M5:M
+    - Конд18!N5:N
+    - Конд18!O5:O
+    - Конд18!P5:P
+    - ШГ!D75:D
 
 dbConfig:
-  connectionUrl: "jdbc:postgresql://localhost:5432/shiroforbes"
+  connectionUrl: "jdbc:postgresql://localhost:<host, default is 5432>/<database name>"
   driver: "org.postgresql.Driver"
-  user: "postgres"
-  password: "postgres"
+  user: "<postgres user>"
+  password: "<user password>"
