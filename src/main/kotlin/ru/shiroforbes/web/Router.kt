@@ -23,6 +23,6 @@ fun Routing.routes(
     authenticationRoutes(studentService, userService)
     externalUrlRoutes(routerConfig)
     menuRoutes(userService)
-    profileRoutes(userService, ratingService, ratingLoaderService)
+    profileRoutes(userService, studentService, ratingService)
     ratingRoutes(ratingService, studentService, userService, ratingLoaderService)
 }
