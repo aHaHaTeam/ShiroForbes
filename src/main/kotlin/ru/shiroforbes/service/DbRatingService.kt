@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.RatingTable
 import ru.shiroforbes.database.StudentTable
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Group
 import ru.shiroforbes.model.Rating
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.RatingRow
@@ -88,7 +88,7 @@ class DbRatingService(
 
     override fun updateGroup(
         names: List<String>,
-        group: GroupType,
+        group: Group,
     ) {
         transaction(database) {
             StudentTable.update({ StudentTable.name inList names }) {
