@@ -54,7 +54,7 @@ body.light-theme {
     --blue-bright: #1976D2;
     --blue-dim: #BBDEFB;
     --orange-bright: #F57C00;
-    --orange-dim: #FFCCBC;
+    --orange-dim: #FFCC9A;
     --deep-orange-bright: #E64A19;
     --deep-orange-dim: #FFCCBC;
     --green-bright: #388E3C;
@@ -108,7 +108,7 @@ body.dark-theme {
     --pink-dim: #C2185B;
     --blue-bright:#BBDEFB;
     --blue-dim:#1976D2;
-    --orange-bright:#FFCCBC;
+    --orange-bright: #FFCC9A;
     --orange-dim: #F57C00;
     --deep-orange-bright:#FFCCBC;
     --deep-orange-dim: #E64A19;

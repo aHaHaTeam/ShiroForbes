@@ -51,7 +51,8 @@ fun Routing.profileRoutes(
                     "profile",
                     mapOf(
                         "user" to profile,
-                        "ratings" to (ratings[Semester.Semesters12] ?: listOf()),
+                        "ratings12" to (ratings[Semester.Semesters12] ?: listOf()),
+                        "ratings2" to (ratings[Semester.Semester2] ?: listOf()),
                         "activeUser" to activeUser,
                         "numberOfPeople" to numberOfPeople,
                     ),

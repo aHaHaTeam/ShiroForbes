@@ -25,10 +25,10 @@ fun Routing.ratingRoutes(
     authenticate("auth-session-at-least-teacher") {
         get("/update/rating") {
             val countrysideDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRating()) }
+                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRatingSemester2()) }
 
             val urbanDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRating()) }
+                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRatingSemester2()) }
 
             call.respond(
                 ThymeleafContent(
