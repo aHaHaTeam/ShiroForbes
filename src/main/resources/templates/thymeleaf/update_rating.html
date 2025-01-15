@@ -8,8 +8,9 @@
     <script src="/static/modules/beer/beer.min.js" type="module"></script>
     <script src="/static/modules/beer/material-dynamic-colors.min.js" type="module"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
+    <link href="/static/styles/snow.css" rel="stylesheet">
 </head>
-<body>
+<body id="main">
 <!--/*@thymesVar id="isLoggedIn" type="java.lang.Boolean"*/-->
 <div th:insert="~{components/header :: header(${user})}"></div>
 <div class="grid">
@@ -62,5 +63,6 @@
 </div>
 <script src="/static/scripts/switch_camps.js"></script>
 <script src="/static/scripts/update_rating.js"></script>
+<script src="/static/scripts/snowflakes.js"></script>
 </body>
 </html>
