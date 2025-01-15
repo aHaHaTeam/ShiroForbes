@@ -1,8 +1,8 @@
 package ru.shiroforbes.web
 
 import org.jetbrains.exposed.sql.exposedLogger
-import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.RatingDelta
+import ru.shiroforbes.model.Semester
 import ru.shiroforbes.model.Student
 import ru.shiroforbes.modules.googlesheets.RatingRow
 import ru.shiroforbes.service.RatingService
@@ -49,16 +49,9 @@ fun computeRatingDeltas(
 suspend fun updateRating(
     ratingService: RatingService,
     rating: List<RatingRow>,
+    semester: Semester,
 ) {
-    ratingService.updateRatingAll(rating)
-}
-
-fun updateGroup(
-    ratingService: RatingService,
-    rating: List<RatingRow>,
-    group: GroupType,
-) {
-    ratingService.updateGroupAll(rating.map { it.name() }, group)
+    ratingService.updateRating(rating, semester)
 }
 
 fun Float.round(decimals: Int): Float {

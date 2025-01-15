@@ -2,9 +2,11 @@ package ru.shiroforbes.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import ru.shiroforbes.model.Semester
 
 object RatingTable : IntIdTable("ratings_season2", "ratingId") {
     val date = datetime("date")
+    val semester = enumerationByName("semester", 32, Semester::class)
     val student = integer("studentId")
     val points = integer("points")
     val total = float("total")

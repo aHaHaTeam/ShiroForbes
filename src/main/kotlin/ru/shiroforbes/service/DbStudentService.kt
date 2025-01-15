@@ -12,7 +12,6 @@ import ru.shiroforbes.model.Student
 
 class DbStudentService(
     private val database: Database,
-    private val ratingService: RatingService,
 ) : StudentService {
     override fun getStudentStatById(id: Int): Student? =
         transaction(database) {
@@ -174,7 +173,7 @@ class DbStudentService(
         }
 
     override fun getStudentByLogin(login: String): Student? {
-        return getStudentStatByLogin(login) ?: return null
+        return getStudentStatByLogin(login)
     }
 
     override fun getPasswordByLogin(login: String): String? =
