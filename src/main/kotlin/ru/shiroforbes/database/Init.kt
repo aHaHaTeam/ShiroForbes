@@ -62,7 +62,7 @@ internal fun kotlin.String.toFloatOrNull(): Float? =
         null
     }
 
-internal fun kotlin.String.toGroupTypeOrNull(): Group? = Group.entries.find { it.text == this }
+internal fun kotlin.String.toGroupOrNull(): Group? = Group.entries.find { it.text.lowercase() == this.lowercase() }
 
 internal fun kotlin.String.toBooleanOrNull(): Boolean? =
     when (this) {
