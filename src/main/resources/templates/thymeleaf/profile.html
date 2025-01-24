@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8" content="width=device-width, initial-scale=1.0" name="viewport">
     <title>ShiroForbes</title>
-    <link href="/static/styles/styles.css" rel="stylesheet">
     <link href="/static/modules/beer/beer.min.css" rel="stylesheet">
     <script src="/static/modules/beer/beer.min.js" type="module"></script>
     <script src="/static/modules/beer/material-dynamic-colors.min.js" type="module"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
     <link href="/static/styles/snow.css" rel="stylesheet">
 </head>
-<body id="main">
+<body>
 <div>
     <div th:insert="~{components/header :: header(${activeUser})}"></div>
 </div>
 <div class="grid">
 
-    <main class="responsive grid" >
+    <main class="responsive grid">
         <div class="s12">
             <h4 class="bold center-align" id="name" th:text="${user.name}"></h4>
             <br>
@@ -27,7 +26,7 @@
                     <button class="border left-round max fill" id="semester2Button">
                         <span>Второе полугодие</span>
                     </button>
-                    <button class="border right-round max" id="semesters12Button"   >
+                    <button class="border right-round max" id="semesters12Button">
                         <span>Весь год</span>
                     </button>
                 </nav>
@@ -46,7 +45,7 @@
             <div class="grid">
                 <div class="s4 m3 l2" th:each="achievement : ${achievements}">
                     <div
-                        th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
+                            th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
                 </div>
             </div>
         </div>
