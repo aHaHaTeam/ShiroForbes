@@ -8,12 +8,14 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.database.RatingTable
 import ru.shiroforbes.database.StudentTable
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Group
 import ru.shiroforbes.model.Rating
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.RatingRow
 
-class DbRatingService(private val database: Database) : RatingService {
+class DbRatingService(
+    private val database: Database,
+) : RatingService {
     override fun getRatings(login: String): Map<Semester, List<Rating>> =
         transaction(database) {
             RatingTable
@@ -40,13 +42,16 @@ class DbRatingService(private val database: Database) : RatingService {
                             resultRow[RatingTable.combinatoricsPercent],
                             resultRow[RatingTable.grobs],
                             resultRow[RatingTable.position],
-                        )
+                        ),
                     )
                 }
-        }
-            .groupBy({ it.first }, { it.second })
+        }.groupBy({ it.first }, { it.second })
+            .mapValues { it.value.sortedByDescending { rating -> rating.date } }
 
-    override suspend fun updateRating(list: List<RatingRow>, semester: Semester) {
+    override suspend fun updateRating(
+        list: List<RatingRow>,
+        semester: Semester,
+    ) {
         transaction(database) {
             val ids =
                 StudentTable
@@ -83,7 +88,7 @@ class DbRatingService(private val database: Database) : RatingService {
 
     override fun updateGroup(
         names: List<String>,
-        group: GroupType,
+        group: Group,
     ) {
         transaction(database) {
             StudentTable.update({ StudentTable.name inList names }) {

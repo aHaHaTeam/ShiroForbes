@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Group
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
@@ -25,7 +25,7 @@ data class ConversionClassStudent(
     val name: String = "",
     val login: String = "",
     val password: String = "",
-    val group: GroupType,
+    val group: Group,
     val rating: Int = 0,
     val wealth: Int = 0,
     val totalSolved: Int = 0,
@@ -62,7 +62,7 @@ internal fun kotlin.String.toFloatOrNull(): Float? =
         null
     }
 
-internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
+internal fun kotlin.String.toGroupOrNull(): Group? = Group.entries.find { it.text.lowercase() == this.lowercase() }
 
 internal fun kotlin.String.toBooleanOrNull(): Boolean? =
     when (this) {

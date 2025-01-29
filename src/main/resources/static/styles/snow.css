@@ -1,0 +1,27 @@
+body.light-theme {
+    --snow-color: #BeD8FF;
+}
+
+body.dark-theme {
+    --snow-color: #FFFFFF;
+}
+.snowflake {
+    --size: 1vw;
+    width: var(--size);
+    height: var(--size);
+    background: var(--snow-color);
+    border-radius: 50%;
+    position: absolute;
+    top: -5vh;
+    z-index: -1;
+    animation: snowfall 12s linear infinite;
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translate(var(--left-ini), 0);
+    }
+    100% {
+        transform: translate(var(--left-end), var(--animation-height));
+    }
+}
