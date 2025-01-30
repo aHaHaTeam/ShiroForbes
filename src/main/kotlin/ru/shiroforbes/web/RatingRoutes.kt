@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.shiroforbes.login.Session
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
 import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.StudentService
@@ -25,10 +25,10 @@ fun Routing.ratingRoutes(
     authenticate("auth-session-at-least-teacher") {
         get("/update/rating") {
             val countrysideDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRating()) }
+                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRatingSemester2()) }
 
             val urbanDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRating()) }
+                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRatingSemester2()) }
 
             call.respond(
                 ThymeleafContent(
@@ -47,8 +47,9 @@ fun Routing.ratingRoutes(
         post("/update/countryside/rating") {
             updateRatingScope.launch {
                 val rating = ratingLoaderService.getCountrysideRating()
-                updateRating(ratingService, rating)
-                updateGroup(ratingService, rating, GroupType.Countryside)
+                val ratingSemester2 = ratingLoaderService.getCountrysideRatingSemester2()
+                updateRating(ratingService, rating, Semester.Semesters12)
+                updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }
             call.respondRedirect("/update/rating")
         }
@@ -56,8 +57,9 @@ fun Routing.ratingRoutes(
         post("/update/urban/rating") {
             updateRatingScope.launch {
                 val rating = ratingLoaderService.getUrbanRating()
-                updateRating(ratingService, rating)
-                updateGroup(ratingService, rating, GroupType.Urban)
+                val ratingSemester2 = ratingLoaderService.getUrbanRatingSemester2()
+                updateRating(ratingService, rating, Semester.Semesters12)
+                updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }
             call.respondRedirect("/update/rating")
         }

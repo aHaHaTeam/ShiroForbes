@@ -1,6 +1,6 @@
 package ru.shiroforbes.modules.googlesheets
 
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Group
 import java.util.*
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.jvmErasure
@@ -9,7 +9,7 @@ class CustomDecoder : Decoder {
     override fun supports(type: KType): Boolean =
         when (type.jvmErasure) {
             Float::class -> true
-            GroupType::class -> true
+            Group::class -> true
             Boolean::class -> true
             else -> false
         }
@@ -17,7 +17,7 @@ class CustomDecoder : Decoder {
     override fun convert(string: String, type: KType): Any? =
         when (type.jvmErasure) {
             Float::class -> toFloatOrNull(string)
-            GroupType::class -> toGroupTypeOrNull(string)
+            Group::class -> toGroupOrNull(string)
             Boolean::class -> toBooleanOrNull(string)
             else -> throw IllegalArgumentException("Unsupported type $type")
         }
@@ -33,7 +33,7 @@ class CustomDecoder : Decoder {
             null
         }
 
-    private fun toGroupTypeOrNull(string: String): GroupType? = GroupType.entries.find { it.text == string }
+    private fun toGroupOrNull(string: String): Group? = Group.entries.find { it.text == string }
 
     private fun toBooleanOrNull(string: String): Boolean? =
         when (string.lowercase(Locale.getDefault())) {

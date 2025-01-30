@@ -16,12 +16,4 @@ fun Routing.externalUrlRoutes(
     get("/grobarium") {
         call.respondRedirect(routerConfig.grobariumUrl)
     }
-
-    get("/series") {
-        call.respondRedirect(routerConfig.seriesUrl)
-    }
-
-    get("/lz") {
-        call.respondRedirect(routerConfig.lzUrl)
-    }
 }

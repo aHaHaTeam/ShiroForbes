@@ -3,107 +3,58 @@
 <head>
     <meta charset="UTF-8" content="width=device-width, initial-scale=1.0" name="viewport">
     <title>ShiroForbes</title>
-
     <link href="/static/modules/beer/beer.min.css" rel="stylesheet">
     <script src="/static/modules/beer/beer.min.js" type="module"></script>
     <script src="/static/modules/beer/material-dynamic-colors.min.js" type="module"></script>
     <link href="/static/styles/styles.css" rel="stylesheet">
+    <link href="/static/styles/snow.css" rel="stylesheet">
 </head>
 <body>
 <div>
     <div th:insert="~{components/header :: header(${activeUser})}"></div>
 </div>
 <div class="grid">
-    <div class="s0 l2"></div>
-    <div class="s12 l8">
-        <main class="responsive grid">
-            <div class="s12">
-                <br>
-                <h4 class="bold center-align" id="name" th:text="${user.name}"></h4>
-                <br>
-                <div class="grid">
-                    <article class="s12 round amber2 middle-align"
-                             th:unless="${ratings[0].position * 2 > numberOfPeople}">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle amber8 large"><i class="large">Trophy</i></button>
-                            <div class="max center center-align row">
-                                <p class="bold" th:text="|Место: |"></p>
-                                <p th:text="|${ratings[0].position}|"></p>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 round purple2 middle-align" th:unless="${ratings[0].grobs == 0}">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle purple8 large"><i class="large">Skull</i></button>
-                            <div class="max center center-align row">
-                                <p class="bold" th:text="|Гробы: |"></p>
-                                <p th:text="|${ratings[0].grobs}|"></p>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 m6 l4 round pink2 middle-align">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle pink8 large"><i class="large">functions</i></button>
-                            <div class="max center center-align">
-                                <span class="bold" th:text="|Задачи: |"></span>
-                                <span style="white-space: nowrap"
-                                      th:text="|${ratings[0].total} (${ratings[0].totalPercent}%)|"></span>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 m6 l4 round blue2 middle-align">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle blue8 large"><i class="large">function</i></button>
-                            <div class="max center center-align">
-                                <span class="bold" th:text="|Алгебра: |"></span>
-                                <span style="white-space: nowrap"
-                                      th:text="|${ratings[0].algebra} (${ratings[0].algebraPercent}%)|"></span>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 m6 l4 round orange2 middle-align">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle orange8 large"><i class="large">calculate</i></button>
-                            <div class="max center center-align">
-                                <span class="bold" th:text="|Теория чисел: |"></span>
-                                <span style="white-space: nowrap"
-                                      th:text="|${ratings[0].numbersTheory} (${ratings[0].numbersTheoryPercent}%)|"></span>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 m6 l4 round deep-orange2 middle-align">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle deep-orange8 large"><i class="large">playing_cards</i></button>
-                            <div class="max center center-align">
-                                <span class="bold" style="word-break: break-all;" th:text="|Комбинаторика: |"></span>
-                                <span style="white-space: nowrap"
-                                      th:text="|${ratings[0].combinatorics} (${ratings[0].combinatoricsPercent}%)|"></span>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="s12 m6 l4 round green2 middle-align">
-                        <div class="row" style="column-gap: 0; width: 85%;">
-                            <button class="circle green8 large"><i class="large">architecture</i></button>
-                            <div class="max center center-align">
-                                <span class="bold" style="word-break: break-all;" th:text="|Геометрия: |"></span>
-                                <span style="white-space: nowrap"
-                                      th:text="|${ratings[0].geometry} (${ratings[0].geometryPercent}%)|"></span>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <br>
-                <div class="grid">
-                    <div class="s4 m3 l2" th:each="achievement : ${achievements}">
-                        <div th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
-                    </div>
+
+    <main class="responsive grid">
+        <div class="s12">
+            <h4 class="bold center-align" id="name" th:text="${user.name}"></h4>
+            <br>
+
+            <div class="s12 grid">
+                <div class="s2 m3 l3"></div>
+                <nav class="no-space center-align middle-align s8 m6 l6">
+                    <button class="border left-round max fill" id="semester2Button">
+                        <span>Второе полугодие</span>
+                    </button>
+                    <button class="border right-round max" id="semesters12Button">
+                        <span>Весь год</span>
+                    </button>
+                </nav>
+                <div class="s2 m3 l3"></div>
+            </div>
+            <br>
+
+            <div class="s0 l2"></div>
+            <div class="s12 l8" id="semester2Content"
+                 th:insert="~{components/profileStats :: profileStats(${user},${ratings2},${numberOfPeople})}"></div>
+            <div class="s12 l8" id="semesters12Content" hidden="hidden"
+                 th:insert="~{components/profileStats :: profileStats(${user},${ratings12},${numberOfPeople})}"></div>
+            <div class="s0 l2"></div>
+
+            <br>
+            <div class="grid">
+                <div class="s4 m3 l2" th:each="achievement : ${achievements}">
+                    <div
+                            th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
                 </div>
             </div>
-        </main>
-    </div>
-    <div class="s0 l2"></div>
+        </div>
+    </main>
+
+
 </div>
 
 </body>
-
+<script src="/static/scripts/switch_semester.js"></script>
+<script src="/static/scripts/snowflakes.js"></script>
 </html>

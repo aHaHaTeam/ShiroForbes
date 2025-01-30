@@ -3,3 +3,8 @@
     font-face-name: "Publico Headline Web Bold Regular";
     src: url("/static/PublicoHeadline-Bold-Web.ttf") format("truetype");
 }
+
+.shiro-forbes-logo {
+    --shiro: #3F68AF;
+    --vlasik: #EA6132;
+}

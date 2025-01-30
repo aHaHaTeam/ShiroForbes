@@ -3,47 +3,41 @@
 
 <head>
     <title>ShiroForbes</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js" type="module"></script>
-    <script src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"
-            type="module"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.6.12/dist/cdn/beer.min.js"></script>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
 </head>
 
 <body>
 <div th:fragment="header(user)">
+    <link href="/static/styles/overleaf-icon.css" rel="stylesheet">
     <header class="fixed fill small-round">
         <nav class="grid">
-            <div class="s2 center middle-align">
+            <div class="s1 left-align">
                 <div th:if="${!user.equals(0)}">
                     <a class="circle transparent horizontal" href="/grobarium">
-                        <i class="middle extra">
-                            <img alt="Гробарий"
-                                 src="/static/images/overleaf-o-logo-primary.png">
+                        <i class="extra middle icon-overleaf">
                         </i>
                     </a>
                 </div>
             </div>
+            <div class="s1"></div>
+
             <div class="center s8" th:insert="~{components/logo :: logo()}"></div>
 
-            <div class="s2 right-align middle-align">
+            <div class="s1 center-align" th:insert="~{components/theme_button :: theme_button()}"></div>
+            <div class="s1 right-align">
                 <div th:if="${!user.equals(0)}">
-                    <a class="circle transparent horizontal middle-align" href="/logout">
+                    <a class="circle transparent horizontal" href="/logout">
                         <i class="middle">logout</i>
                     </a>
                 </div>
-
-                <!--                <div th:unless="${!user.equals(0)}">-->
-                <!--                    <a class="circle transparent horizontal" href="/login">-->
-                <!--                        <span>Войти</span>-->
-                <!--                        <i>login</i>-->
-                <!--                    </a>-->
-                <!--                </div>-->
             </div>
         </nav>
     </header>
-    <br>
 </div>
 </body>
 
