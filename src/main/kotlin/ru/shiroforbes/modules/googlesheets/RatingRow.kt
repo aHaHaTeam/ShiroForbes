@@ -1,14 +1,14 @@
 package ru.shiroforbes.modules.googlesheets
 
 data class RatingRow(
-    val firstName: String,
     val lastName: String,
+    val firstName: String,
     val solvedProblems: Float,
     val solvedPercentage: Float,
     val rating: Int,
-    val failures: Int,
+    val minuses: Int,
     val grobs: Int,
-    val grobsRating: Int,
+    val grobRating: Int,
     val algebraSolved: Float,
     val algebraPercentage: Int,
     val numbersTheorySolved: Float,

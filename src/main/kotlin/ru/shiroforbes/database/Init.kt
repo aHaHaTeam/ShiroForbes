@@ -1,6 +1,5 @@
 package ru.shiroforbes.database
 
-import com.google.api.services.sheets.v4.SheetsScopes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,10 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
 import ru.shiroforbes.model.GroupType
 import ru.shiroforbes.model.Rights
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
-import ru.shiroforbes.service.DbRatingService
-import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.modules.googlesheets.*
 import kotlin.reflect.KClass
 
 data class ConversionClassStudent(
@@ -50,31 +46,6 @@ data class ConversionClassAdmin(
     val password: String = "",
 )
 
-internal fun kotlin.String.toFloatOrNull(): Float? =
-    try {
-        this
-            .filter { !it.isWhitespace() }
-            .split(',')
-            .joinToString(".")
-            .toFloat()
-    } catch (e: Exception) {
-        null
-    }
-
-internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
-
-internal fun kotlin.String.toBooleanOrNull(): Boolean? =
-    when (this) {
-        "1" -> true
-        "0" -> false
-        "TRUE" -> true
-        "FALSE" -> false
-        "true" -> true
-        "false" -> false
-        "True" -> true
-        "False" -> false
-        else -> null
-    }
 
 fun main() {
     val database =
@@ -84,10 +55,8 @@ fun main() {
             config.dbConfig.user,
             config.dbConfig.password,
         )
-    val ratingService = DbRatingService(database)
-    val studentService = DbStudentService(database, ratingService)
 
-    transaction {
+    transaction(database) {
         exec("DROP TYPE IF EXISTS rights CASCADE;\n")
         exec("CREATE TYPE rights AS ENUM ('Admin', 'Teacher', 'Student');\n")
 
@@ -176,17 +145,14 @@ fun main() {
 }
 
 private fun <T : Any> fetchGoogleSheets(
-    table: String,
+    range: String,
     conversion: KClass<T>,
-) = GoogleSheetsService(
-    GoogleSheetsApiConnectionService(
-        config.googleSheetsConfig.credentialsPath,
-        listOf(SheetsScopes.SPREADSHEETS_READONLY),
-    ),
-    config.googleSheetsConfig.initSpreadsheetId,
-    conversion,
-    listOf(
-        table,
-    ),
-    Class.forName("ru.shiroforbes.database.InitKt"),
-).getWhileNotEmpty()
+): List<T> {
+    val table = GoogleSheetsGetRequest(
+        GoogleSheetsConnectionService(
+            config.googleSheetsConfig.credentialsPath,
+        ),
+        config.googleSheetsConfig.initSpreadsheetId,
+    ).addRange(range).execute()
+    return ReflectiveTableParser(conversion, listOf(CustomDecoder(), DefaultDecoder())).parse(table[range]!!)
+}

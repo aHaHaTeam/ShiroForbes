@@ -8,15 +8,8 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 
-/**
- * Service providing connection to Google APIs.
- *
- * @property [serviceAccountKeyFile] path to file with service credentials (/service-account-key.json.json by default)
- * @property [scopes] the list of OAuth 2.0 scopes for use with API.
- */
-class GoogleSheetsApiConnectionService(
-    private val serviceAccountKeyFile: String,
-    private val scopes: List<String>,
+class GoogleSheetsConnectionService(
+    serviceAccountKeyFile: String,
     applicationName: String = "Google API Service",
 ) {
     val service: Sheets
