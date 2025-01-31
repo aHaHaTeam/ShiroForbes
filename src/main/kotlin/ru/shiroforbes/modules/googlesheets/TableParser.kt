@@ -4,9 +4,12 @@ interface TableParser<T> {
     fun parse(table: List<List<String>>): List<T>
 
     fun joinAndParse(tables: List<List<List<String>>>): List<T> {
-        val widths = tables.map { table -> table.maxOf { it.size } }
-        val shrankTables = tables.mapIndexed { i, table -> table.takeWhile { it.size == widths[i] } }
-            .reduce { a, b -> a.zip(b).map { it.first + it.second } }
+        val shrankTables = tables.map { table ->
+            val width = table.maxOf { it.size }
+            table.takeWhile { it.size == width }
+        }.reduce { table1, table2 ->
+            table1.zip(table2).map { it.first + it.second }
+        }
         return parse(shrankTables)
     }
 }

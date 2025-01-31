@@ -23,8 +23,9 @@ class GoogleSheetsGetRequest(
                     valueRenderOption = "FORMATTED_VALUE"
                 }
                 .execute()
-        return response.valueRanges.zip(tableRanges).associate { (table, range) ->
-            range to table.getValues().map { row -> row.map { it.toString() } }
-        }
+        return response.valueRanges.zip(tableRanges)
+            .associate { (table, range) ->
+                range to table.getValues().map { row -> row.map { it.toString() } }
+            }
     }
 }

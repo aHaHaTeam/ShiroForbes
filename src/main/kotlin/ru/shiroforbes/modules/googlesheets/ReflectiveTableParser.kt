@@ -16,34 +16,17 @@ class ReflectiveTableParser<T : Any>(
         }
 
         return table.map {
-            val args =
-                it.mapIndexed { index, value ->
-                    val converted =
-                        try {
-                            convert(
-                                value,
-                                clazz.primaryConstructor!!.parameters[index].type,
-                            )
-                        } catch (e: Exception) {
-                            null
-                        }
-                    if (converted == null) {
-                        exposedLogger.debug(
-                            "Cannot convert \"{}\" to \"{}\"",
-                            value,
-                            clazz.primaryConstructor!!.parameters[index].type,
-                        )
-                    }
-                    return@mapIndexed converted
-                }
+            val constructor = clazz.primaryConstructor!!
+            val args = it.mapIndexed { index, value ->
+                val type = constructor.parameters[index].type
+                val converted = convert(value, type)
+                    ?: exposedLogger.error("Cannot convert \"${value}\" to \"${type}\"")
+                return@mapIndexed converted
+            }
             try {
-                clazz.primaryConstructor!!.call(*(args.toTypedArray()))
+                constructor.call(*(args.toTypedArray()))
             } catch (e: Exception) {
-                exposedLogger.error(
-                    "Cannot convert \"${
-                        args.toTypedArray().joinToString(", ")
-                    }\" to \"${clazz.simpleName}\"",
-                )
+                exposedLogger.error("Cannot convert \"${args.joinToString(", ")}\" to \"${clazz.simpleName}\"")
                 throw e
             }
         }
