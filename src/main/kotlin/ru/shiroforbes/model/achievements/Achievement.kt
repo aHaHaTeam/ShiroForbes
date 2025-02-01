@@ -1,6 +1,6 @@
 package ru.shiroforbes.model.achievements
 
-class Achievement(
+data class Achievement(
     val title: String,
     val description: String,
     val icon: String,

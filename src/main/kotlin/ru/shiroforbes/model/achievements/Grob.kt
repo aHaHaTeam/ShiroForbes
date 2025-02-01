@@ -1,6 +1,6 @@
 package ru.shiroforbes.model.achievements
 
-class Grob(
+data class Grob(
     val firstSolved: Int,
     val solutionDate: Int,
 )

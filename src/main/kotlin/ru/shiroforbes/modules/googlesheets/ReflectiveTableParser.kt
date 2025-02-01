@@ -20,7 +20,10 @@ class ReflectiveTableParser<T : Any>(
             val args = it.mapIndexed { index, value ->
                 val type = constructor.parameters[index].type
                 val converted = convert(value, type)
-                    ?: exposedLogger.error("Cannot convert \"${value}\" to \"${type}\"")
+                    ?: run {
+                        exposedLogger.error("Cannot convert \"${value}\" to \"${type}\"")
+                        null
+                    }
                 return@mapIndexed converted
             }
             try {

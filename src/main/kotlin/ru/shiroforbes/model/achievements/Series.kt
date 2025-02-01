@@ -1,6 +1,6 @@
 package ru.shiroforbes.model.achievements
 
-class Series(
+data class Series(
     val number: Int,
     val solved: List<Float>,
 )
