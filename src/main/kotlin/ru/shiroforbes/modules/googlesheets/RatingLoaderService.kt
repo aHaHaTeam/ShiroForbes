@@ -11,13 +11,7 @@ class RatingLoaderService(
 
     private val parser = ReflectiveTableParser(RatingRow::class, listOf(CustomDecoder(), DefaultDecoder()))
 
-    fun getCountrysideRating(): List<RatingRow> = getRating(config.countrysideRatingRanges)
-    fun getCountrysideRatingSemester2(): List<RatingRow> = getRating(config.countrysideRatingRangesSemester2)
-
-    fun getUrbanRating(): List<RatingRow> = getRating(config.urbanRatingRanges)
-    fun getUrbanRatingSemester2(): List<RatingRow> = getRating(config.urbanRatingRangesSemester2)
-
-    private fun getRating(ranges: List<String>): List<RatingRow> {
+    fun getRating(ranges: List<String>): List<RatingRow> {
         val tables = ranges.fold(
             GoogleSheetsGetRequest(
                 connectionService,

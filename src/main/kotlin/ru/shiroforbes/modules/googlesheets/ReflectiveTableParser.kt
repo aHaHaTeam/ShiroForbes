@@ -39,9 +39,6 @@ class ReflectiveTableParser<T : Any>(
         str: String,
         type: KType,
     ): Any? {
-        if (type.jvmErasure.simpleName == String::class.simpleName) {
-            return str
-        }
         for (decoder in decoders) {
             if (decoder.supports(type)) {
                 return decoder.convert(str, type)
