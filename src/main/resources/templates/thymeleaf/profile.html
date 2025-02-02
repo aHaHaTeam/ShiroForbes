@@ -46,6 +46,7 @@
                 <div class="s4 m3 l2" th:each="achievement : ${achievements}">
                     <div
                             th:insert="~{components/achievement :: achievement(${user.icon}, ${user.title}, ${user.description})}"></div>
+<!--                    TODO why user.icon and not achievement.icon above??-->
                 </div>
             </div>
         </div>

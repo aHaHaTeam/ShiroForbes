@@ -3,8 +3,10 @@
 package ru.shiroforbes.config
 
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -20,12 +22,13 @@ import ru.shiroforbes.service.*
 import ru.shiroforbes.web.routes
 
 fun Application.configureApp(config: Config) {
-    val database = Database.connect(
-        config.dbConfig.connectionUrl,
-        config.dbConfig.driver,
-        config.dbConfig.user,
-        config.dbConfig.password,
-    )
+    val database =
+        Database.connect(
+            config.dbConfig.connectionUrl,
+            config.dbConfig.driver,
+            config.dbConfig.user,
+            config.dbConfig.password,
+        )
 
     val ratingService: RatingService = DbRatingService(database)
     val studentService: StudentService = DbStudentService(database)
@@ -129,5 +132,9 @@ fun Application.configureApp(config: Config) {
         allowHeader(HttpHeaders.AccessControlAllowOrigin)
         allowHeader(HttpHeaders.ContentType)
         anyHost()
+    }
+
+    install(ContentNegotiation) {
+        json()
     }
 }
