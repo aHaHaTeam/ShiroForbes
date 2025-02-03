@@ -1,15 +1,50 @@
 import Header from "../components/Header.jsx";
-import React from "react";
+import React, {useEffect} from "react";
 import RatingDiff from "../components/RatingDiff.jsx";
+import authFetch from "../scripts/util/authFetch.jsx";
+
+async function fetchCountryside() {
+    const response = await authFetch(`/api/rating/countryside`);
+    return response.json();
+}
+
+async function fetchUrban() {
+    const response = await authFetch(`/api/rating/urban`);
+    return response.json();
+}
 
 function updateRating(props) {
     const [showCountryside, setShowCountryside] = React.useState(true);
     const [countrysideStudents, setCountrysideStudents] = React.useState([]);
     const [urbanStudents, setUrbanStudents] = React.useState([]);
 
+    useEffect(() => {
+        fetchCountryside().then(setCountrysideStudents)
+            .catch(error => console.error("Failed to fetch countryside students info", error));
+
+        fetchUrban().then(setUrbanStudents)
+            .catch(error => console.error("Failed to fetch urban students info", error));
+    })
+
+    const setGroup = (group) => {
+        if (group === "urban") {
+            setShowCountryside(false)
+        }
+        if (group === "countryside") {
+            setShowCountryside(true)
+        }
+    }
+
+    const setUrban = () => {
+        setGroup("urban")
+    }
+    const setCountryside = () => {
+        setGroup("countryside")
+    }
+
     return (
         <div>
-            <Header user={1}/>
+            <Header/>
             <div className="grid">
                 <div className="s0 m1 l2"></div>
                 <div className="s12 m10 l8">

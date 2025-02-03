@@ -10,7 +10,7 @@ function Routs() {
     return (
         <BrowserRouter>
             <Navbar/>
-            <Header user={0}/>
+            <Header/>
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/about" element={<About/>}/>
