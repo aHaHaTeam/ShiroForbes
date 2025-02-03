@@ -1,6 +1,5 @@
 package ru.shiroforbes.database
 
-import com.google.api.services.sheets.v4.SheetsScopes
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -11,12 +10,10 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.shiroforbes.config
-import ru.shiroforbes.model.GroupType
+import ru.shiroforbes.model.Group
 import ru.shiroforbes.model.Rights
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsApiConnectionService
-import ru.shiroforbes.modules.googlesheets.GoogleSheetsService
-import ru.shiroforbes.service.DbRatingService
-import ru.shiroforbes.service.DbStudentService
+import ru.shiroforbes.model.Semester
+import ru.shiroforbes.modules.googlesheets.*
 import kotlin.reflect.KClass
 
 data class ConversionClassStudent(
@@ -24,7 +21,7 @@ data class ConversionClassStudent(
     val name: String = "",
     val login: String = "",
     val password: String = "",
-    val group: GroupType,
+    val group: Group,
     val rating: Int = 0,
     val wealth: Int = 0,
     val totalSolved: Int = 0,
@@ -50,46 +47,22 @@ data class ConversionClassAdmin(
     val password: String = "",
 )
 
-internal fun kotlin.String.toFloatOrNull(): Float? =
-    try {
-        this
-            .filter { !it.isWhitespace() }
-            .split(',')
-            .joinToString(".")
-            .toFloat()
-    } catch (e: Exception) {
-        null
-    }
-
-internal fun kotlin.String.toGroupTypeOrNull(): GroupType? = GroupType.entries.find { it.text == this }
-
-internal fun kotlin.String.toBooleanOrNull(): Boolean? =
-    when (this) {
-        "1" -> true
-        "0" -> false
-        "TRUE" -> true
-        "FALSE" -> false
-        "true" -> true
-        "false" -> false
-        "True" -> true
-        "False" -> false
-        else -> null
-    }
 
 fun main() {
-    val database =
-        Database.connect(
-            config.dbConfig.connectionUrl,
-            config.dbConfig.driver,
-            config.dbConfig.user,
-            config.dbConfig.password,
-        )
-    val ratingService = DbRatingService(database)
-    val studentService = DbStudentService(database, ratingService)
+    val database = Database.connect(
+        config.dbConfig.connectionUrl,
+        config.dbConfig.driver,
+        config.dbConfig.user,
+        config.dbConfig.password,
+    )
 
-    transaction {
+    transaction(database) {
         exec("DROP TYPE IF EXISTS rights CASCADE;\n")
         exec("CREATE TYPE rights AS ENUM ('Admin', 'Teacher', 'Student');\n")
+        exec("DROP TYPE IF EXISTS semester CASCADE;\n")
+        exec("CREATE TYPE semester AS ENUM ('Semester2', 'Semesters12');\n")
+        exec("DROP TYPE IF EXISTS \"group\" CASCADE;\n")
+        exec("CREATE TYPE \"group\" AS ENUM ('Countryside', 'Urban');\n")
 
         drop(
             UserTable,
@@ -107,18 +80,21 @@ fun main() {
             RatingTable,
             AchievementTable,
         )
-        fetchGoogleSheets<ConversionClassStudent>("ShV!A2:N", ConversionClassStudent::class).forEach { student ->
+        fetchGoogleSheets("ShV!A2:N", ConversionClassStudent::class).forEach { student ->
             val id =
                 StudentTable.insertAndGetId {
                     it[name] = student.name
                     it[login] = student.login
                     it[password] = student.password
-                    it[group] = true
+                    it[group] = student.group
                 }
 
-            RatingTable.insert {
+            for (s in Semester.entries) RatingTable.insert {
+                it[semester] = s
+                it[date] = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
                 it[RatingTable.student] = id.value
-                it[total] = 0F
+                it[total] = 0f
                 it[points] = 0
                 it[algebraPercent] = 0
                 it[numbersTheoryPercent] = 0
@@ -132,10 +108,6 @@ fun main() {
                 it[numbersTheory] = 0f
                 it[geometry] = 0f
                 it[combinatorics] = 0f
-                it[date] =
-                    Clock.System
-                        .now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
             }
 
             UserTable.insert {
@@ -176,17 +148,14 @@ fun main() {
 }
 
 private fun <T : Any> fetchGoogleSheets(
-    table: String,
+    range: String,
     conversion: KClass<T>,
-) = GoogleSheetsService(
-    GoogleSheetsApiConnectionService(
-        config.googleSheetsConfig.credentialsPath,
-        listOf(SheetsScopes.SPREADSHEETS_READONLY),
-    ),
-    config.googleSheetsConfig.initSpreadsheetId,
-    conversion,
-    listOf(
-        table,
-    ),
-    Class.forName("ru.shiroforbes.database.InitKt"),
-).getWhileNotEmpty()
+): List<T> {
+    val table = GoogleSheetsGetRequest(
+        GoogleSheetsConnectionService(
+            config.googleSheetsConfig.credentialsPath,
+        ),
+        config.googleSheetsConfig.initSpreadsheetId,
+    ).addRange(range).execute()
+    return ReflectiveTableParser(conversion, listOf(CustomDecoder(), DefaultDecoder())).parse(table[range]!!)
+}

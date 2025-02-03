@@ -7,7 +7,7 @@ import ru.shiroforbes.model.achievements.Series
 
 class GoldenSeriesCount : AchievementRule {
     override fun achieved(performance: Performance): Achievement? {
-        performance.problems.filter { series: Series -> series.solved.all { it == 1.0 } }.also {
+        performance.problems.filter { series: Series -> series.solved.all { it == 1f } }.also {
             val count = it.size
             val last = it.maxBy { series -> series.number }.number
             if (count == 0) return null

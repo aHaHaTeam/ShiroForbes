@@ -1,35 +1,25 @@
 package ru.shiroforbes.modules.googlesheets
 
-import com.google.api.services.sheets.v4.SheetsScopes
 import ru.shiroforbes.config.GoogleSheetsConfig
 
 class RatingLoaderService(
-    config: GoogleSheetsConfig,
+    private val config: GoogleSheetsConfig,
 ) {
-    private val urbanDeserializer =
-        GoogleSheetsService(
-            GoogleSheetsApiConnectionService(
-                config.credentialsPath,
-                listOf(SheetsScopes.SPREADSHEETS_READONLY),
-            ),
-            config.ratingSpreadsheetId,
-            RatingRow::class,
-            config.urbanRatingRanges,
-            Class.forName("ru.shiroforbes.database.InitKt"),
-        )
-    private val countrysideDeserializer =
-        GoogleSheetsService(
-            GoogleSheetsApiConnectionService(
-                config.credentialsPath,
-                listOf(SheetsScopes.SPREADSHEETS_READONLY),
-            ),
-            config.ratingSpreadsheetId,
-            RatingRow::class,
-            config.countrysideRatingRanges,
-            Class.forName("ru.shiroforbes.database.InitKt"),
-        )
+    private val connectionService = GoogleSheetsConnectionService(
+        config.credentialsPath
+    )
 
-    fun getCountrysideRating(): List<RatingRow> = countrysideDeserializer.getWhileNotEmpty()
+    private val parser = ReflectiveTableParser(RatingRow::class, listOf(CustomDecoder(), DefaultDecoder()))
 
-    fun getUrbanRating(): List<RatingRow> = urbanDeserializer.getWhileNotEmpty()
+    fun getRating(ranges: List<String>): List<RatingRow> {
+        val tables = ranges.fold(
+            GoogleSheetsGetRequest(
+                connectionService,
+                config.ratingSpreadsheetId
+            )
+        ) { request, range -> request.addRange(range) }
+            .execute()
+        return parser.joinAndParse(ranges.map { tables[it]!! })
+    }
+
 }

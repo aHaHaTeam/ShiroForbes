@@ -28,8 +28,7 @@ fun Application.configureApp(config: Config) {
     )
 
     val ratingService: RatingService = DbRatingService(database)
-    val studentService: StudentService = DbStudentService(database, ratingService)
-    val teacherService: TeacherService = DbTeacherService(database)
+    val studentService: StudentService = DbStudentService(database)
     val adminService: AdminService = DbAdminService(database)
     val userService: UserService = DbUserService(database, studentService)
 

@@ -12,7 +12,7 @@ class GoldenSeriesStrike : AchievementRule {
         var currentStrike = 0
         val goldenSeries =
             performance.problems
-                .filter { series -> series.solved.all { it == 1.0 } }
+                .filter { series -> series.solved.all { it == 1f } }
                 .map { series -> series.number }
                 .sorted()
         for (i in 1..goldenSeries.size) {

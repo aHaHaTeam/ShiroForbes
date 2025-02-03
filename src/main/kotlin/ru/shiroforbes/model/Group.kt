@@ -1,6 +1,6 @@
 package ru.shiroforbes.model
 
-enum class GroupType(
+enum class Group(
     val text: String,
 ) {
     Urban("Urban"),

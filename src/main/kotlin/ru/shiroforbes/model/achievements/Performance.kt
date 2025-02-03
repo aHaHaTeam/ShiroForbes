@@ -1,6 +1,6 @@
 package ru.shiroforbes.model.achievements
 
-class Performance(
+data class Performance(
     val problems: List<Series>,
     val grobs: List<Grob>,
 )
