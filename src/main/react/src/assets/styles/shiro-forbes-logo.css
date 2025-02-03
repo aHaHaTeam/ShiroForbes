@@ -1,0 +1,22 @@
+@font-face {
+    font-family: "Publico Headline Web";
+    font-face-name: "Publico Headline Web Bold Regular";
+    src: url("../fonts/PublicoHeadline-Bold-Web.ttf") format("truetype");
+}
+
+.shiro-forbes-logo {
+    --shiro: #3F68AF;
+    --vlasik: #EA6132;
+    font-family: 'Publico Headline Web', serif;
+    width: fit-content;
+    margin-top: 0;
+    -webkit-text-stroke: 1px var(--stroke);
+}
+
+.shiro{
+    color: var(--shiro);
+}
+
+.vlasik{
+    color: var(--vlasik)
+}

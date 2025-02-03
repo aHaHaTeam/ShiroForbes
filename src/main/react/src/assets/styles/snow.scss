@@ -1,0 +1,48 @@
+@use "sass:math";
+body.light-theme {
+    --snow-color: #BeD8FF;
+}
+
+body.dark-theme {
+    --snow-color: #FFFFFF;
+}
+
+.snowflake {
+    --size: 1vw;
+    width: var(--size);
+    height: var(--size);
+    background: var(--snow-color);
+    border-radius: 50%;
+    position: absolute;
+    top: -5vh;
+    z-index: -1;
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translate3d(var(--left-ini), 0, 0);
+    }
+    100% {
+        transform: translate3d(var(--left-end), 110vh, 0);
+    }
+}
+
+@for $i from 1 through 50 {
+    .snowflake:nth-child(#{$i}) {
+        --size: #{math.random(5) * 0.2}vh;
+        --left-ini: #{math.random(20) - 10}vw;
+        --left-end: #{math.random(20) - 10}vw;
+        left: #{math.random(100)}vw;
+        animation: snowfall #{5 + math.random(10)}s linear infinite;
+        animation-delay: -#{math.random(10)}s;
+    }
+}
+
+/* added small blur every 6 snowflakes*/
+.snowflake:nth-child(6n) {
+    filter: blur(1px);
+}
+
+
+
+
