@@ -1,10 +1,10 @@
 import {getToken} from "./localToken.jsx";
 
 const authFetch = async (
-    input: RequestInfo,
-    init: RequestInit | undefined = {},
-    token?: string
-): Promise<Response> => {
+    input,
+    init = {},
+    token
+)=> {
     const access_token = token || getToken()?.value || 'no_token';
 
     if (access_token === 'no_token') {

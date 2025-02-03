@@ -3,8 +3,6 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Users from "./pages/Users.jsx";
 import Navbar from "./Navbar.jsx";
-import "./beer/beer.min.css"
-import {useEffect} from "react";
 import Login from "./pages/Login.jsx";
 import Header from "./components/Header.jsx";
 
