@@ -1,0 +1,51 @@
+name: Build And Test
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+  build:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Run Backend Tests
+        run: ./gradlew test
+
+      - name: Store Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
