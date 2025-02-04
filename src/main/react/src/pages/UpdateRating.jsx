@@ -1,5 +1,5 @@
 import Header from "../components/Header.jsx";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import RatingDiff from "../components/RatingDiff.jsx";
 import authFetch from "../scripts/util/authFetch.jsx";
 
@@ -17,6 +17,7 @@ function updateRating(props) {
     const [showCountryside, setShowCountryside] = React.useState(true);
     const [countrysideStudents, setCountrysideStudents] = React.useState([]);
     const [urbanStudents, setUrbanStudents] = React.useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         fetchCountryside().then(setCountrysideStudents)
@@ -42,6 +43,21 @@ function updateRating(props) {
         setGroup("countryside")
     }
 
+    const publish = () => {
+        setIsLoading(true);
+        const url = "/api/rating/update/" + (showCountryside ? "countryside" : "urban");
+        authFetch(url, {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: "{}"
+        }).then(response => {
+            if (!response.ok) {
+                alert("Something went wrong")
+            }
+        })
+        setIsLoading(false)
+    }
+
     return (
         <div>
             <Header/>
@@ -51,11 +67,13 @@ function updateRating(props) {
                     <div className="grid">
                         <div className="s2 m3 l3"></div>
                         <nav className="no-space center-align middle-align s8 m6 l6">
-                            <button className={"border left-round max " + (showCountryside && "fill")} id="countryside">
+                            <button className={"border left-round max " + (showCountryside && "fill")} id="countryside"
+                                    onClick={setCountryside}>
                                 <i className="small">nature</i>
                                 <span>16:00/17:00</span>
                             </button>
-                            <button className={"border right-round max" + (!showCountryside && "fill")} id="urban">
+                            <button className={"border right-round max" + (!showCountryside && "fill")} id="urban"
+                                    onClick={setUrban}>
                                 <i className="small">home</i>
                                 <span>18:00</span>
                             </button>
@@ -66,36 +84,24 @@ function updateRating(props) {
                     <main className="responsive">
                         {showCountryside && <div id="countrysideContent">
                             <RatingDiff students={countrysideStudents}/>
-                            {user.rights === 'Admin' &&
-                                <form id="countrysideForm">
-                                    <button className="extra round center" id="countrysidePublishButton"
-                                            type="submit">
-                                        <span id="countrysideSpan">Опубликовать</span>
-                                        <progress className="circle" id="countrysideProgress"
-                                                  style="display: none"></progress>
-                                    </button>
-                                </form>}
                         </div>}
 
                         {showCountryside && <div id="urbanContent">
                             <RatingDiff students={urbanStudents}/>
-                            <form id="urbanForm">
-                                {user.rights === 'Admin' &&
-                                    <button className="extra round center" id="urbanPublishButton"
-                                            type="submit">
-                                        <span id="urbanSpan">Опубликовать</span>
-                                        <progress className="circle" id="urbanProgress"
-                                                  style="display: none"></progress>
-                                    </button>}
-                            </form>
                         </div>}
+
+                        {user.rights === 'Admin' &&
+                            <form id="countrysideForm">
+                                <button className="extra round center" id="publishButton"
+                                        type="submit">
+                                    {isLoading && <span id="publishSpan">Опубликовать</span>}
+                                    {!isLoading && <progress className="circle" id="publishProgress"></progress>}
+                                </button>
+                            </form>}
                     </main>
                 </div>
                 <div className="s0 m1 l2"></div>
             </div>
-            <script src="/static/scripts/switch_camps.js"></script>
-            <script src="/static/scripts/update_rating.js"></script>
-            <script src="/static/scripts/snowflakes.js"></script>
         </div>
 
     )

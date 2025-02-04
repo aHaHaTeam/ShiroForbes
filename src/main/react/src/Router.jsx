@@ -5,6 +5,7 @@ import Users from "./pages/Users.jsx";
 import Navbar from "./Navbar.jsx";
 import Login from "./pages/Login.jsx";
 import Header from "./components/Header.jsx";
+import Snow from "./components/Snow.jsx";
 
 function Routs() {
     return (
@@ -17,6 +18,7 @@ function Routs() {
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/login" element={<Login/>}/>
             </Routes>
+            <Snow/>
         </BrowserRouter>
     );
 }
