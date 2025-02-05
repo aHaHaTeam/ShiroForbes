@@ -6,19 +6,20 @@ import Navbar from "./Navbar.jsx";
 import Login from "./pages/Login.jsx";
 import Header from "./components/Header.jsx";
 import Snow from "./components/Snow.jsx";
+import UpdateRating from "./pages/UpdateRating.jsx";
 
 function Routs() {
     return (
         <BrowserRouter>
             <Navbar/>
-            <Header/>
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/about" element={<About/>}/>
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/rating" element={<UpdateRating/>}/>
             </Routes>
-            <Snow/>
+            {/*<Snow/>*/}
         </BrowserRouter>
     );
 }

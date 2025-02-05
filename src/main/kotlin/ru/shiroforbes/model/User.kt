@@ -1,10 +1,13 @@
 package ru.shiroforbes.model
 
+import kotlinx.serialization.Serializable
+
 // represents student or admin
-open class User(
-    val login: String,
-    val rights: Rights,
-) {
+@Serializable
+sealed class User  {
+    abstract val login: String
+    abstract val rights: Rights
+
     override fun equals(other: Any?): Boolean =
         when (other) {
             is User -> (this.login == other.login)

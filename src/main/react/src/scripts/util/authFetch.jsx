@@ -20,9 +20,10 @@ const authFetch = async (
     options.headers = {
         ...init.headers,
         Authorization: `Bearer ${access_token}`,
+        mode: 'no-cors',
     };
 
-    return fetch(input, options);
+    return fetch(url, options);
 };
 
 export default authFetch;

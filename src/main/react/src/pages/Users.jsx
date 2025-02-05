@@ -12,7 +12,8 @@ function Users() {
         fetchUsers()
             .then(setUsers)
             .catch(error => console.error("Ошибка загрузки:", error));
-    }, []);
+    }, [null]);
+
 
     return (
         <div>

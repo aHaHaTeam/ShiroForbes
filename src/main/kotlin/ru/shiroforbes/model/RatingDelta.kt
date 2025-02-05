@@ -1,5 +1,8 @@
 package ru.shiroforbes.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RatingDelta(
     val name: String,
     val login: String,

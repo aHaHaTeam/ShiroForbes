@@ -1,6 +1,11 @@
 import authFetch from "../scripts/util/authFetch.jsx";
 import React, {useEffect} from "react";
 
+async function fetchRating(url) {
+    const response = await fetch(url);
+
+    return await response.json();
+}
 
 function RatingDiff(props) {
     const [students, setStudents] = React.useState([]);
@@ -26,33 +31,33 @@ function RatingDiff(props) {
                     </thead>
                     <tbody>
                     {students.map((student, j) => (
-                        <tr>
+                        <tr key={j}>
                             <td>
                                 <span>{student.newRank}</span>
-                                {student.newRank < student.oldRank && <i style="color: green">arrow_drop_up</i>}
+                                {student.newRank < student.oldRank && <i style={{color: "green"}}>arrow_drop_up</i>}
                                 {student.newRank < student.oldRank &&
-                                    <span style="color: green">{student.oldRank - student.newRank}</span>}
-                                {student.newRank > student.oldRank && <i style="color: red">arrow_drop_down</i>}
+                                    <span style={{color: "green"}}>{student.oldRank - student.newRank}</span>}
+                                {student.newRank > student.oldRank && <i style={{color: "red"}}>arrow_drop_down</i>}
                                 {student.newRank > student.oldRank &&
-                                    <span style="color: red">{student.oldRank - student.newRank}</span>}
-                                {student.newRank === student.oldRank && <i style="color: gray">remove</i>}
-                                {student.newRank === student.oldRank && <span style="color: gray">(0)</span>}
+                                    <span style={{color: "red"}}>{student.oldRank - student.newRank}</span>}
+                                {student.newRank === student.oldRank && <i style={{color: "gray"}}>remove</i>}
+                                {student.newRank === student.oldRank && <span style={{color: "gray"}}>(0)</span>}
                             </td>
                             <td><a href={`/profile/${student.login}`}>{student.name}</a></td>
                             <td className="right-align">
                                 <span>{student.solved}</span>
-                                {student.solvedDelta > 0 && <span style="color: green">+{student.solvedDelta}</span>}
-                                {student.solvedDelta < 0 && <span style="color: red"
-                                >{student.solvedDelta}</span>}
-                                {student.solvedDelta === 0 && <span style="color: gray">(+0)</span>}
+                                {student.solvedDelta > 0 && <span style={{color: "green"}}>(+{student.solvedDelta})</span>}
+                                {student.solvedDelta < 0 && <span style={{color: "red"}}
+                                >({student.solvedDelta})</span>}
+                                {student.solvedDelta === 0 && <span style={{color: "gray"}}>(+0)</span>}
                             </td>
                             <td className="right-align">
                                 <span>{student.rating}</span>
-                                {student.ratingDelta > 0 && <span style="color: green"
-                                >+{student.ratingDelta}</span>}
-                                {student.ratingDelta < 0 && <span style="color: red"
-                                >{student.ratingDelta}</span>}
-                                {student.ratingDelta === 0 && <span style="color: gray">(+0)</span>}
+                                {student.ratingDelta > 0 && <span style={{color: "green"}}
+                                >(+{student.ratingDelta})</span>}
+                                {student.ratingDelta < 0 && <span style={{color: "red"}}
+                                >({student.ratingDelta})</span>}
+                                {student.ratingDelta === 0 && <span style={{color: "gray"}}>(+0)</span>}
                             </td>
                         </tr>
                     ))}

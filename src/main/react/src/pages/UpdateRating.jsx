@@ -2,14 +2,15 @@ import Header from "../components/Header.jsx";
 import React, {useEffect, useState} from "react";
 import RatingDiff from "../components/RatingDiff.jsx";
 import authFetch from "../scripts/util/authFetch.jsx";
+import {getRights} from "../scripts/util/userInfo.jsx";
 
 async function fetchCountryside() {
-    const response = await authFetch(`/api/rating/countryside`);
+    const response = await fetch(`http://localhost:80//api/rating/get/countryside`);
     return response.json();
 }
 
 async function fetchUrban() {
-    const response = await authFetch(`/api/rating/urban`);
+    const response = await fetch(`http://localhost:80//api/rating/get/urban`);
     return response.json();
 }
 
@@ -18,14 +19,14 @@ function updateRating(props) {
     const [countrysideStudents, setCountrysideStudents] = React.useState([]);
     const [urbanStudents, setUrbanStudents] = React.useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
+    const rights = getRights();
     useEffect(() => {
         fetchCountryside().then(setCountrysideStudents)
             .catch(error => console.error("Failed to fetch countryside students info", error));
 
         fetchUrban().then(setUrbanStudents)
             .catch(error => console.error("Failed to fetch urban students info", error));
-    })
+    }, [])
 
     const setGroup = (group) => {
         if (group === "urban") {
@@ -72,7 +73,7 @@ function updateRating(props) {
                                 <i className="small">nature</i>
                                 <span>16:00/17:00</span>
                             </button>
-                            <button className={"border right-round max" + (!showCountryside && "fill")} id="urban"
+                            <button className={"border right-round max " + (!showCountryside && "fill")} id="urban"
                                     onClick={setUrban}>
                                 <i className="small">home</i>
                                 <span>18:00</span>
@@ -86,14 +87,14 @@ function updateRating(props) {
                             <RatingDiff students={countrysideStudents}/>
                         </div>}
 
-                        {showCountryside && <div id="urbanContent">
+                        {!showCountryside && <div id="urbanContent">
                             <RatingDiff students={urbanStudents}/>
                         </div>}
 
-                        {user.rights === 'Admin' &&
+                        {rights === 'Admin' &&
                             <form id="countrysideForm">
                                 <button className="extra round center" id="publishButton"
-                                        type="submit">
+                                        type="submit" onClick={publish}>
                                     {isLoading && <span id="publishSpan">Опубликовать</span>}
                                     {!isLoading && <progress className="circle" id="publishProgress"></progress>}
                                 </button>
@@ -107,4 +108,4 @@ function updateRating(props) {
     )
 }
 
-export default {updateRating}
+export default updateRating

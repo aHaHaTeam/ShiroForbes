@@ -26,4 +26,5 @@ fun Routing.routes(
     profileRoutes(userService, studentService, ratingService)
     ratingRoutes(ratingService, studentService, userService, ratingLoaderService)
     testRoutes()
+    apiRoutes(studentService, ratingLoaderService)
 }
