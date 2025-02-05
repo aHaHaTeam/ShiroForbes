@@ -6,8 +6,6 @@ function Snow() {
     const heightScaleFactor = document.body.scrollHeight / window.innerHeight;
 
     useEffect(() => {
-
-
         for (let i = 0; i < 50 * heightScaleFactor; i++) {
             const element = document.createElement('div');
             element.classList.add('snowflake');

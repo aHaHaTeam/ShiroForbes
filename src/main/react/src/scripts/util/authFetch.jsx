@@ -1,4 +1,4 @@
-import {getToken} from "./localToken.jsx";
+import {getToken} from "./jsonWebToken.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,7 +11,6 @@ const authFetch = async (
     const access_token = token || getToken()?.value || 'no_token';
 
     if (access_token === 'no_token') {
-        // eslint-disable-next-line no-console
         console.warn('Making secure API call without an auth token');
     }
 
@@ -20,7 +19,6 @@ const authFetch = async (
     options.headers = {
         ...init.headers,
         Authorization: `Bearer ${access_token}`,
-        mode: 'no-cors',
     };
 
     return fetch(url, options);

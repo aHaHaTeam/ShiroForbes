@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import ru.shiroforbes.login.Session
+import ru.shiroforbes.auth.Session
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.User
 import ru.shiroforbes.service.UserService

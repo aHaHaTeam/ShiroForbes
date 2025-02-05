@@ -10,6 +10,7 @@ async function fetchUser(login) {
 
 async function fetchRatings(login) {
     const response = await authFetch(`/api/ratings/${login}`);
+    return response.json();
 }
 
 

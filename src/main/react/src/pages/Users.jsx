@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import authFetch from "../scripts/util/authFetch.jsx";
 
 async function fetchUsers() {
-    const response = await fetch("http://localhost:80/api/users");
+    const response = await authFetch("/api/users");
     return response.json();
 }
 
@@ -11,7 +12,7 @@ function Users() {
     useEffect(() => {
         fetchUsers()
             .then(setUsers)
-            .catch(error => console.error("Ошибка загрузки:", error));
+            .catch(error => console.error(error));
     }, [null]);
 
 

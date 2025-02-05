@@ -1,12 +1,16 @@
 @file:Suppress("ktlint:standard:no-wildcard-imports")
 
-package ru.shiroforbes.login
+package ru.shiroforbes.auth
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.server.auth.jwt.*
 import kotlinx.coroutines.runBlocking
+import ru.shiroforbes.config
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.service.AdminService
 import ru.shiroforbes.service.UserService
-import java.security.MessageDigest
+import java.util.*
 
 fun validUser(
     userService: UserService,
@@ -40,10 +44,16 @@ fun validAdmin(
     }
 }
 
-fun sha256(password: String): ByteArray {
-    val sha = MessageDigest.getInstance("SHA-256")
-    sha.update(password.toByteArray())
-    return sha.digest()
+fun generateToken(login: String, rights: Rights): String {
+    return JWT.create()
+        .withIssuer("ktor-server")
+        .withClaim("login", login)
+        .withClaim("rights", rights.name)
+        .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000))
+        .sign(Algorithm.HMAC256(config.authConfig.secretKey))
 }
 
-fun knownPasswords(): Map<String, ByteArray> = mapOf("admin" to sha256("admin"))
+fun hasRights(principal: JWTPrincipal?, rights: Rights): Boolean {
+    val userRights = principal?.payload?.getClaim("rights")?.asString()
+    return userRights == rights.name
+}

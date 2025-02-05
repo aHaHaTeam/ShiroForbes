@@ -10,8 +10,8 @@ import io.ktor.server.thymeleaf.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import ru.shiroforbes.login.Session
-import ru.shiroforbes.login.userRights
+import ru.shiroforbes.auth.Session
+import ru.shiroforbes.auth.userRights
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.service.StudentService
 import ru.shiroforbes.service.UserService
@@ -50,12 +50,11 @@ fun Routing.authenticationRoutes(studentService: StudentService, userService: Us
     }
 
     get("/logout") {
-        call.sessions.set(Session("", ""))
         call.respondRedirect("/login")
     }
 }
 
-private fun Map<String, JsonElement>.jsonValue(key: String): String {
+internal fun Map<String, JsonElement>.jsonValue(key: String): String {
     val quoted = this[key].toString()
     return quoted.substring(1, quoted.length - 1)
 }

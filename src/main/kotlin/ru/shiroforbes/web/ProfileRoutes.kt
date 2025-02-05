@@ -5,7 +5,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
-import ru.shiroforbes.login.Session
+import ru.shiroforbes.auth.Session
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.model.Student

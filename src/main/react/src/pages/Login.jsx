@@ -1,6 +1,7 @@
 import Logo from "../components/Logo.jsx";
 import {useState} from "react";
-import {setToken} from "../scripts/util/localToken.jsx";
+import {setToken} from "../scripts/util/jsonWebToken.jsx";
+import sha256 from 'crypto-js/sha256';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,20 +15,22 @@ function Login() {
         event.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}api/login`, {
+            const hashedPassword = sha256(password).toString()
+            const response = await fetch(`${API_URL}/api/login`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({login, password}),
+                body: JSON.stringify({login, "password": hashedPassword}),
             });
 
             if (!response.ok) {
-                throw new Error("Неверные учетные данные");
+                console.error(response.statusText);
             }
 
             const data = await response.json();
+            console.log(data.token)
             setToken(data.token);
         } catch (err) {
-            alert(err);
+            console.error(err);
         }
         setIsLoading(false);
     };

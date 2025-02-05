@@ -1,4 +1,4 @@
-package ru.shiroforbes.login
+package ru.shiroforbes.auth
 
 import io.ktor.server.auth.*
 

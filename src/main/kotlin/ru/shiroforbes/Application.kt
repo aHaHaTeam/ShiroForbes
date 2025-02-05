@@ -9,15 +9,13 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import ru.shiroforbes.config.DbConfig
-import ru.shiroforbes.config.GoogleSheetsConfig
-import ru.shiroforbes.config.RouterConfig
-import ru.shiroforbes.config.configureApp
+import ru.shiroforbes.config.*
 
 data class Config(
     val googleSheetsConfig: GoogleSheetsConfig,
     val routerConfig: RouterConfig,
     val dbConfig: DbConfig,
+    val authConfig: AuthConfig,
 )
 
 internal val config: Config by lazy {
@@ -43,7 +41,7 @@ fun main(args: Array<String>) {
         launch {
             embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
                 .start(wait = true)
-        }
+        }   
     }
 }
 

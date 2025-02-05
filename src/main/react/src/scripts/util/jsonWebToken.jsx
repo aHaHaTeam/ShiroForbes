@@ -1,16 +1,6 @@
+import {jwtDecode} from "jwt-decode";
 
 const TOKEN_KEY = 'shv_token';
-
-const TOKEN_TTL_MS = 999999999999999;
-
-const isExpired = (timeStamp) => {
-    if (!timeStamp) return false;
-
-    const now = new Date().getTime();
-    const diff = now - timeStamp;
-
-    return diff > TOKEN_TTL_MS;
-};
 
 const setToken = (access_token) => {
     localStorage.setItem(
@@ -22,10 +12,6 @@ const setToken = (access_token) => {
     );
 };
 
-const removeToken = () => {
-    localStorage.removeItem(TOKEN_KEY);
-};
-
 const getToken = () => {
     let result = null;
 
@@ -35,4 +21,16 @@ const getToken = () => {
     return result;
 };
 
-export {getToken, setToken, removeToken, isExpired};
+function getUserRights() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode(token);
+        return decoded.role;
+    } catch (error) {
+        return null;
+    }
+}
+
+export {getToken, setToken, getUserRights};

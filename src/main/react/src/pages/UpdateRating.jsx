@@ -5,16 +5,16 @@ import authFetch from "../scripts/util/authFetch.jsx";
 import {getRights} from "../scripts/util/userInfo.jsx";
 
 async function fetchCountryside() {
-    const response = await fetch(`http://localhost:80//api/rating/get/countryside`);
+    const response = await authFetch(`/api/rating/countryside`);
     return response.json();
 }
 
 async function fetchUrban() {
-    const response = await fetch(`http://localhost:80//api/rating/get/urban`);
+    const response = await authFetch(`/api/rating/urban`);
     return response.json();
 }
 
-function updateRating(props) {
+function updateRating() {
     const [showCountryside, setShowCountryside] = React.useState(true);
     const [countrysideStudents, setCountrysideStudents] = React.useState([]);
     const [urbanStudents, setUrbanStudents] = React.useState([]);

@@ -37,3 +37,4 @@ out/
 
 /.kotlin/
 /src/main/resources/googlesheets/service-account-key.json
+/src/main/react/.env
