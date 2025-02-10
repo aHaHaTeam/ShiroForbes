@@ -2,12 +2,13 @@ import Logo from "../components/Logo.jsx";
 import {useState} from "react";
 import {setToken} from "../scripts/util/jsonWebToken.jsx";
 import sha256 from 'crypto-js/sha256';
+import {getLogin, getRights, setLogin, setRights} from "../scripts/util/userInfo.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
     const [isLoading, setIsLoading] = useState(false);
-    const [login, setLogin] = useState("");
+    const [login, _setLogin] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async (event) => {
@@ -29,10 +30,18 @@ function Login() {
             const data = await response.json();
             console.log(data.token)
             setToken(data.token);
+            setLogin(login)
+            setRights(data.rights)
         } catch (err) {
             console.error(err);
         }
         setIsLoading(false);
+        if(getRights()==="Admin" || getRights()==="Teacher"){
+            window.location.assign("/update_rating")
+        }
+        if(getRights()==="Student"){
+            window.location.assign(`/profile/${getLogin()}`)
+        }
     };
 
     return (
@@ -54,7 +63,7 @@ function Login() {
                                     id="login"
                                     type="text"
                                     value={login}
-                                    onChange={(e) => setLogin(e.target.value)}
+                                    onChange={(e) => _setLogin(e.target.value)}
                                     required
                                 />
                                 <label htmlFor="login">Login</label>
@@ -63,7 +72,7 @@ function Login() {
                             <div className="field label border">
                                 <input
                                     id="password"
-                                    type="text"
+                                    type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required

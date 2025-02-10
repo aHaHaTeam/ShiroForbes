@@ -39,8 +39,8 @@ const getRights = () => {
 
     const storedRights = localStorage.getItem(RIGHTS_KEY);
     storedRights && (result = JSON.parse(storedRights));
-
-    return result;
+    if (result == null) return null;
+    return result.value;
 };
 
 export {getRights, getLogin, removeIdentity, setLogin, setRights};

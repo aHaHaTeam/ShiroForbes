@@ -44,16 +44,30 @@ fun validAdmin(
     }
 }
 
-fun generateToken(login: String, rights: Rights): String {
-    return JWT.create()
+fun generateToken(
+    login: String,
+    rights: Rights,
+): String =
+    JWT
+        .create()
         .withIssuer("ktor-server")
         .withClaim("login", login)
         .withClaim("rights", rights.name)
         .withExpiresAt(Date(System.currentTimeMillis() + 60 * 60 * 1000))
         .sign(Algorithm.HMAC256(config.authConfig.secretKey))
-}
 
-fun hasRights(principal: JWTPrincipal?, rights: Rights): Boolean {
+fun hasRights(
+    principal: JWTPrincipal?,
+    rights: Rights,
+): Boolean {
     val userRights = principal?.payload?.getClaim("rights")?.asString()
     return userRights == rights.name
+}
+
+fun sameStudent(
+    principal: JWTPrincipal?,
+    login: String,
+): Boolean {
+    val userLogin = principal?.payload?.getClaim("login")?.asString()
+    return userLogin == login
 }

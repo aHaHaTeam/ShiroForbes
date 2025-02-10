@@ -1,7 +1,9 @@
 package ru.shiroforbes.model
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 
+@Serializable
 class Rating(
     var date: LocalDateTime,
     var student: Int,

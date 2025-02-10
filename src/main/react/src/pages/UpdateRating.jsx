@@ -18,14 +18,19 @@ function updateRating() {
     const [showCountryside, setShowCountryside] = React.useState(true);
     const [countrysideStudents, setCountrysideStudents] = React.useState([]);
     const [urbanStudents, setUrbanStudents] = React.useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [updatePending, setUpdatePending] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
     const rights = getRights();
+
+
     useEffect(() => {
         fetchCountryside().then(setCountrysideStudents)
             .catch(error => console.error("Failed to fetch countryside students info", error));
 
         fetchUrban().then(setUrbanStudents)
             .catch(error => console.error("Failed to fetch urban students info", error));
+
+        setPageLoading(false);
     }, [])
 
     const setGroup = (group) => {
@@ -44,8 +49,11 @@ function updateRating() {
         setGroup("countryside")
     }
 
+    if(pageLoading) {
+        return (<div>Loading...</div>)
+    }
     const publish = () => {
-        setIsLoading(true);
+        setUpdatePending(true);
         const url = "/api/rating/update/" + (showCountryside ? "countryside" : "urban");
         authFetch(url, {
             method: "POST",
@@ -56,7 +64,7 @@ function updateRating() {
                 alert("Something went wrong")
             }
         })
-        setIsLoading(false)
+        setUpdatePending(false)
     }
 
     return (
@@ -93,10 +101,10 @@ function updateRating() {
 
                         {rights === 'Admin' &&
                             <form id="countrysideForm">
-                                <button className="extra round center" id="publishButton"
+                                <button className="extra round" id="publishButton"
                                         type="submit" onClick={publish}>
-                                    {isLoading && <span id="publishSpan">Опубликовать</span>}
-                                    {!isLoading && <progress className="circle" id="publishProgress"></progress>}
+                                    {!updatePending && <span id="publishSpan">Опубликовать</span>}
+                                    {updatePending && <progress className="circle" id="publishProgress"></progress>}
                                 </button>
                             </form>}
                     </main>

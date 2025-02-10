@@ -7,6 +7,7 @@ import Login from "./pages/Login.jsx";
 import Header from "./components/Header.jsx";
 import Snow from "./components/Snow.jsx";
 import UpdateRating from "./pages/UpdateRating.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function Routs() {
     return (
@@ -17,7 +18,8 @@ function Routs() {
                 <Route path="/about" element={<About/>}/>
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/login" element={<Login/>}/>
-                <Route path="/rating" element={<UpdateRating/>}/>
+                <Route path="/update_rating" element={<UpdateRating/>}/>
+                <Route path="/profile/:login" element={<Profile/>}/>
             </Routes>
             {/*<Snow/>*/}
         </BrowserRouter>

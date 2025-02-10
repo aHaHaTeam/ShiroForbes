@@ -7,15 +7,24 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.encodeToJsonElement
 import ru.shiroforbes.auth.generateToken
 import ru.shiroforbes.auth.hasRights
+import ru.shiroforbes.auth.sameStudent
 import ru.shiroforbes.auth.userRights
 import ru.shiroforbes.model.Rights
+import ru.shiroforbes.model.Semester
+import ru.shiroforbes.model.Student
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
+import ru.shiroforbes.service.RatingService
 import ru.shiroforbes.service.StudentService
 import ru.shiroforbes.service.UserService
 
@@ -25,8 +34,12 @@ data class UserJson(
     val name: String,
 )
 
-
-fun Routing.apiRoutes(userService: UserService, studentService: StudentService, ratingLoaderService: RatingLoaderService) {
+fun Routing.apiRoutes(
+    userService: UserService,
+    studentService: StudentService,
+    ratingLoaderService: RatingLoaderService,
+    ratingService: RatingService,
+) {
     post("/api/login") {
         val formContent = call.receiveText()
         val params = (Json.parseToJsonElement(formContent) as JsonObject).toMap()
@@ -40,10 +53,8 @@ fun Routing.apiRoutes(userService: UserService, studentService: StudentService, 
         }
 
         val token = generateToken(login, rights)
-        call.respond(HttpStatusCode.OK, mapOf("token" to token))
+        call.respond(HttpStatusCode.OK, mapOf("token" to token, "rights" to rights.name))
     }
-
-
 
     authenticate("auth-jwt") {
         get("/api/users") {
@@ -64,7 +75,6 @@ fun Routing.apiRoutes(userService: UserService, studentService: StudentService, 
             val countrysideDeltasDeferred =
                 async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRatingSemester2()) }
             call.respond(countrysideDeltasDeferred.await())
-            println(countrysideDeltasDeferred.await().size)
         }
 
         get("/api/rating/urban") {
@@ -78,11 +88,59 @@ fun Routing.apiRoutes(userService: UserService, studentService: StudentService, 
         }
 
         get("/api/profile/{login}") {
-            TODO("handle api request")
+            val principal = call.principal<JWTPrincipal>()
+            if (!(
+                    hasRights(principal, Rights.Admin) ||
+                        hasRights(principal, Rights.Teacher) ||
+                        sameStudent(
+                            principal,
+                            call.parameters["login"]!!,
+                        )
+                )
+            ) {
+                call.respond(HttpStatusCode.Forbidden)
+            }
+            val profile = userService.getUserByLogin(call.parameters["login"]!!) ?: return@get
+
+            if (profile.rights != Rights.Student) {
+                call.respondRedirect("/menu")
+            }
+            profile as Student
+
+            val ratings = ratingService.getRatings(profile.login)
+            val numberOfPeople = studentService.getNumberOfStudentsInGroup(profile.group)
+
+            val response =
+                JsonObject(
+                    mapOf(
+                        "numberOfPeople" to JsonPrimitive(numberOfPeople),
+                        "user" to Json.encodeToJsonElement(profile),
+                        "ratings" to Json.encodeToJsonElement(ratings),
+                    ),
+                )
+            call.respond(HttpStatusCode.OK, response)
         }
 
-        get("/api/ratings/{login}") {
-            TODO("handle api request")
+        val updateRatingScope = CoroutineScope(Dispatchers.Default)
+        post("/api/rating/update/countryside") {
+            // TODO check for rights
+            updateRatingScope.launch {
+                val rating = ratingLoaderService.getCountrysideRating()
+                val ratingSemester2 = ratingLoaderService.getCountrysideRatingSemester2()
+                updateRating(ratingService, rating, Semester.Semesters12)
+                updateRating(ratingService, ratingSemester2, Semester.Semester2)
+            }
+            call.respond(HttpStatusCode.OK)
+        }
+
+        post("/api/rating/update/urban") {
+            updateRatingScope.launch {
+                val rating = ratingLoaderService.getUrbanRating()
+                val ratingSemester2 = ratingLoaderService.getUrbanRatingSemester2()
+                updateRating(ratingService, rating, Semester.Semesters12)
+                updateRating(ratingService, ratingSemester2, Semester.Semester2)
+            }
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
