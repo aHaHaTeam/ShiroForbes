@@ -3,15 +3,12 @@ import React, {useEffect, useState} from "react";
 import RatingDiff from "../components/RatingDiff.jsx";
 import authFetch from "../scripts/util/authFetch.jsx";
 import {getRights} from "../scripts/util/userInfo.jsx";
+import {data} from "react-router-dom";
 
-async function fetchCountryside() {
-    const response = await authFetch(`/api/rating/countryside`);
-    return response.json();
-}
-
-async function fetchUrban() {
-    const response = await authFetch(`/api/rating/urban`);
-    return response.json();
+async function fetchRatings() {
+    const countryside = await authFetch(`/api/rating/countryside`);
+    const urban = await authFetch(`/api/rating/urban`);
+    return {"countryside": await countryside.json(), "urban":await urban.json()};
 }
 
 function updateRating() {
@@ -24,13 +21,11 @@ function updateRating() {
 
 
     useEffect(() => {
-        fetchCountryside().then(setCountrysideStudents)
-            .catch(error => console.error("Failed to fetch countryside students info", error));
-
-        fetchUrban().then(setUrbanStudents)
-            .catch(error => console.error("Failed to fetch urban students info", error));
-
-        setPageLoading(false);
+        fetchRatings().then(data => {
+            setCountrysideStudents(data.countryside);
+            setUrbanStudents(data.urban);
+            setPageLoading(false);
+        }).catch(error => console.error("Failed to fetch countryside students info", error));
     }, [])
 
     const setGroup = (group) => {
@@ -49,7 +44,7 @@ function updateRating() {
         setGroup("countryside")
     }
 
-    if(pageLoading) {
+    if (pageLoading) {
         return (<div>Loading...</div>)
     }
     const publish = () => {
@@ -112,7 +107,6 @@ function updateRating() {
                 <div className="s0 m1 l2"></div>
             </div>
         </div>
-
     )
 }
 

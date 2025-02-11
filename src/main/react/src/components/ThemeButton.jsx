@@ -14,11 +14,11 @@ export function setDefaultTheme(body) {
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
     body.classList.remove('light');
     body.classList.remove('dark');
-    setTheme(body,prefersDarkScheme ? 'dark' : 'light');
+    setTheme(body, prefersDarkScheme ? 'dark' : 'light');
 }
 
 function ThemeButton(props) {
-    const body = props.body;
+    const body = document.body;
     const [isDark, setDark] = React.useState(body.classList.contains('dark-theme'));
 
     const changeTheme = () => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from "./Logo.jsx";
 import ThemeButton from "./ThemeButton.jsx";
+import LogoutButton from "./LogoutButton.jsx";
 
 
 function Header() {
@@ -19,14 +20,8 @@ function Header() {
 
                 <div className="center s8"><Logo/></div>
 
-                <div className="s1 center-align"><ThemeButton body={document.body}/></div>
-                <div className="s1 right-align">
-                    <div>
-                        <a className="circle transparent horizontal" href="/logout">
-                            <i>logout</i>
-                        </a>
-                    </div>
-                </div>
+                <div className="s1 center-align"><ThemeButton/></div>
+                <div className="s1 right-align"><LogoutButton/></div>
             </nav>
         </header>
     )
