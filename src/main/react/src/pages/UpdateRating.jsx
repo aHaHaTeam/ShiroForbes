@@ -4,6 +4,7 @@ import RatingDiff from "../components/RatingDiff.jsx";
 import authFetch from "../scripts/util/authFetch.jsx";
 import {getRights} from "../scripts/util/userInfo.jsx";
 import {data} from "react-router-dom";
+import Loading from "../components/Loading.jsx";
 
 async function fetchRatings() {
     const countryside = await authFetch(`/api/rating/countryside`);
@@ -45,7 +46,7 @@ function updateRating() {
     }
 
     if (pageLoading) {
-        return (<div>Loading...</div>)
+        return (<Loading/>)
     }
     const publish = () => {
         setUpdatePending(true);
@@ -96,7 +97,7 @@ function updateRating() {
 
                         {rights === 'Admin' &&
                             <form id="countrysideForm">
-                                <button className="extra round" id="publishButton"
+                                <button className="extra round center" id="publishButton"
                                         type="submit" onClick={publish}>
                                     {!updatePending && <span id="publishSpan">Опубликовать</span>}
                                     {updatePending && <progress className="circle" id="publishProgress"></progress>}

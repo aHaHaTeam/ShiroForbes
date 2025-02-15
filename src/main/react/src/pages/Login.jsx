@@ -80,7 +80,7 @@ function Login() {
                                 <label htmlFor="password">Password</label>
                             </div>
                             <div className="medium-space"></div>
-                            <button className="extra round" id="signIn" type="submit">
+                            <button className="extra round center" id="signIn" type="submit">
                                 {!isLoading && <span id="span">Sign In</span>}
                                 {isLoading && <progress className="circle" id="progress"></progress>}
                             </button>

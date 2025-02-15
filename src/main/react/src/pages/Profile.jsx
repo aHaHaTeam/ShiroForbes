@@ -4,6 +4,7 @@ import Header from "../components/Header.jsx";
 import ProfileStats from "../components/ProfileStats.jsx";
 import {getLogin} from "../scripts/util/userInfo.jsx";
 import {useParams} from "react-router-dom";
+import Loading from "../components/Loading.jsx";
 
 async function fetchProfile(login) {
     const response = await authFetch(`/api/profile/${login}`);
@@ -44,10 +45,7 @@ function Profile(props) {
     }, [])
 
     if (pageLoading) {
-        return (<div>
-            <Header/>
-            Loading...
-        </div>)
+        return (<Loading></Loading>)
     }
     return (
 
