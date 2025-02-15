@@ -20,6 +20,7 @@ import ru.shiroforbes.auth.generateToken
 import ru.shiroforbes.auth.hasRights
 import ru.shiroforbes.auth.sameStudent
 import ru.shiroforbes.auth.userRights
+import ru.shiroforbes.config
 import ru.shiroforbes.model.Rights
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.model.Student
@@ -73,7 +74,12 @@ fun Routing.apiRoutes(
                 call.respond(HttpStatusCode.Forbidden)
             }
             val countrysideDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRatingSemester2()) }
+                async {
+                    computeRatingDeltas(
+                        studentService,
+                        ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2),
+                    )
+                }
             call.respond(countrysideDeltasDeferred.await())
         }
 
@@ -83,7 +89,12 @@ fun Routing.apiRoutes(
                 call.respond(HttpStatusCode.Forbidden)
             }
             val urbanDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRatingSemester2()) }
+                async {
+                    computeRatingDeltas(
+                        studentService,
+                        ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2),
+                    )
+                }
             call.respond(urbanDeltasDeferred.await())
         }
 
@@ -125,8 +136,8 @@ fun Routing.apiRoutes(
         post("/api/rating/update/countryside") {
             // TODO check for rights
             updateRatingScope.launch {
-                val rating = ratingLoaderService.getCountrysideRating()
-                val ratingSemester2 = ratingLoaderService.getCountrysideRatingSemester2()
+                val rating = ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRanges)
+                val ratingSemester2 = ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2)
                 updateRating(ratingService, rating, Semester.Semesters12)
                 updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }
@@ -135,8 +146,8 @@ fun Routing.apiRoutes(
 
         post("/api/rating/update/urban") {
             updateRatingScope.launch {
-                val rating = ratingLoaderService.getUrbanRating()
-                val ratingSemester2 = ratingLoaderService.getUrbanRatingSemester2()
+                val rating = ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRanges)
+                val ratingSemester2 = ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2)
                 updateRating(ratingService, rating, Semester.Semesters12)
                 updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }

@@ -11,7 +11,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.shiroforbes.auth.Session
 import ru.shiroforbes.config
-import ru.shiroforbes.login.Session
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
 import ru.shiroforbes.service.RatingService
@@ -30,7 +29,7 @@ fun Routing.ratingRoutes(
                 async {
                     computeRatingDeltas(
                         studentService,
-                        ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2)
+                        ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2),
                     )
                 }
 
@@ -38,7 +37,7 @@ fun Routing.ratingRoutes(
                 async {
                     computeRatingDeltas(
                         studentService,
-                        ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2)
+                        ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2),
                     )
                 }
 
