@@ -16,7 +16,12 @@ function Header() {
                         </a>
                     </div>
                 </div>
-                <div className="s1"></div>
+                <div className="s1">
+                    <a className="circle transparent horizontal" href="/grobarium">
+                    <i className="extra middle icon-overleaf">
+                    </i>
+                </a>
+                </div>
 
                 <div className="center s8"><Logo/></div>
 

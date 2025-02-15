@@ -1,9 +1,0 @@
-.icon-overleaf {
-    -webkit-mask: url(/static/images/overleaf-o-logo-white.png) no-repeat center;
-    mask: url(/static/images/overleaf-o-logo-white.png) no-repeat center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    background-color: var(--on-surface-variant);
-    height: 100%;
-    width: 100%;
-}

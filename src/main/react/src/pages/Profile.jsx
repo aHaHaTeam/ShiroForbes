@@ -44,14 +44,15 @@ function Profile(props) {
     }, [])
 
     if (pageLoading) {
-        return (<div>Loading...</div>)
+        return (<div>
+            <Header/>
+            Loading...
+        </div>)
     }
     return (
 
         <div>
             <div>
-                {/*it is only important that user is not 0*/}
-                {/*have to reconsider even passing user to header*/}
                 <Header/>
             </div>
             <div className="grid">
