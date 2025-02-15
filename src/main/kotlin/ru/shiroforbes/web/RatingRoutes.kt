@@ -10,6 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.shiroforbes.auth.Session
+import ru.shiroforbes.config
+import ru.shiroforbes.login.Session
 import ru.shiroforbes.model.Semester
 import ru.shiroforbes.modules.googlesheets.RatingLoaderService
 import ru.shiroforbes.service.RatingService
@@ -25,10 +27,20 @@ fun Routing.ratingRoutes(
     authenticate("auth-session-at-least-teacher") {
         get("/update/rating") {
             val countrysideDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getCountrysideRatingSemester2()) }
+                async {
+                    computeRatingDeltas(
+                        studentService,
+                        ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2)
+                    )
+                }
 
             val urbanDeltasDeferred =
-                async { computeRatingDeltas(studentService, ratingLoaderService.getUrbanRatingSemester2()) }
+                async {
+                    computeRatingDeltas(
+                        studentService,
+                        ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2)
+                    )
+                }
 
             call.respond(
                 ThymeleafContent(
@@ -46,8 +58,10 @@ fun Routing.ratingRoutes(
         val updateRatingScope = CoroutineScope(Dispatchers.Default)
         post("/update/countryside/rating") {
             updateRatingScope.launch {
-                val rating = ratingLoaderService.getCountrysideRating()
-                val ratingSemester2 = ratingLoaderService.getCountrysideRatingSemester2()
+                val rating =
+                    ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRanges)
+                val ratingSemester2 =
+                    ratingLoaderService.getRating(config.googleSheetsConfig.countrysideRatingRangesSemester2)
                 updateRating(ratingService, rating, Semester.Semesters12)
                 updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }
@@ -56,8 +70,10 @@ fun Routing.ratingRoutes(
 
         post("/update/urban/rating") {
             updateRatingScope.launch {
-                val rating = ratingLoaderService.getUrbanRating()
-                val ratingSemester2 = ratingLoaderService.getUrbanRatingSemester2()
+                val rating =
+                    ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRanges)
+                val ratingSemester2 =
+                    ratingLoaderService.getRating(config.googleSheetsConfig.urbanRatingRangesSemester2)
                 updateRating(ratingService, rating, Semester.Semesters12)
                 updateRating(ratingService, ratingSemester2, Semester.Semester2)
             }
